@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import spektral as sk
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping
@@ -73,17 +74,15 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
         return  np.array(new_matrices)
 
     def k_fold_with_replication_train_and_evaluate_baselines_model(self,
-                                                         folds,
-                                                         n_replications,
-                                                         classes_weights,
-                                                         max_size_matrices,
-                                                        max_size_sequence,
-                                                         base_report,
-                                                        parameters,
-                                                         model_name,
-                                                        units,
-                                                        augmentation_categories,
-                                                        country):
+                                                                    folds,
+                                                                    n_replications,
+                                                                    classes_weights,
+                                                                    max_size_matrices,
+                                                                    base_report,
+                                                                    parameters,
+                                                                    model_name,
+                                                                    units,
+                                                                    country):
 
         folds_histories = []
         folds_reports = []
@@ -98,7 +97,6 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
 
                 history, report = self.train_and_evaluate_baseline_model(fold,
                                                         max_size_matrices,
-                                                        max_size_sequence,
                                                         parameters,
                                                         model_name,
                                                         class_weight,
@@ -118,7 +116,6 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
     def train_and_evaluate_baseline_model(self,
                                           fold,
                                           max_size_matrices,
-                                          max_size_sequence,
                                           parameters,
                                           model_name,
                                           class_weight,
@@ -126,25 +123,27 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
                                           country,
                                           seed=None):
 
-        adjacency_train, y_train, features_train, \
-        adjacency_test, y_test, features_test = fold
+        adjacency_train, y_train, temporal_train, \
+        adjacency_test, y_test, temporal_test = fold
 
-        print("entradas: ", adjacency_train.shape, features_train.shape,
+
+
+        print("Tamanho dados de treino: ", adjacency_train.shape, temporal_train.shape,
               y_train.shape)
-        print("enstrada test: ", adjacency_test.shape, features_test.shape,
+        print("Tamanho dados de teste: ", adjacency_test.shape, temporal_test.shape,
               y_test.shape)
+
         num_classes = max(y_train.flatten()) + 1
         max_size = max_size_matrices
-        print("classes: ", num_classes, adjacency_train.shape)
+        print("Quantidade de classes: ", num_classes)
         if country == 'BR' or country == 'Brazil':
             batch = max_size * 5
         elif country == 'US':
             batch = max_size * 20
 
         batch = 40
-        print("tamanho batch: ", batch)
-        print("epocas: ", parameters['epochs'])
-        print("y_train: ", y_train.shape, y_test.shape)
+        print("Tamanho do batch: ", batch)
+        print("Épocas: ", parameters['epochs'])
         print("Modelo: ", model_name)
         model = self.find_model(country, model_name, num_classes, max_size, self.features_num_columns).build(units1=units, output_size=num_classes, seed=seed)
         y_train = np_utils.to_categorical(y_train, num_classes=num_classes)
@@ -154,8 +153,8 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
                       weighted_metrics=[tf.keras.metrics.CategoricalAccuracy(name="acc")])
 
 
-        hi = model.fit(x=[adjacency_train, features_train],
-                       y=y_train, validation_data=([adjacency_test, features_test], y_test),
+        hi = model.fit(x=[adjacency_train, temporal_train],
+                       y=y_train, validation_data=([adjacency_test, temporal_test], y_test),
                        epochs=parameters['epochs'], batch_size=batch,
                        shuffle=False,  # Shuffling data means shuffling the whole graph
                        callbacks=[
@@ -166,23 +165,19 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
         h = hi.history
         #print("summary: ", model.summary())
 
-        y_predict_location = model.predict([adjacency_test, features_test],
+        y_predict_location = model.predict([adjacency_test, temporal_test],
                                            batch_size=batch)
 
-        scores = model.evaluate([adjacency_test, features_test],
+        scores = model.evaluate([adjacency_test, temporal_test],
                                 y_test, batch_size=batch)
         print("scores: ", scores)
 
         # To transform one_hot_encoding to list of integers, representing the locations
         # print("------------- Location ------------")
-        # print("saida: ", y_predict_location[0].shape, y_predict_location, y_predict_location.shape)
         y_predict_location = one_hot_decoding_predicted(y_predict_location)
         y_test = one_hot_decoding_predicted(y_test)
-        # print("Original: ", y_test[0], " tamanho: ", len(y_test))
-        # print("previu: ", y_predict_location[0], " tamanho: ", len(y_predict_location))
         report = skm.classification_report(y_test, y_predict_location, output_dict=True)
         # print(report)
-        print("finaal", class_weight)
         return h, report
 
 

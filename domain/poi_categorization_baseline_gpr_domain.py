@@ -210,7 +210,7 @@ class PoiCategorizationBaselineGPRDomain(PoiCategorizationDomain):
 
         num_classes = max(y_train.flatten()) + 1
         max_size = max_size_matrices
-        print("classes: ", num_classes, adjacency_train.shape)
+        print("classes: ", num_classes)
         batch = max_size*30
         print("tamanho batch: ", batch)
         print("epocas: ", parameters['epochs'])

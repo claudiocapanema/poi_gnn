@@ -294,9 +294,8 @@ class PoiCategorizationTransferLearningDomain:
         class_weight = list(train_categories_freq.values())
         user_categories_train = np.array([[e for e in row] for row in user_categories_train])
         user_categories_test = np.array([[e for e in row] for row in user_categories_test])
-        print("forma: ", adjacency_list_train.shape, user_metrics_list_train.shape, adjacency_list_test.shape, user_metrics_list_test.shape)
-        return (adjacency_list_train, user_categories_train, features_list_train, user_metrics_list_train, \
-               adjacency_list_test, user_categories_test, features_list_test, user_metrics_list_test), \
+        return (adjacency_list_train, user_categories_train, features_list_train, user_metrics_list_train,
+                adjacency_list_test, user_categories_test, features_list_test, user_metrics_list_test), \
                train_categories_freq
 
 

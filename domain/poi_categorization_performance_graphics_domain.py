@@ -23,5 +23,5 @@ class PoiCategorizationPerformanceGraphicsDomain:
 
         return df_metrics
 
-    def performance_graphics(self, metrics, osm_categories_to_int, base_dir, folds_replications_filename):
-        self.poi_categorization_performance_graphics_loader.plot_metrics(metrics, osm_categories_to_int, base_dir, folds_replications_filename)
+    def performance_graphics(self, output_dirs, new_models_names, osm_categories_to_int, base_dir, dataset):
+        self.poi_categorization_performance_graphics_loader.export_reports(output_dirs, new_models_names, osm_categories_to_int, base_dir, dataset)

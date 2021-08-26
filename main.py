@@ -1,6 +1,8 @@
 import sys
 import ast
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 from job.poi_categorization_job import PoiCategorizationJob

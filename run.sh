@@ -283,7 +283,7 @@ CATEGORIZATION_PERFORMANCE_GRAPHICS_CONFIG='{
           "categories_type":"9_categories",
           "graph_type":"not_directed",
           "country":"BR",
-          "version":"PATH",
+          "version":"normal",
           "folds":"5",
           "replications":"1"
           }'

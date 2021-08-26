@@ -1,0 +1,35 @@
+"\begin{tabular}{llll}
+\toprule
+       &                       &          arma &       POI-GNN \\
+\midrule
+Precision & Arts and Entertainment &   textbf{0.0} &           0.0 \\
+       & Great Outdoors &          0.02 &  textbf{0.13} \\
+       & Work &          0.31 &  textbf{0.33} \\
+       & Food &          0.28 &   textbf{0.3} \\
+       & Travel Spot &          0.26 &  textbf{0.31} \\
+       & Home &  textbf{0.51} &           0.5 \\
+       & Shop and Service &  textbf{0.27} &          0.27 \\
+       & Nighlife Spot &          0.12 &  textbf{0.27} \\
+       & College and Education &  textbf{0.49} &          0.44 \\
+\hline
+Recall & Arts and Entertainment &   textbf{0.0} &           0.0 \\
+       & Great Outdoors &   textbf{0.0} &           0.0 \\
+       & Work &  textbf{0.49} &          0.46 \\
+       & Food &  textbf{0.68} &           0.6 \\
+       & Travel Spot &          0.05 &  textbf{0.11} \\
+       & Home &          0.48 &  textbf{0.49} \\
+       & Shop and Service &          0.22 &  textbf{0.31} \\
+       & Nighlife Spot &          0.01 &  textbf{0.09} \\
+       & College and Education &          0.12 &  textbf{0.19} \\
+Fscore & Arts and Entertainment &   textbf{0.0} &           0.0 \\
+       & Great Outdoors &   textbf{0.0} &           0.0 \\
+       & Work &  textbf{0.38} &          0.38 \\
+       & Food &   textbf{0.4} &           0.4 \\
+       & Travel Spot &          0.08 &  textbf{0.16} \\
+       & Home &   textbf{0.5} &          0.49 \\
+       & Shop and Service &          0.24 &  textbf{0.29} \\
+       & Nighlife Spot &          0.02 &  textbf{0.14} \\
+       & College and Education &           0.2 &  textbf{0.27} \\
+\bottomrule
+\end{tabular}
+"

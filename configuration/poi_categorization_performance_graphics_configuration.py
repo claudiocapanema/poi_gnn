@@ -20,7 +20,7 @@ class PoiCategorizationPerformanceGraphicsConfiguration(Enum):
                              'dense_foursquare': {
                                  'directed': "output/performance_graphics/dense_foursquare/directed/",
                                  'not_directed': {'BR': {
-                                     'NORMAL': "output/performance_graphics/dense_foursquare/BR/NORMAL/not_directed/",
+                                     'normal': "output/performance_graphics/dense_foursquare/BR/normal/not_directed/",
                                      'PATH': "output/performance_graphics/dense_foursquare/BR/PATH/not_directed/"},
                                                   'US': {
                                                       'NORMAL': "output/performance_graphics/dense_foursquare/US/NORMAL/not_directed/",
@@ -32,9 +32,9 @@ class PoiCategorizationPerformanceGraphicsConfiguration(Enum):
     SEQUENTIAL_POI_RECOMMENDATION_BASELINES_MODELS_NAMES = ("sequential", ['map'])
 
     FOLDS_REPLICATIONS = ("folds_replications",
-                          {'5': {'1': '5_folds/1_replications/metrics.csv',
-                                 '2': '5_folds/2_replications/metrics.csv',
-                                 '3': '5_folds/3_replications/metrics.csv'}})
+                          {'5': {'1': '5_folds/1_replications/',
+                                 '2': '5_folds/2_replications/',
+                                 '3': '5_folds/3_replications/'}})
 
     FOLDS_REPLICATIONS_FILENAME = ("folds_replications_filename",
                                    {'5': {'1': '5_folds_1_replications',

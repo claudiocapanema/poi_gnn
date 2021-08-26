@@ -23,8 +23,6 @@ class PoiCategorizationPerformanceGraphicsJob:
         country = Input.get_instance().inputs['country']
         version = Input.get_instance().inputs['version']
 
-        sequential_model_names = PoiCategorizationPerformanceGraphicsConfiguration.SEQUENTIAL_POI_RECOMMENDATION_BASELINES_MODELS_NAMES.get_value()
-
         output_base_dir_poi_categorization = self.poi_categorization_configuration.OUTPUT_DIR[1]
         model_names = PoiCategorizationPerformanceGraphicsConfiguration.MODELS_NAMES.get_value()
         folds_replications = PoiCategorizationPerformanceGraphicsConfiguration.FOLDS_REPLICATIONS.get_value()[folds][replications]
@@ -61,16 +59,6 @@ class PoiCategorizationPerformanceGraphicsJob:
 
             output_dirs.append(output_dir+folds_replications)
             new_models_names.append(model_name)
-        # getting the metrics.csv directories of POI recommendation baselines
-        # for model_name in sequential_model_names:
-        #     model_names.append(model_name)
-        #     output_base_dir = PoiCategorizationSequentialBaselinesConfiguration.OUTPUT_BASE_DIR.get_value()
-        #     dataset_type_dir = PoiCategorizationSequentialBaselinesConfiguration.DATASET_TYPE.get_value()[dataset_name]
-        #     category_type_dir = PoiCategorizationSequentialBaselinesConfiguration.CATEGORY_TYPE.get_value()[categories_type]
-        #     model_name_dir = PoiCategorizationSequentialBaselinesConfiguration.MODEL_NAME.get_value()[model_name]
-        #     output_dir = output_base_dir + dataset_type_dir + category_type_dir + model_name_dir
-        #
-        #     output_dirs.append(output_dir + folds_replications)
 
         # getting the metrics.csv directory of the hmrm
         # if country != 'JP' and country != 'US':
@@ -79,23 +67,22 @@ class PoiCategorizationPerformanceGraphicsJob:
         #     output_dirs.append("/home/claudio/Documentos/pycharm_projects/poi_detection/output/matrix_factorization_baseline/global_foursquare/BR/8_categories/5_folds/all_year_long/metrics_8_categories_no_balanced_weight.csv")
 
         # getting the metrics.csv directory of the poi-gnn
-        # model_name = 'POI-GNN'
-        # new_models_names.append(model_name)
-        # output_base_dir = self.poi_categorization_configuration.OUTPUT_DIR[1]
-        # dataset_type_dir = self.poi_categorization_configuration.DATASET_TYPE[1][dataset_name]
-        # category_type_dir = self.poi_categorization_configuration.CATEGORY_TYPE[1][categories_type]
-        # output_dir = self.poi_categorization_baselines_configuration. \
-        #     output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir, dataset_type=dataset_type_dir,
-        #                category_type=category_type_dir, country=country_dir, version=version_dir)
-        # output_dirs.append(output_dir+folds_replications)
+        model_name = 'POI-GNN'
+        new_models_names.append(model_name)
+        output_base_dir = self.poi_categorization_configuration.OUTPUT_DIR[1]
+        dataset_type_dir = self.poi_categorization_configuration.DATASET_TYPE[1][dataset_name]
+        category_type_dir = self.poi_categorization_configuration.CATEGORY_TYPE[1][categories_type]
+        output_dir = self.poi_categorization_baselines_configuration. \
+            output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir, dataset_type=dataset_type_dir,
+                       category_type=category_type_dir, country=country_dir, version=version_dir)
+        output_dirs.append(output_dir+folds_replications)
 
         print("ler", output_dirs)
-        metrics = self.poi_categorization_performance_graphics_domain.\
-            read_metrics(output_dirs, new_models_names, folds_replications)
-        print("metrica", metrics)
-        metrics = metrics[['0_fscore', '1_fscore', '2_fscore', '3_fscore', '4_fscore', '5_fscore', '6_fscore', '7_fscore', 'accuracy', 'macro_avg_fscore', 'weighted_avg_fscore', 'Method']]
+        # metrics = self.poi_categorization_performance_graphics_domain.\
+        #     read_metrics(output_dirs, new_models_names, folds_replications)
+        # print("metrica", metrics)
         self.poi_categorization_performance_graphics_domain.\
-            performance_graphics(metrics, osm_categories_to_int, base_dir, folds_replications_filename)
+            performance_graphics(output_dirs, new_models_names, osm_categories_to_int, base_dir, dataset_name)
 
 
 

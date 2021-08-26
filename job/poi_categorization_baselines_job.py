@@ -19,6 +19,7 @@ class PoiCategorizationBaselinesJob:
         self.poi_categorization_loader = PoiCategorizationLoader()
         self.poi_categorization_baselines_configuration = PoICategorizationBaselinesConfiguration()
         self.poi_categorization_configuration = PoICategorizationConfiguration()
+        self.poi_categorization_domain = PoiCategorizationDomain(Input.get_instance().inputs['dataset_name'])
 
     def start(self):
         base_dir = Input.get_instance().inputs['base_dir']
@@ -36,9 +37,6 @@ class PoiCategorizationBaselinesJob:
 
         self.files_verificaiton(country_aux, adjacency_matrix_filename, temporal_matrix_filename)
 
-        # get list of valid categories for the given dataset
-        # categories_to_int_osm = self.poi_categorization_baselines_configuration. \
-        #     DATASET_CATEGORIES_TO_INT_OSM_CATEGORIES[1][dataset_name][categories_type]
         max_size_matrices = self.poi_categorization_configuration.MAX_SIZE_MATRICES[1]
         max_size_sequence = self.poi_categorization_configuration.MINIMUM_RECORDS[1]
         n_splits = self.poi_categorization_configuration.N_SPLITS[1]
@@ -50,6 +48,7 @@ class PoiCategorizationBaselinesJob:
         dataset_type_dir = self.poi_categorization_baselines_configuration.DATASET_TYPE[1][dataset_name]
         country_dir = self.poi_categorization_baselines_configuration.COUNTRY[1][country]
         category_type_dir = self.poi_categorization_baselines_configuration.CATEGORY_TYPE[1][categories_type]
+        int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name]
         model_name_dir = self.poi_categorization_baselines_configuration.MODEL_NAME[1][model_name]
         graph_type_dir = self.poi_categorization_baselines_configuration.GRAPH_TYPE[1][graph_type]
         units = self.poi_categorization_baselines_configuration.UNITS[1][dataset_name][country][model_name]
@@ -59,7 +58,6 @@ class PoiCategorizationBaselinesJob:
                        model_name=model_name_dir)
 
         base_report = self.poi_categorization_baselines_configuration.REPORT_MODEL[1][categories_type]
-        augmentation_categories = self.poi_categorization_baselines_configuration.AUGMENTATION_CATEGORIES[1]
 
         base_dir = base_dir + graph_type + "/" + country_dir
         adjacency_matrix_filename = base_dir + adjacency_matrix_filename
@@ -68,8 +66,6 @@ class PoiCategorizationBaselinesJob:
             read_matrix(adjacency_matrix_filename, temporal_matrix_filename)
         print("arquivos: \n", adjacency_matrix_filename)
         print(temporal_matrix_filename)
-
-        print("matriz de adjacencia: \n", adjacency_df)
 
         self.matrices_verification(adjacency_df, temporal_df)
 
@@ -83,7 +79,6 @@ class PoiCategorizationBaselinesJob:
                                     model_name)
 
         usuarios = adjacency_df.shape
-        #users_metrics = users_metrics.query("user_id not in " + str(remove_users_ids))
 
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'categories': users_categories}}
         folds, class_weight = self.poi_categorization_baselines_domain. \
@@ -94,23 +89,20 @@ class PoiCategorizationBaselinesJob:
 
         folds_histories, base_report = self.poi_categorization_baselines_domain.\
             k_fold_with_replication_train_and_evaluate_baselines_model(folds,
-                                                             n_replications,
-                                                             class_weight,
-                                                             max_size_matrices,
-                                                            max_size_sequence,
-                                                             base_report,
-                                                            parameters,
-                                                             model_name,
-                                                            units,
-                                                            augmentation_categories,
-                                                            country)
+                                                                        n_replications,
+                                                                        class_weight,
+                                                                        max_size_matrices,
+                                                                        base_report,
+                                                                        parameters,
+                                                                        model_name,
+                                                                        units,
+                                                                        country)
 
         print("------------- Location ------------")
         print(base_report)
+        base_report = self.poi_categorization_domain.preprocess_report(base_report, int_to_category)
         self.poi_categorization_loader.plot_history_metrics(folds_histories, base_report, output_dir)
         self.poi_categorization_loader.save_report_to_csv(output_dir, base_report, n_splits, n_replications, usuarios)
-        print("usuarios: ", usuarios)
-        print("tamanho máximo da sequência: ", max_size_sequence)
 
     def matrices_verification(self, adjacency_df, temporal_df):
 
@@ -118,7 +110,7 @@ class PoiCategorizationBaselinesJob:
             print("Matrizes com tamanhos diferentes")
             raise
         else:
-            print("Quantidade de usuários: ", len(adjacency_df))
+            print("Quantidade inicial de usuários: ", len(adjacency_df))
 
     def files_verificaiton(self, country, adjacency_matrix_filename, temporal):
 

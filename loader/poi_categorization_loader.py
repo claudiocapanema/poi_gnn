@@ -45,33 +45,58 @@ class PoiCategorizationLoader:
 
     def save_report_to_csv(self, output_dir, report, n_folds, n_replications, usuarios):
 
-        new_dict = {}
+        precision_dict = {}
+        recall_dict = {}
+        fscore_dict = {}
         column_size = n_folds*n_replications
         for key in report:
             if key == 'accuracy':
                 column = 'accuracy'
-                new_dict[column] = report[key]
+                fscore_dict[column] = report[key]
                 continue
             elif key == 'recall' or key == 'f1-score' \
                     or key == 'support':
                 continue
             if key == 'macro avg' or key == 'weighted avg':
-                column = key.replace(" ", "_") + "_fscore"
-                new_dict[column] = report[key]['f1-score']
+                column = key
+                fscore_dict[column] = report[key]['f1-score']
                 continue
-            column = key + "_fscore"
-            column_data = report[key]['f1-score']
-            if len(column_data) < column_size:
-                while len(column_data) < column_size:
-                    column_data.append(np.nan)
-            new_dict[column] = column_data
+            fscore_column = key
+            fscore_column_data = report[key]['f1-score']
+            if len(fscore_column_data) < column_size:
+                while len(fscore_column_data) < column_size:
+                    fscore_column_data.append(np.nan)
+            fscore_dict[fscore_column] = fscore_column_data
 
-        #print("final: ", new_dict)
-        new_dict['users'] = [str(usuarios)]*column_size
-        df = pd.DataFrame(new_dict)
+            precision_column = key
+            precision_column_data = report[key]['precision']
+            if len(precision_column_data) < column_size:
+                while len(precision_column_data) < column_size:
+                    precision_column_data.append(np.nan)
+            precision_dict[precision_column] = precision_column_data
+
+            recall_column = key
+            recall_column_data = report[key]['recall']
+            if len(recall_column_data) < column_size:
+                while len(recall_column_data) < column_size:
+                    recall_column_data.append(np.nan)
+            recall_dict[recall_column] = recall_column_data
+
+            # print("final: ", new_dict)
+        precision = pd.DataFrame(precision_dict)
+        print("Métricas precision: \n", precision)
         output_dir = output_dir + str(n_folds) + "_folds/" + str(n_replications) + "_replications/"
+        print("pasta", output_dir)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
-        df.to_csv(output_dir + "metrics.csv", index_label=False, index=False)
+        precision.to_csv(output_dir + "precision.csv", index_label=False, index=False)
+
+        recall = pd.DataFrame(recall_dict)
+        print("Métricas recall: \n", recall)
+        recall.to_csv(output_dir + "recall.csv", index_label=False, index=False)
+
+        fscore = pd.DataFrame(fscore_dict)
+        print("Métricas fscore: \n", fscore)
+        fscore.to_csv(output_dir + "fscore.csv", index_label=False, index=False)
 
     def save_model_and_weights(self, model, output_dir, n_folds, n_replications):
         output_dir = output_dir + str(n_folds) + "_folds/" + str(n_replications) + "_replications/"

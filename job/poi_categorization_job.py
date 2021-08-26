@@ -54,6 +54,7 @@ class PoiCategorizationJob:
         output_base_dir = self.poi_categorization_configuration.OUTPUT_DIR[1]
         dataset_type_dir = self.poi_categorization_configuration.DATASET_TYPE[1][dataset_name]
         category_type_dir = self.poi_categorization_configuration.CATEGORY_TYPE[1][categories_type]
+        int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name]
         graph_type_dir = self.poi_categorization_configuration.GRAPH_TYPE[1][graph_type]
         country_dir = self.poi_categorization_configuration.COUNTRY[1][country]
         state_dir = self.poi_categorization_configuration.STATE[1][state]
@@ -173,12 +174,13 @@ class PoiCategorizationJob:
 
         print("------------- Location ------------")
         print(base_report)
+        base_report = self.poi_categorization_domain.preprocess_report(base_report, int_to_category)
         self.poi_categorization_loader.plot_history_metrics(folds_histories, base_report, output_dir)
         self.poi_categorization_loader.save_report_to_csv(output_dir, base_report, n_splits, n_replications, usuarios)
         self.poi_categorization_loader.save_model_and_weights(model, output_dir, n_splits, n_replications)
-        print("usuarios: ", usuarios)
-        print("max size matrices: ", max_size_matrices)
-        print("max size paths: ", max_size_paths)
+        print("Usuarios processados: ", usuarios)
+        print("Tamanho máximo de matriz: ", max_size_matrices)
+        print("Quantidade mínima de registros: ", max_size_paths)
 
     def files_verification(self, country, state, adjacency_matrix_filename, temporal_matrix_filename,
                            adjacency_matrix_week_filename, temporal_matrix_week_filename,
@@ -235,4 +237,4 @@ class PoiCategorizationJob:
             print("Matrizes com tamanhos diferentes")
             raise
         else:
-            print("Quantidade de usuários: ", len(adjacency_df))
+            print("Quantidade inicial de usuários: ", len(adjacency_df))

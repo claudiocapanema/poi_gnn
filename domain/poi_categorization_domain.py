@@ -363,6 +363,12 @@ class PoiCategorizationDomain:
             else:
                 user_matrix, user_category, idx = self._resize_adjacency_and_category_matrices_baselines(
                     user_matrix, user_category, max_size_matrices)
+                if model_name == "gcn" or model_name == "gae":
+                    user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
+                elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                    user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
+                elif model_name == "diff":
+                    user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
 
             """feature"""
             user_temporal_matrix = temporal_df[i]
@@ -494,7 +500,6 @@ class PoiCategorizationDomain:
         else:
             distance_list = []
             duration_list = []
-        print("tamanho adjacency: ", len(adjacency_list))
         skip = False
         if n_splits == 1:
             skip = True
@@ -575,8 +580,6 @@ class PoiCategorizationDomain:
         class_weight = list(train_categories_freq.values())
         user_categories_train = np.array([[e for e in row] for row in user_categories_train])
         user_categories_test = np.array([[e for e in row] for row in user_categories_test])
-        print("forma: ", adjacency_list_train.shape, user_categories_train.shape,
-              adjacency_list_test.shape, user_categories_test.shape)
 
         if len(distance_list) > 0:
             return (adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train,
@@ -678,11 +681,10 @@ class PoiCategorizationDomain:
         duration_weekend_train, adjacency_test_weekend, y_test_weekend, temporal_test_weekend, distance_weekend_test, \
         duration_weekend_test = fold_weekend
 
-
-        print("tamanho matrizes train: ", adjacency_train.shape, temporal_train.shape,
+        print("Tamanho das matrizes de treino: ", adjacency_train.shape, temporal_train.shape,
               adjacency_week_train.shape, temporal_train_week.shape)
 
-        print("tamanho matrizes teste: ", adjacency_test.shape, temporal_test.shape,
+        print("Tamanho das matrizes de teste: ", adjacency_test.shape, temporal_test.shape,
               adjacency_test_week.shape, temporal_test_week.shape)
         # verifying whether categories arrays are equal
         compare1 = y_train == y_train_week
@@ -695,10 +697,10 @@ class PoiCategorizationDomain:
 
         num_classes = max(y_train.flatten()) + 1
         max_size = max_size_matrices
-        print("classes: ", num_classes, adjacency_train.shape)
+        print("Quantidade de classes: ", num_classes)
         if country == 'BR':
             if version == "normal":
-                print("NORMAL")
+                print("Tipo de rede neural: NORMAL")
                 model = GNN(num_classes, max_size, max_size_sequence,
                             self.features_num_columns).build(seed=seed)
             elif version == "PATH":
@@ -713,20 +715,12 @@ class PoiCategorizationDomain:
         elif country == 'BR':
             batch = max_size * 5
 
-        print("tamanho batch: ", batch)
-        print("y_train: ", y_train.shape, y_test.shape, type(y_train))
-        print("one hot: ", np_utils.to_categorical(y_train, num_classes=num_classes).shape)
-        # w1 = np.array([class_weight.values()]*max_size)
-        # loss1 = partial(weighted_categorical_crossentropy, weights=w1)
+        print("Tamanho do batch: ", batch)
         model.compile(optimizer="adam", loss=['categorical_crossentropy'],
                       weighted_metrics=[tf.keras.metrics.CategoricalAccuracy(name="acc")
                                         ])
         y_train = np_utils.to_categorical(y_train, num_classes=num_classes)
         y_test = np_utils.to_categorical(y_test, num_classes=num_classes)
-        # temporal_train_week, path_train_week, adjacency_train_weekend, temporal_train_weekend,
-        # path_train_weekend
-        print("tamanhos: ", "adj: ", adjacency_train[0].shape, "\ntempo: ", temporal_train[0].shape,
-              "\ndist: ", distance_train[0].shape, "\ndura: ", duration_train[0].shape)
         hi = model.fit(x=[adjacency_train, temporal_train, distance_train, duration_train],
                        y=y_train, validation_data=([adjacency_test, temporal_test, distance_test, duration_test], y_test),
                        epochs=epochs, batch_size=batch,
@@ -735,24 +729,11 @@ class PoiCategorizationDomain:
                            EarlyStopping(patience=100, restore_best_weights=True)
                        ]
                        )
-        #, path_train_week, adjacency_train_weekend, temporal_train_weekend,
-                          #path_train_weekend
-
-        # , path_test_week,
-        # adjacency_test_weekend, temporal_test_weekend, path_test_weekend
 
         h = hi.history
         #print("summary: ", model.summary())
-        # temporal_train_week, path_train_week, adjacency_train_weekend,
-        # temporal_train_weekend,
-        # path_train_weekend
         y_predict_location = model.predict([adjacency_test, temporal_test,distance_test, duration_test],
                                            batch_size=batch)
-
-        # path_test_week,
-        # adjacency_test_weekend,
-        # temporal_test_weekend,
-        # path_test_weekend
 
         scores = model.evaluate([adjacency_test, temporal_test, distance_test, duration_test],
                                 y_test, batch_size=batch)
@@ -781,7 +762,17 @@ class PoiCategorizationDomain:
         index = np.argmax(accuracies)
         return models[index]
 
+    def preprocess_report(self, report, int_to_categories):
 
+        new_report = {}
+
+        for key in report:
+            if key != 'accuracy' and key != 'macro avg' and key != 'weighted avg':
+                new_report[int_to_categories[key]] = report[key]
+            else:
+                new_report[key] = report[key]
+
+        return new_report
 
 
         
