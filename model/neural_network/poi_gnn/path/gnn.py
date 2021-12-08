@@ -203,7 +203,7 @@ class GNNPath:
         out_distance = ARMAConv(self.classes,
                                 activation="softmax")([out_distance, A_input])
 
-        out_duration = ARMAConv(20, activation='elu')([Temporal_input, A_input])
+        out_duration = ARMAConv(20, activation='elu')([Duration_input, A_input])
         out_duration = Dropout(0.5)(out_duration)
         out_duration = ARMAConv(self.classes,
                                 activation="softmax")([out_duration, A_input])

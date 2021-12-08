@@ -45,7 +45,13 @@ class BasePoiCategorizationConfiguration:
                                                       "locationid": "placeid",
                                                       "category": "categoryid",
                                                       "latitude": "latitude",
-                                                      "longitude": "longitude"}
+                                                      "longitude": "longitude"},
+                                "gowalla": {"datetime": "local_datetime",
+                                                      "userid": "userid",
+                                                      "locationid": "placeid",
+                                                      "category": "category",
+                                                      "latitude": "latitude",
+                                                      "longitude": "longitude"},
                                 })
 
         # A categoria Home/hotel foi retirada e englobada por Other.
@@ -124,15 +130,23 @@ class BasePoiCategorizationConfiguration:
                                               'Nighlife Spot': 7,
                                               'College and Education': 8}
 
+        self.GOWALLA_7_CATEGORIES = {'Shopping': 0,
+                                     'Community': 1,
+                                     'Food': 2,
+                                     'Entertainment': 3,
+                                     'Travel': 4,
+                                     'Outdoors': 5,
+                                     'Nightlife': 6}
+
         self.INT_TO_CATEGORIES = ("int_to_categories", {
             "dense_foursquare": {str(i): list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())[i] for i in
                                  range(len(list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())))},
-            "gowalla": {
-                "7_categories": {str(i): self.GOWALLA_7_CATEGORIES[i] for i in range(len(self.GOWALLA_7_CATEGORIES))}}})
+            "gowalla": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))}})
 
         self.CATEGORIES = ("categories", {'weeplaces': {'7_categories_osm': self.OSM_7_CATEGORIES_TO_INT[1]},
                                           'global_foursquare': {'8_categories': self.GLOBAL_FOURSQUARE_8_CATEGORIES},
-                                          'dense_foursquare': {'9_categories': self.DENSE_FORUSQUARE_9_CATEGORIES}})
+                                          'dense_foursquare': {'9_categories': self.DENSE_FORUSQUARE_9_CATEGORIES},
+                                          'gowalla': {'7_categories': self.GOWALLA_7_CATEGORIES}})
 
         # MATRIX_MAX_SIZE = ("matrix_max_size", 1166, False, "max size of the adjacency matrix and features matrix")
 

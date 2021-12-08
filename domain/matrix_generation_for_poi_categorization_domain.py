@@ -301,7 +301,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         count = 0
         # limitar usuarios
         print("us", len(ids))
-        users_checkin = users_checkin.query(userid_column + " in "+str(ids[:15000]))
+        #users_checkin = users_checkin.query(userid_column + " in "+str(ids[:15000]))
         start = time.time()
         users_checkin = users_checkin.groupby(userid_column).apply(lambda e: self.generate_user_matrices(e, e[userid_column].iloc[0],
                                                                                                          datetime_column,

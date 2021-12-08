@@ -80,13 +80,14 @@ class MatrixGenerationForPoiCategorizationJob():
         latitude_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['latitude_column']
         longitude_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['longitude_column']
         country_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['country_column']
+        state_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['state_column']
+        category_to_int = self.poi_categorization_configuration.GOWALLA_7_CATEGORIES
         max_time_between_records_dir = self.poi_categorization_configuration.MAX_TIME_BETWEEN_RECORDS[1][max_time_between_records]
 
         # get list of valid categories for the given dataset
         # categories_to_int_osm = self.poi_categorization_configuration.\
         #     DATASET_CATEGORIES_TO_INT_OSM_CATEGORIES[1][dataset_name][categories_type]
         max_size_matrices = self.poi_categorization_configuration.MAX_SIZE_MATRICES[1]
-        train_size = self.poi_categorization_configuration.TRAIN_SIZE[1]
         n_splits = self.poi_categorization_configuration.N_SPLITS[1]
         n_replications = self.poi_categorization_configuration.N_REPLICATIONS[1]
 
@@ -103,8 +104,16 @@ class MatrixGenerationForPoiCategorizationJob():
 
         #base_report = self.poi_categorization_configuration.REPORT_MODEL[1][categories_type]
         users_checkin = self.file_extractor.read_csv(users_checkin_filename, dtypes_columns).query(country_column + " == '"+country+"'")
+        if category_column == category_name_column:
+            categories = users_checkin[category_name_column].tolist()
+            categories_int = []
+            for i in range(len(categories)):
+                categories_int.append(category_to_int[categories[i]])
+
+        category_column = category_column + "_id"
+        users_checkin[category_column] = np.array(categories_int)
         if state != "":
-            users_checkin = users_checkin.query("state == '" + state + "'")
+            users_checkin = users_checkin.query(state_column + " == '" + state + "'")
         print("----- verificação -----")
         print("Pais: ", users_checkin[country_column].unique().tolist())
         if len(state) > 0:

@@ -39,10 +39,20 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                                               "userid_column": "userid",
                                               "locationid_column": "placeid",
                                              "country_column": "country_name",
+                                             "state_column": "state",
                                               "category_column": "categoryid",
                                               "category_name_column": "category",
                                               "latitude_column": "latitude",
-                                              "longitude_column": "longitude"}
+                                              "longitude_column": "longitude"},
+                        "gowalla": {"datetime_column": "local_datetime",
+                                              "userid_column": "userid",
+                                              "locationid_column": "placeid",
+                                             "country_column": "country_name",
+                                            "state_column": "state_name",
+                                              "category_column": "category",
+                                              "category_name_column": "category",
+                                              "latitude_column": "latitude",
+                                              "longitude_column": "longitude"},
                          })
 
     # userid	placeid	datetime	lat	lon	city	category	local_datetime

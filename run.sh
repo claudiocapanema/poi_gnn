@@ -88,6 +88,11 @@ GLOBAL_FOURQUARE_USER_METRICS_FILENAME_BR="files/global_foursquare_user_metrics_
 GLOBAL_FOURQUARE_USER_METRICS_FILENAME_2012_2013_BR="files/global_foursquare_user_metrics_BR_2012_2013.csv"
 GLOBAL_FOURQUARE_USER_METRICS_FILENAME_US="files/global_foursquare_user_metrics_US.csv"
 
+# gowalla
+GOWALLA_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/matrices_poi_categorization/"
+GOWALLA_LOCAL_DATETIME_US="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_7_categories_local_datetime_columns_reduced_us.csv"
+GOWALLA_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/directed/"
+GOWALLA_NOT_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/not_directed/"
 # poi transactions analysis
 # antigo
 POI_TRANSACTIONS_ANALYSIS_OLD_8_CATEGORIES_FILENAME="${GLOBAL_FOURSQUARE_BASE_DIR}dataset_TIST2015_Checkins_with_Pois_8_categories_local_datetime_br_us_ca_ny_jp_2012_2013_with_state_and_cities.csv"
@@ -124,6 +129,30 @@ TRANSACTIONS_BASE_DIR="${GLOBAL_FOURSQUARE_BASE_DIR}transactions/"
 #          "pattern_matrices":"no",
 #          "categories_type":"7_categories_osm"
 #          }'
+
+MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+          "job": "matrix_generation_for_poi_categorization",
+          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US'",
+          "base_dir":"'$GOWALLA_BASE_DIR'",
+          "directed_folder":"'$GOWALLA_DIRECTED_FOLDER'",
+          "not_directed_folder":"'$GOWALLA_NOT_DIRECTED_FOLDER'",
+          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+          "hour48":"yes",
+          "personal_features_matrix":"no",
+          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+          "country":"United States",
+          "state":"TEXAS",
+          "different_venues":"yes",
+          "max_time_between_records": "",
+          "top_users":"40000",
+          "directed":"no",
+          "dataset_name":"gowalla",
+          "pattern_matrices":"yes",
+          "categories_type":"7_categories"
+          }'
 
 MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "job": "matrix_generation_for_poi_categorization",
