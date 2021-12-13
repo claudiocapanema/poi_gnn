@@ -81,6 +81,7 @@ class MatrixGenerationForPoiCategorizationJob():
         longitude_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['longitude_column']
         country_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['country_column']
         state_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['state_column']
+        num_users = MatrixGenerationForPoiCategorizationConfiguration.NUM_USERS.get_value()[dataset_name]
         category_to_int = self.poi_categorization_configuration.GOWALLA_7_CATEGORIES
         max_time_between_records_dir = self.poi_categorization_configuration.MAX_TIME_BETWEEN_RECORDS[1][max_time_between_records]
 
@@ -109,9 +110,9 @@ class MatrixGenerationForPoiCategorizationJob():
             categories_int = []
             for i in range(len(categories)):
                 categories_int.append(category_to_int[categories[i]])
+            category_column = category_column + "_id"
+            users_checkin[category_column] = np.array(categories_int)
 
-        category_column = category_column + "_id"
-        users_checkin[category_column] = np.array(categories_int)
         if state != "":
             users_checkin = users_checkin.query(state_column + " == '" + state + "'")
         print("----- verificação -----")
@@ -212,6 +213,7 @@ class MatrixGenerationForPoiCategorizationJob():
                                            personal_matrix,
                                            top_users,
                                            max_time_between_records,
+                                           num_users,
                                            hour48,
                                            osm_category_column)
         else:

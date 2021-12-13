@@ -55,6 +55,9 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                                               "longitude_column": "longitude"},
                          })
 
+    NUM_USERS = ("num_users", {'dense_foursquare': 30000,
+                               'gowalla': 30000})
+
     # userid	placeid	datetime	lat	lon	city	category	local_datetime
 
     def __str__(self):
