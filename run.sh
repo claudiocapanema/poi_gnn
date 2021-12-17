@@ -20,10 +20,15 @@ SHAPEFILE_FILENAME="${BASE_DIR}/BR_shapefile/BRMUE250GC_SIR.shp"
 USERS_CHECKIN_FILENAME="${BASE_DIR}/weeplaces/weeplace_1000.csv"
 USERS_CHECKIN_FILENAME_BASELINE_HMRM="/home/guilherme/Documentos/Analisar_dataset_weeplaces_7_8_meses/users_7_8_months_clean.csv"
 FEATURES_FILENAME_HMRM="/home/guilherme/Documentos/new_users_steps_dataset/features_hmrm_500_users.csv"
+ADJACENCY_MATRIX_BASE_FILENAME="adjacency_matrix"
+FEATURES_MATRIX_BASE_FILENAME="features_matrix"
+DISTANCE_MATRIX_BASE_FILENAME="distance_matrix"
+DURATION_MATRIX_BASE_FILENAME="duration_matrix"
+SEQUENCE_MATRIX_BASE_FILENAME="sequence_matrix"
 
 # Dense foursquare
 DENSE_FOURSQUARE_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/fourquare_thiago/"
-DENSE_FOURSQUARE_LOCAL_DATETIME="${DENSE_FOURSQUARE_BASE_DIR}dense_foursquare_local_datetime_9_categories.csv"
+DENSE_FOURSQUARE_LOCAL_DATETIME="${DENSE_FOURSQUARE_BASE_DIR}dense_foursquare_local_datetime_us_brazil_states_9_categories.csv"
 DENSE_FOURSQUARE_ADJACENCY_FILENAME="adjacency_matrix_not_directed_48_9_categories_BR.csv"
 DENSE_FOURSQUARE_ADJACENCY_WEEK_FILENAME="adjacency_matrix_weekday_not_directed_48_9_categories_BR.csv"
 DENSE_FOURSQUARE_ADJACENCY_WEEKEND_FILENAME="adjacency_matrix_weekend_not_directed_48_9_categories_BR.csv"
@@ -93,6 +98,33 @@ GOWALLA_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/
 GOWALLA_LOCAL_DATETIME_US="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_7_categories_local_datetime_columns_reduced_us.csv"
 GOWALLA_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/directed/"
 GOWALLA_NOT_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/not_directed/"
+GOWALLA_ADJACENCY_FILENAME_BR="adjacency_matrix_not_directed_48_9_categories_BR.csv"
+GOWALLA_ADJACENCY_WEEK_FILENAME_BR="adjacency_matrix_weekday_not_directed_48_9_categories_BR.csv"
+GOWALLA_ADJACENCY_WEEKEND_FILENAME_BR="adjacency_matrix_weekend_not_directed_48_9_categories_BR.csv"
+GOWALLA_TEMPORAL_FILENAME_BR="features_matrix_not_directed_48_9_categories_BR.csv"
+GOWALLA_TEMPORAL_WEEK_FILENAME_BR="features_matrix_weekday_not_directed_48_9_categories_BR.csv"
+GOWALLA_TEMPORAL_WEEKEND_FILENAME_BR="features_matrix_weekend_not_directed_48_9_categories_BR.csv"
+GOWALLA_DISTANCE_FILENAME_BR="distance_matrix_not_directed_48_9_categories_BR.csv"
+GOWALLA_DISTANCE_WEEK_FILENAME_BR="distance_matrix_weekday_not_directed_48_9_categories_BR.csv"
+GOWALLA_DISTANCE_WEEKEND_FILENAME_BR="distance_matrix_weekend_not_directed_48_9_categories_BR.csv"
+GOWALLA_DURATION_FILENAME_BR="duration_matrix_not_directed_48_9_categories_BR.csv"
+GOWALLA_DURATION_WEEK_FILENAME_BR="duration_matrix_weekday_not_directed_48_9_categories_BR.csv"
+GOWALLA_DURATION_WEEKEND_FILENAME_BR="duration_matrix_weekend_not_directed_48_9_categories_BR.csv"
+
+# us
+GOWALLA_ADJACENCY_FILENAME_US="adjacency_matrix_not_directed_48_7_categories_US.csv"
+GOWALLA_ADJACENCY_WEEK_FILENAME_US="adjacency_matrix_weekday_not_directed_48_7_categories_US.csv"
+GOWALLA_ADJACENCY_WEEKEND_FILENAME_US="adjacency_matrix_weekend_not_directed_48_7_categories_US.csv"
+GOWALLA_TEMPORAL_FILENAME_US="features_matrix_not_directed_48_7_categories_US.csv"
+GOWALLA_TEMPORAL_WEEK_FILENAME_US="features_matrix_weekday_not_directed_48_7_categories_US.csv"
+GOWALLA_TEMPORAL_WEEKEND_FILENAME_US="features_matrix_weekend_not_directed_48_7_categories_US.csv"
+GOWALLA_DISTANCE_FILENAME_US="distance_matrix_not_directed_48_7_categories_US.csv"
+GOWALLA_DISTANCE_WEEK_FILENAME_US="distance_matrix_weekday_not_directed_48_7_categories_US.csv"
+GOWALLA_DISTANCE_WEEKEND_FILENAME_US="distance_matrix_weekend_not_directed_48_7_categories_US.csv"
+GOWALLA_DURATION_FILENAME_US="duration_matrix_not_directed_48_7_categories_US.csv"
+GOWALLA_DURATION_WEEK_FILENAME_US="duration_matrix_weekday_not_directed_48_7_categories_US.csv"
+GOWALLA_DURATION_WEEKEND_FILENAME_US="duration_matrix_weekend_not_directed_48_7_categories_US.csv"
+
 # poi transactions analysis
 # antigo
 POI_TRANSACTIONS_ANALYSIS_OLD_8_CATEGORIES_FILENAME="${GLOBAL_FOURSQUARE_BASE_DIR}dataset_TIST2015_Checkins_with_Pois_8_categories_local_datetime_br_us_ca_ny_jp_2012_2013_with_state_and_cities.csv"
@@ -134,8 +166,8 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "job": "matrix_generation_for_poi_categorization",
           "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US'",
           "base_dir":"'$GOWALLA_BASE_DIR'",
-          "directed_folder":"'$GOWALLA_DIRECTED_FOLDER'",
-          "not_directed_folder":"'$GOWALLA_NOT_DIRECTED_FOLDER'",
+          "directed_folder":"directed/",
+          "not_directed_folder":"not_directed/",
           "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
           "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
           "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
@@ -154,29 +186,29 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "categories_type":"7_categories"
           }'
 
-MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
-          "job": "matrix_generation_for_poi_categorization",
-          "users_checkin_filename": "'$DENSE_FOURSQUARE_LOCAL_DATETIME'",
-          "base_dir":"'$DENSE_FOURSQUARE_BASE_DIR'",
-          "directed_folder":"'$GLOBAL_FOURSQUARE_DIRECTED_FOLDER'",
-          "not_directed_folder":"'$GLOBAL_FOURSQUARE_NOT_DIRECTED_FOLDER'",
-          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
-          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
-          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
-          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
-          "hour48":"yes",
-          "personal_features_matrix":"no",
-          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-          "country":"Brazil",
-          "state":"",
-          "different_venues":"yes",
-          "max_time_between_records": "",
-          "top_users":"40000",
-          "directed":"no",
-          "dataset_name":"dense_foursquare",
-          "pattern_matrices":"yes",
-          "categories_type":"9_categories"
-          }'
+#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+#          "job": "matrix_generation_for_poi_categorization",
+#          "users_checkin_filename": "'$DENSE_FOURSQUARE_LOCAL_DATETIME'",
+#          "base_dir":"'$DENSE_FOURSQUARE_BASE_DIR'",
+#          "directed_folder":"'$GLOBAL_FOURSQUARE_DIRECTED_FOLDER'",
+#          "not_directed_folder":"'$GLOBAL_FOURSQUARE_NOT_DIRECTED_FOLDER'",
+#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+#          "hour48":"yes",
+#          "personal_features_matrix":"no",
+#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+#          "country":"United States",
+#          "state":"CALIFORNIA",
+#          "different_venues":"yes",
+#          "max_time_between_records": "",
+#          "top_users":"40000",
+#          "directed":"no",
+#          "dataset_name":"dense_foursquare",
+#          "pattern_matrices":"yes",
+#          "categories_type":"9_categories"
+#          }'
 
 #CATEGORIZATION_CONFIG='{
 #          "job": "categorization",
@@ -204,31 +236,84 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
 #          "categories_type":"8_categories"
 #          }'
 
+#CATEGORIZATION_CONFIG='{
+#          "job": "categorization",
+#          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
+#          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
+#          "ground_truth": "'$GROUND_TRUTH'",
+#          "base_dir":"'$DENSE_FOURSQUARE_BASE_DIR'different_venues/matrizes/",
+#          "adjacency_matrix_filename": "'$DENSE_FOURSQUARE_ADJACENCY_FILENAME'",
+#          "adjacency_matrix_week_filename": "'$DENSE_FOURSQUARE_ADJACENCY_WEEK_FILENAME'",
+#          "adjacency_matrix_weekend_filename": "'$DENSE_FOURSQUARE_ADJACENCY_WEEKEND_FILENAME'",
+#          "temporal_matrix_filename": "'$DENSE_FOURSQUARE_TEMPORAL_FILENAME'",
+#          "temporal_matrix_week_filename": "'$DENSE_FOURSQUARE_TEMPORAL_WEEK_FILENAME'",
+#          "temporal_matrix_weekend_filename": "'$DENSE_FOURSQUARE_TEMPORAL_WEEKEND_FILENAME'",
+#          "distance_matrix_filename":"'$DENSE_FOURSQUARE_DISTANCE_FILENAME'",
+#          "distance_matrix_week_filename":"'$DENSE_FOURSQUARE_DISTANCE_WEEK_FILENAME'",
+#          "distance_matrix_weekend_filename":"'$DENSE_FOURSQUARE_DISTANCE_WEEKEND_FILENAME'",
+#          "duration_matrix_filename":"'$DENSE_FOURSQUARE_DURATION_FILENAME'",
+#          "duration_matrix_week_filename":"'$DENSE_FOURSQUARE_DURATION_WEEK_FILENAME'",
+#          "duration_matrix_weekend_filename":"'$DENSE_FOURSQUARE_DURATION_WEEKEND_FILENAME'",
+#          "graph_type":"not_directed",
+#          "dataset_name":"dense_foursquare",
+#          "country":"United States",
+#          "state":"CALIFORNIA",
+#          "version":"normal",
+#          "categories_type":"9_categories"
+#          }'
+
+#CATEGORIZATION_CONFIG='{
+#          "job": "categorization",
+#          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
+#          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
+#          "ground_truth": "'$GROUND_TRUTH'",
+#          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/matrizes/",
+#          "adjacency_matrix_filename": "'$DENSE_FOURSQUARE_ADJACENCY_FILENAME'",
+#          "adjacency_matrix_week_filename": "'$DENSE_FOURSQUARE_ADJACENCY_WEEK_FILENAME'",
+#          "adjacency_matrix_weekend_filename": "'$DENSE_FOURSQUARE_ADJACENCY_WEEKEND_FILENAME'",
+#          "temporal_matrix_filename": "'$DENSE_FOURSQUARE_TEMPORAL_FILENAME'",
+#          "temporal_matrix_week_filename": "'$DENSE_FOURSQUARE_TEMPORAL_WEEK_FILENAME'",
+#          "temporal_matrix_weekend_filename": "'$DENSE_FOURSQUARE_TEMPORAL_WEEKEND_FILENAME'",
+#          "distance_matrix_filename":"'$DENSE_FOURSQUARE_DISTANCE_FILENAME'",
+#          "distance_matrix_week_filename":"'$DENSE_FOURSQUARE_DISTANCE_WEEK_FILENAME'",
+#          "distance_matrix_weekend_filename":"'$DENSE_FOURSQUARE_DISTANCE_WEEKEND_FILENAME'",
+#          "duration_matrix_filename":"'$DENSE_FOURSQUARE_DURATION_FILENAME'",
+#          "duration_matrix_week_filename":"'$DENSE_FOURSQUARE_DURATION_WEEK_FILENAME'",
+#          "duration_matrix_weekend_filename":"'$DENSE_FOURSQUARE_DURATION_WEEKEND_FILENAME'",
+#          "graph_type":"not_directed",
+#          "dataset_name":"dense_foursquare",
+#          "country":"United States",
+#          "state":"CALIFORNIA",
+#          "version":"normal",
+#          "categories_type":"9_categories"
+#          }'
+
 CATEGORIZATION_CONFIG='{
           "job": "categorization",
           "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
           "users_steps_filename": "'$USERS_STEPS_FILENAME'",
           "ground_truth": "'$GROUND_TRUTH'",
-          "base_dir":"'$DENSE_FOURSQUARE_BASE_DIR'different_venues/matrizes/",
-          "adjacency_matrix_filename": "'$DENSE_FOURSQUARE_ADJACENCY_FILENAME'",
-          "adjacency_matrix_week_filename": "'$DENSE_FOURSQUARE_ADJACENCY_WEEK_FILENAME'",
-          "adjacency_matrix_weekend_filename": "'$DENSE_FOURSQUARE_ADJACENCY_WEEKEND_FILENAME'",
-          "temporal_matrix_filename": "'$DENSE_FOURSQUARE_TEMPORAL_FILENAME'",
-          "temporal_matrix_week_filename": "'$DENSE_FOURSQUARE_TEMPORAL_WEEK_FILENAME'",
-          "temporal_matrix_weekend_filename": "'$DENSE_FOURSQUARE_TEMPORAL_WEEKEND_FILENAME'",
-          "distance_matrix_filename":"'$DENSE_FOURSQUARE_DISTANCE_FILENAME'",
-          "distance_matrix_week_filename":"'$DENSE_FOURSQUARE_DISTANCE_WEEK_FILENAME'",
-          "distance_matrix_weekend_filename":"'$DENSE_FOURSQUARE_DISTANCE_WEEKEND_FILENAME'",
-          "duration_matrix_filename":"'$DENSE_FOURSQUARE_DURATION_FILENAME'",
-          "duration_matrix_week_filename":"'$DENSE_FOURSQUARE_DURATION_WEEK_FILENAME'",
-          "duration_matrix_weekend_filename":"'$DENSE_FOURSQUARE_DURATION_WEEKEND_FILENAME'",
+          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/",
+          "adjacency_matrix_filename": "'$GOWALLA_ADJACENCY_FILENAME_US'",
+          "temporal_matrix_filename": "'$GOWALLA_TEMPORAL_FILENAME_US'",
+          "distance_matrix_filename":"'$GOWALLA_DISTANCE_FILENAME_US'",
+          "duration_matrix_filename":"'$GOWALLA_DURATION_FILENAME_US'",
+          "adjacency_matrix_week_filename": "'$GOWALLA_ADJACENCY_WEEK_FILENAME_US'",
+          "adjacency_matrix_weekend_filename": "'$GOWALLA_ADJACENCY_WEEKEND_FILENAME_US'",
+          "temporal_matrix_week_filename": "'$GOWALLA_TEMPORAL_WEEK_FILENAME_US'",
+          "temporal_matrix_weekend_filename": "'$GOWALLA_TEMPORAL_WEEKEND_FILENAME_US'",
+          "distance_matrix_week_filename":"'$GOWALLA_DISTANCE_WEEK_FILENAME_US'",
+          "distance_matrix_weekend_filename":"'$GOWALLA_DISTANCE_WEEKEND_FILENAME_US'",
+          "duration_matrix_week_filename":"'$GOWALLA_DURATION_WEEK_FILENAME_US'",
+          "duration_matrix_weekend_filename":"'$GOWALLA_DURATION_WEEKEND_FILENAME_US'",
           "graph_type":"not_directed",
-          "dataset_name":"dense_foursquare",
-          "country":"BR",
-          "state":"",
+          "dataset_name":"gowalla",
+          "country":"US",
+          "state":"TEXAS",
           "version":"normal",
-          "categories_type":"9_categories"
+          "categories_type":"7_categories"
           }'
+
 
 BASELINES_CONFIG='{
           "job": "hmrm_baseline",

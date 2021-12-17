@@ -16,6 +16,7 @@ class FileExtractor:
     def read_csv(self, filename, dtypes_columns=None):
 
         if dtypes_columns is None:
+            print("arq", filename)
             df = pd.read_csv(filename)
         else:
             #print(pd.read_csv(filename).iloc[30551])

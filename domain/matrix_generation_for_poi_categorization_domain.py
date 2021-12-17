@@ -40,7 +40,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         :return: adjacency, temporal, and path matrices
         """
 
-        user_checkin = user_checkin.sort_values(by=[datetime_column])
+        user_checkin = user_checkin.sort_values(by=[datetime_column]).head(150)
         latitude_list = user_checkin[latitude_column].tolist()
         longitude_list = user_checkin[longitude_column].tolist()
 

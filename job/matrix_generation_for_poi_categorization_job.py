@@ -46,7 +46,7 @@ class MatrixGenerationForPoiCategorizationJob():
         differemt_venues = Input.get_instance().inputs['different_venues']
         print("Dataset: ", Input.get_instance().inputs['dataset_name'])
 
-        convert_country = {'Brazil': 'BR', 'BR': 'BR'}
+        convert_country = {'Brazil': 'BR', 'BR': 'BR', 'United States': 'US'}
 
         if personal_matrix == "no":
             personal_matrix = False
@@ -118,7 +118,7 @@ class MatrixGenerationForPoiCategorizationJob():
         print("----- verificação -----")
         print("Pais: ", users_checkin[country_column].unique().tolist())
         if len(state) > 0:
-            print("Estado: ", users_checkin['state'].unique().tolist())
+            print("Estado: ", users_checkin[state_column].unique().tolist())
 
         # data
 
@@ -231,5 +231,5 @@ class MatrixGenerationForPoiCategorizationJob():
                                            osm_category_column)
 
     def folder_generation(self, folder):
-        print("ciração da pas: ", folder)
+        print("criação da pas: ", folder)
         Path(folder).mkdir(parents=True, exist_ok=True)

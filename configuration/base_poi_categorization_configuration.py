@@ -8,11 +8,12 @@ class BasePoiCategorizationConfiguration:
             "n_replications", 1, False, "number of replications/executions (minimum 1) of training and evaluation process")
 
         self.DATASET_TYPE = ("dataset_type", {'foursquare': "foursquare/", 'weeplaces': "weeplaces/", 'raw_gps': "raw_gps/",
-                                              'global_foursquare': "global_foursquare/", 'dense_foursquare': "dense_foursquare/"})
+                                              'global_foursquare': "global_foursquare/", 'dense_foursquare': "dense_foursquare/",
+                                              'gowalla': "gowalla/"})
 
-        self.COUNTRY = ("country", {'BR': "BR/", 'US': "US/", 'JP': "JP/", 'Brazil': 'BR/'})
+        self.COUNTRY = ("country", {'BR': "BR/", 'US': "US/", 'JP': "JP/", 'Brazil': 'BR/', 'United States': 'US/'})
 
-        self.STATE = ("state", {'sp': "SP/", 'CA': "CA/", 'NY': "NY/", "": ""})
+        self.STATE = ("state", {'sp': "SP/", 'CA': "CA/", 'NY': "NY/", "": "", 'CALIFORNIA': "CA/", "TEXAS": "TX/"})
 
         self.MAX_TIME_BETWEEN_RECORDS = ("max_time_between_records", {"1": "1_days/", "3": "3_days/", '': ""})
 
@@ -21,7 +22,7 @@ class BasePoiCategorizationConfiguration:
         self.GRAPH_TYPE = ("graph_type", {'directed':'directed/', 'not_directed': 'not_directed/'})
 
         self.CATEGORY_TYPE = ("category_type", {'osm': "13_categories/", 'reduced_osm': "9_categories/",
-                                                "7_categories_osm": "7_categories/",
+                                                "7_categories": "7_categories/",
                                                 "9_categories": "9_categories/",
                                                 "8_categories": "8_categories/",
                                                 "6_categories": "6_categories/"})
@@ -151,7 +152,7 @@ class BasePoiCategorizationConfiguration:
         # MATRIX_MAX_SIZE = ("matrix_max_size", 1166, False, "max size of the adjacency matrix and features matrix")
 
         self.MAX_SIZE_MATRICES = (
-            "max_size_matrices", 8, False, "max size of the adjacency matrices and features (row size) ones")
+            "max_size_matrices", 10, False, "max size of the adjacency matrices and features (row size) ones")
 
 
         self.REPORT_9_INT_CATEGORIES = ("report_9_int_categories",
@@ -202,6 +203,7 @@ class BasePoiCategorizationConfiguration:
         self.REPORT_MODEL = ("report_model",
                              {'reduced_osm': self.REPORT_9_INT_CATEGORIES[1],
                               '7_categories_osm': self.REPORT_7_INT_CATEGORIES[1],
+                              '7_categories': self.REPORT_7_INT_CATEGORIES[1],
                               '9_categories': self.REPORT_9_INT_CATEGORIES[1],
                               '8_categories': self.REPORT_8_INT_CATEGORIES[1]})
 

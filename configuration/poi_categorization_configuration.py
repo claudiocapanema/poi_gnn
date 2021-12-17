@@ -7,6 +7,6 @@ class PoICategorizationConfiguration(BasePoiCategorizationConfiguration):
 
         self.OUTPUT_DIR = ("output_dir", "output/poi_categorization_job/", False, "output directory for the poi_categorization_job")
 
-        self.EPOCHS = ("epochs", {'BR': 14, 'US': 12, 'Brazil': 14})
+        self.EPOCHS = ("epochs", {'BR': 14, 'US': 12, 'Brazil': 14, 'United States': 12})
 
         self.VERSION = ("version", {"normal": ""})

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import json
 from sklearn.model_selection import KFold
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, power_transform
 
 import spektral as sk
 import tensorflow as tf
@@ -375,6 +376,7 @@ class PoiCategorizationDomain:
             user_temporal_matrix = json.loads(user_temporal_matrix)
             user_temporal_matrix = np.array(user_temporal_matrix)
             user_temporal_matrix = user_temporal_matrix[idx]
+            user_temporal_matrix = self._min_max_normalize(user_temporal_matrix)
             if model_name == "poi_gnn":
                 # week
                 user_temporal_matrix_week = temporal_week_df[i]
@@ -681,6 +683,12 @@ class PoiCategorizationDomain:
         duration_weekend_train, adjacency_test_weekend, y_test_weekend, temporal_test_weekend, distance_weekend_test, \
         duration_weekend_test = fold_weekend
 
+        input_train = [adjacency_train, adjacency_week_train, adjacency_train_weekend,
+                       temporal_train, temporal_train_week, temporal_train_weekend, distance_train, distance_week_train, distance_weekend_train,
+                       duration_train, distance_week_train, distance_weekend_train]
+        input_test = [adjacency_test, adjacency_test_week, adjacency_test_weekend, temporal_test, temporal_test_week, temporal_test_weekend,
+                      distance_test, distance_week_test, distance_weekend_test, duration_test, duration_week_test, duration_weekend_test]
+
         print("Tamanho das matrizes de treino: ", adjacency_train.shape, temporal_train.shape,
               adjacency_week_train.shape, temporal_train_week.shape)
 
@@ -711,7 +719,7 @@ class PoiCategorizationDomain:
             model = GNNUS(num_classes, max_size, max_size_sequence,
                         self.features_num_columns).build(seed=seed)
         if country == 'US':
-            batch = max_size * 6
+            batch = max_size * 1
         elif country == 'BR':
             batch = max_size * 5
 
@@ -721,8 +729,8 @@ class PoiCategorizationDomain:
                                         ])
         y_train = np_utils.to_categorical(y_train, num_classes=num_classes)
         y_test = np_utils.to_categorical(y_test, num_classes=num_classes)
-        hi = model.fit(x=[adjacency_train, temporal_train, distance_train, duration_train],
-                       y=y_train, validation_data=([adjacency_test, temporal_test, distance_test, duration_test], y_test),
+        hi = model.fit(x=input_train,
+                       y=y_train, validation_data=(input_test, y_test),
                        epochs=epochs, batch_size=batch,
                        shuffle=False,  # Shuffling data means shuffling the whole graph
                        callbacks=[
@@ -732,10 +740,10 @@ class PoiCategorizationDomain:
 
         h = hi.history
         #print("summary: ", model.summary())
-        y_predict_location = model.predict([adjacency_test, temporal_test,distance_test, duration_test],
+        y_predict_location = model.predict(input_test,
                                            batch_size=batch)
 
-        scores = model.evaluate([adjacency_test, temporal_test, distance_test, duration_test],
+        scores = model.evaluate(input_test,
                                 y_test, batch_size=batch)
         print("scores: ", scores)
 
@@ -774,5 +782,20 @@ class PoiCategorizationDomain:
 
         return new_report
 
+    def _min_max_normalize(self, matrix):
+
+        matrix_1 = matrix.transpose()
+        scaler = MinMaxScaler()
+        scaler.fit(matrix_1)
+        matrix_1 = scaler.transform(matrix_1).transpose()
+
+
+        # min_value = matrix.min()
+        # max_value = matrix.max()
+        #
+        # matrix = (matrix-min_value)/(max_value-min_value)
+        # matrix += matrix_1
+
+        return matrix_1
 
         
