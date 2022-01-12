@@ -16,7 +16,7 @@ from model.neural_network.poi_categorization_baselines.BR.gat.model import GAT
 from model.neural_network.poi_categorization_baselines.BR.diffconv.model import DiffConv
 
 from model.neural_network.poi_categorization_baselines.US.gae.model import GCNModelAEUS
-from model.neural_network.poi_categorization_baselines.US.arma.model import ARMAUSModel
+from model.neural_network.poi_categorization_baselines.US.arma.arma_us import ARMAUSModel
 from model.neural_network.poi_categorization_baselines.US.arma_enhanced.model import ARMAUSEnhancedModel
 from model.neural_network.poi_categorization_baselines.US.gcn.model import GCNUS
 from model.neural_network.poi_categorization_baselines.US.gat.model import GATUS
@@ -29,7 +29,7 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
     def __init__(self, dataset_name):
         super().__init__(dataset_name)
 
-    def find_model(self, country, model, num_classes, max_size, features_num_columns):
+    def find_model(self, country, model, num_classes, max_size, features_num_columns, class_weight):
         if country == 'BR' or country == 'Brazil':
             if model == "gae":
                 return GCNModelAE(num_classes, max_size, features_num_columns)
@@ -47,7 +47,7 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
             if model == "gae":
                 return GCNModelAEUS(num_classes, max_size, features_num_columns)
             elif model == "arma":
-                return ARMAUSModel(num_classes, max_size, features_num_columns)
+                return ARMAUSModel(num_classes, max_size, features_num_columns, class_weight)
             elif model == "arma_enhanced":
                 return ARMAUSEnhancedModel(num_classes, max_size, features_num_columns)
             elif model == "gcn":
@@ -130,6 +130,11 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
 
         print("Tamanho dados de treino: ", adjacency_train.shape, temporal_train.shape,
               y_train.shape)
+        print("adjancecy: ", type(adjacency_train[0]), adjacency_train[0].shape)
+        for i in range(len(adjacency_train)):
+            if adjacency_train[i].shape != adjacency_train[0].shape:
+                print("paraaa")
+                exit()
         print("Tamanho dados de teste: ", adjacency_test.shape, temporal_test.shape,
               y_test.shape)
 
@@ -139,20 +144,20 @@ class PoiCategorizationBaselinesDomain(PoiCategorizationDomain):
         if country == 'BR' or country == 'Brazil':
             batch = max_size * 5
         elif country == 'US':
-            batch = max_size * 20
+            batch = max_size * 1
 
-        batch = 40
+        #batch = 40
         print("Tamanho do batch: ", batch)
         print("Épocas: ", parameters['epochs'])
         print("Modelo: ", model_name)
-        model = self.find_model(country, model_name, num_classes, max_size, self.features_num_columns).build(units1=units, output_size=num_classes, seed=seed)
+        model = self.find_model(country, model_name, num_classes, max_size, self.features_num_columns, class_weight).build(units1=units, output_size=num_classes, seed=seed)
         y_train = np_utils.to_categorical(y_train, num_classes=num_classes)
         y_test = np_utils.to_categorical(y_test, num_classes=num_classes)
         model.compile(optimizer=parameters['optimizer'],
                       loss=parameters['loss'],
                       weighted_metrics=[tf.keras.metrics.CategoricalAccuracy(name="acc")])
 
-
+        print("peso: ", class_weight)
         hi = model.fit(x=[adjacency_train, temporal_train],
                        y=y_train, validation_data=([adjacency_test, temporal_test], y_test),
                        epochs=parameters['epochs'], batch_size=batch,

@@ -35,7 +35,8 @@ class PoICategorizationBaselinesConfiguration(BasePoiCategorizationConfiguration
                        'dense_foursquare': {'BRr': {'gat': 160, 'gcn': 200, 'arma': 180, 'arma_enhanced': 260, 'gae': 40},
                                   'Brazil': {'gat': 160, 'gcn': 200, 'arma': 20, 'arma_enhanced': 260, 'gae': 40},
                                   'US': {'gat': 160, 'gcn': 220, 'arma': 240, 'arma_enhanced': 120, 'gae': 40},
-                                  'JP': {'gat': 80, 'gcn': 40, 'arma': 100, 'arma_enhanced': 40, 'gae': 40}}})
+                                  'JP': {'gat': 80, 'gcn': 40, 'arma': 100, 'arma_enhanced': 40, 'gae': 40}},
+                       'gowalla': {'US': {'gat': 160, 'gcn': 220, 'arma': 20, 'arma_enhanced': 120, 'gae': 40}}})
 
     PARAMETERS = ("parameters",
                   {'BR': {'gae': {'optimizer': OPTIMIZER[1]['gae'], 'epochs': EPOCHS[1]['BR']['gae'], 'loss': LOSS[1]['gae']},

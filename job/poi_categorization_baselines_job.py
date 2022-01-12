@@ -30,10 +30,13 @@ class PoiCategorizationBaselinesJob:
         categories_type = Input.get_instance().inputs['categories_type']
         model_name = Input.get_instance().inputs['baseline']
         country = Input.get_instance().inputs['country']
+        state = Input.get_instance().inputs['state']
         print("Dataset: ", Input.get_instance().inputs['dataset_name'])
 
         if country == 'Brazil':
             country_aux = 'BR'
+        elif country == 'US':
+            country_aux = 'US'
 
         self.files_verificaiton(country_aux, adjacency_matrix_filename, temporal_matrix_filename)
 
@@ -47,6 +50,7 @@ class PoiCategorizationBaselinesJob:
         output_base_dir = self.poi_categorization_baselines_configuration.OUTPUT_BASE_DIR[1]
         dataset_type_dir = self.poi_categorization_baselines_configuration.DATASET_TYPE[1][dataset_name]
         country_dir = self.poi_categorization_baselines_configuration.COUNTRY[1][country]
+        state_dir = self.poi_categorization_baselines_configuration.STATE[1][state]
         category_type_dir = self.poi_categorization_baselines_configuration.CATEGORY_TYPE[1][categories_type]
         int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name]
         model_name_dir = self.poi_categorization_baselines_configuration.MODEL_NAME[1][model_name]
@@ -54,12 +58,12 @@ class PoiCategorizationBaselinesJob:
         units = self.poi_categorization_baselines_configuration.UNITS[1][dataset_name][country][model_name]
         output_dir = self.poi_categorization_baselines_configuration.\
             output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir,
-                       dataset_type=dataset_type_dir, country=country_dir, category_type=category_type_dir,
+                       dataset_type=dataset_type_dir, country=country_dir, state_dir=state_dir, category_type=category_type_dir,
                        model_name=model_name_dir)
 
         base_report = self.poi_categorization_baselines_configuration.REPORT_MODEL[1][categories_type]
 
-        base_dir = base_dir + graph_type + "/" + country_dir
+        base_dir = base_dir + graph_type + "/" + country_dir + state + "/"
         adjacency_matrix_filename = base_dir + adjacency_matrix_filename
         temporal_matrix_filename = base_dir + temporal_matrix_filename
         adjacency_df, temporal_df, aux1, aux2 = self.poi_categorization_baselines_domain. \
@@ -76,13 +80,15 @@ class PoiCategorizationBaselinesJob:
                                     max_size_sequence,
                                     False,
                                     False,
+                                    7,
                                     model_name)
 
         usuarios = adjacency_df.shape
 
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'categories': users_categories}}
         folds, class_weight = self.poi_categorization_baselines_domain. \
-            k_fold_split_train_test(inputs,
+            k_fold_split_train_test(max_size_matrices,
+                                    inputs,
                                     n_splits,
                                     'all_week',
                                     model_name=model_name)

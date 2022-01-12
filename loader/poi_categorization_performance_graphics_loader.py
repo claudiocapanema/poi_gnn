@@ -123,6 +123,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
     def export_reports(self, output_dirs, models_names, osm_categories_to_int, base_dir, dataset):
 
         model_report = {'arma': {}, 'POI-GNN': {}}
+        print("saidas: ", models_names)
         for i in range(len(models_names)):
             model_name = models_names[i]
             output = output_dirs[i]
@@ -162,6 +163,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
         df = pd.DataFrame(models_dict, index=index).round(2)
 
         output = base_dir
+        print("bbbbbbbbb", base_dir)
         Path(output).mkdir(parents=True, exist_ok=True)
         # writer = pd.ExcelWriter(output + 'metrics.xlsx', engine='xlsxwriter')
         #
@@ -170,22 +172,19 @@ class PoiCategorizationPerformanceGraphicsLoader:
         # # Close the Pandas Excel writer and output the Excel file.
         # writer.save()
 
-        max_values = df.idxmax(axis=1)
-        max_values = max_values.tolist()
+        #max_values = df.idxmax(axis=1)
+        max_values = self.idmax(df)
         max_columns = {'arma': [], 'POI-GNN': []}
-        for i in range(len(max_values)):
-            e = max_values[i]
-            max_columns[e].append(i)
+        for max_value in max_values:
+            row_index = max_value[0]
+            column = max_value[1]
+            column_values = df[column].tolist()
+            column_values[row_index] = "textbf{" + str(column_values[row_index]) + "}"
 
-        for key in max_columns:
-            column_values = df[key].tolist()
+            df[column] = np.array(column_values)
 
-            column_list = max_columns[key]
-            for j in range(len(column_list)):
-                k = column_list[j]
-                column_values[k] = "textbf{" + str(column_values[k]) + "}"
+        df.columns = ['ARMA', 'POI-GNN']
 
-            df[key] = np.array(column_values)
         display(HTML(df.to_html()))
 
 
@@ -193,3 +192,35 @@ class PoiCategorizationPerformanceGraphicsLoader:
         pd.DataFrame({'latex': [latex]}).to_csv(output + "latex.txt", header=False, index=False)
 
         self.plot_general_metrics_with_confidential_interval(model_report, columns, base_dir, dataset)
+
+    def idmax(self, df):
+
+        df_indexes = []
+        columns = df.columns.tolist()
+        print("colunas", columns)
+        for i in range(len(df)):
+
+            row = df.iloc[i].tolist()
+            indexes = self.select_mean(i, row, columns)
+            df_indexes += indexes
+
+        return df_indexes
+
+    def select_mean(self, index, values, columns):
+
+        list_of_means = []
+        indexes = []
+
+        for i in range(len(values)):
+
+            value = float(str(values[i])[:4])
+            list_of_means.append(value)
+
+        max_value = max(list_of_means)
+
+        for i in range(len(list_of_means)):
+
+            if list_of_means[i] == max_value:
+                indexes.append([index, columns[i]])
+
+        return indexes

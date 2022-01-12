@@ -1,0 +1,29 @@
+"\begin{tabular}{llll}
+\toprule
+       &           &          ARMA &       POI-GNN \\
+\midrule
+Precision & Shopping &          0.26 &  textbf{0.29} \\
+       & Community &          0.34 &   textbf{0.4} \\
+       & Food &          0.32 &  textbf{0.36} \\
+       & Entertainment &  textbf{0.23} &           0.2 \\
+       & Travel &          0.29 &  textbf{0.34} \\
+       & Outdoors &          0.23 &  textbf{0.26} \\
+       & Nightlife &          0.34 &  textbf{0.36} \\
+\hline
+Recall & Shopping &          0.25 &  textbf{0.26} \\
+       & Community &  textbf{0.39} &          0.37 \\
+       & Food &          0.52 &  textbf{0.59} \\
+       & Entertainment &           0.0 &  textbf{0.03} \\
+       & Travel &          0.11 &  textbf{0.14} \\
+       & Outdoors &           0.2 &  textbf{0.25} \\
+       & Nightlife &          0.49 &  textbf{0.53} \\
+Fscore & Shopping &          0.25 &  textbf{0.27} \\
+       & Community &          0.37 &  textbf{0.38} \\
+       & Food &           0.4 &  textbf{0.45} \\
+       & Entertainment &          0.01 &  textbf{0.05} \\
+       & Travel &          0.16 &   textbf{0.2} \\
+       & Outdoors &          0.21 &  textbf{0.26} \\
+       & Nightlife &           0.4 &  textbf{0.43} \\
+\bottomrule
+\end{tabular}
+"

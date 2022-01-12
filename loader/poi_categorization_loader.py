@@ -1,13 +1,29 @@
 from pathlib import Path
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 from tensorflow.keras.models import save_model
+import seaborn as sns
 
 class PoiCategorizationLoader:
 
     def __init__(self):
         pass
+
+    def heatmap(self, dir, df, filename, title, size, annot):
+
+        plt.figure(figsize=size)
+        fig = sns.heatmap(df, annot=annot, cmap="YlGnBu").set_title(title).get_figure()
+
+        self.save_fig(dir, filename+".png", fig)
+
+    def save_fig(self, dir, filename, fig):
+
+        Path(dir).mkdir(parents=True, exist_ok=True)
+        fig.savefig(dir + filename + ".png",
+                    bbox_inches='tight',
+                    dpi=400)
+
 
     def plot_history_metrics(self, folds_histories, folds_reports, output_dir, show=False):
 
@@ -21,27 +37,27 @@ class PoiCategorizationLoader:
             for j in range(len(fold_histories)):
                 h = fold_histories[j]
                 file_index = "fold_" + str(i) + "_replication_" + str(j)
-                pyplot.figure(figsize=(12, 12))
-                pyplot.plot(h['acc'])
-                pyplot.plot(h['val_acc'])
-                pyplot.title('model acc')
-                pyplot.ylabel('acc')
-                pyplot.xlabel('epoch')
-                pyplot.legend(['train', 'test'], loc='upper left')
+                plt.figure(figsize=(12, 12))
+                plt.plot(h['acc'])
+                plt.plot(h['val_acc'])
+                plt.title('model acc')
+                plt.ylabel('acc')
+                plt.xlabel('epoch')
+                plt.legend(['train', 'test'], loc='upper left')
                 if show:
-                    pyplot.show()
-                pyplot.savefig(output_dir + file_index+ "_history_accuracy.png")
+                    plt.show()
+                plt.savefig(output_dir + file_index+ "_history_accuracy.png")
                 # summarize history for loss
-                pyplot.figure(figsize=(12, 12))
-                pyplot.plot(h['loss'])
-                pyplot.plot(h['val_loss'])
-                pyplot.title('model loss')
-                pyplot.ylabel('loss')
-                pyplot.xlabel('epoch')
-                pyplot.legend(['train', 'test'], loc='upper left')
-                pyplot.savefig(output_dir + file_index + "_history_loss.png")
+                plt.figure(figsize=(12, 12))
+                plt.plot(h['loss'])
+                plt.plot(h['val_loss'])
+                plt.title('model loss')
+                plt.ylabel('loss')
+                plt.xlabel('epoch')
+                plt.legend(['train', 'test'], loc='upper left')
+                plt.savefig(output_dir + file_index + "_history_loss.png")
                 if show:
-                    pyplot.show()
+                    plt.show()
 
     def save_report_to_csv(self, output_dir, report, n_folds, n_replications, usuarios):
 

@@ -25,7 +25,9 @@ class PoiCategorizationPerformanceGraphicsConfiguration(Enum):
                                                   'US': {
                                                       'NORMAL': "output/performance_graphics/dense_foursquare/US/NORMAL/not_directed/",
                                                       'PATH': "output/performance_graphics/dense_foursquare/US/PATH/not_directed/"},
-                                                  'JP': "output/performance_graphics/dense_foursquare/JP/not_directed/"}}
+                                                  'JP': "output/performance_graphics/dense_foursquare/JP/not_directed/"}},
+                             'gowalla': {'directed': "output/performance_graphics/gowalla/directed/",
+                                         'not_directed': {"US": {"TX": {'normal': "output/performance_graphics/gowalla/US/TX/normal/not_directed"}}}}
                              }
                 )
 

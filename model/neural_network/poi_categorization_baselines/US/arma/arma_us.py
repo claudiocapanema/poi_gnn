@@ -31,21 +31,57 @@ class exibir(Layer):
 
         return x1
 
+class WeightInitializer(tf.keras.initializers.Initializer):
+
+    def __init__(self, weight_list):
+
+        self.weight_list = weight_list
+
+    def __call__(self, shape, *args, **kwargs):
+        tf.print("tamanho: ", shape)
+
+        return 0
+
+
+class ClassWeight(Model):
+
+    def __init__(self, weight_list):
+        super(ClassWeight, self).__init__()
+        self.weight = tf.constant(weight_list)
+
+    # def build(self, input_shape):
+    #
+    #     self.weight = self.add_weight(name='weight', shape=(input_shape[0], input_shape[1], input_shape[2]), initializer=WeightInitializer(self.weight_list), trainable=False)
+
+
+    @tf.function
+    def apply_weight(self, prediction):
+
+        return self.weight[0] * prediction
+
+    def call(self, inputs, training=None, mask=None):
+
+        predictions = inputs
+
+        return tf.map_fn(lambda e: self.apply_weight(e), elems=predictions)
+
+
+
 
 
 class ARMAUSModel:
-    def __init__(self, classes, max_size_matrices, max_size_sequence, features_num_columns: int):
+    def __init__(self, classes, max_size_matrices, features_num_columns: int, class_weight: list):
         self.max_size_matrices = max_size_matrices
-        self.max_size_sequence = max_size_sequence
         self.classes = classes
         self.features_num_columns = features_num_columns
+        self.class_weight = [class_weight for i in range(max_size_matrices)]
+        print("ppppppppppppp", len(self.class_weight))
 
     def build(self, units1=300, output_size=8, dropout=0.5, seed=None):
         if seed is not None:
             tf.random.set_seed(seed)
         A_input = Input((self.max_size_matrices, self.max_size_matrices))
         X_input = Input((self.max_size_matrices, self.features_num_columns))
-        S_input = Input((self.max_size_matrices, self.max_size_sequence))
         input_dim = self.features_num_columns
 
         #x = tf.keras.layers.Concatenate()([X_input, S_input])
@@ -69,9 +105,11 @@ class ARMAUSModel:
                         gcn_activation=None,
                         kernel_regularizer=l2(l2_reg))([x, A_input])
 
+        #gc_2 = ClassWeight(self.class_weight)([gc_2])
+
         #gc_2 = tf.multiply(tf.constant([a,a,a,a,a,a,a,a,a,a]), gc_2)
 
-        model = Model(inputs=[A_input, X_input, S_input], outputs=[gc_2])
+        model = Model(inputs=[A_input, X_input], outputs=[gc_2])
 
         return model
 

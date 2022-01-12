@@ -11,9 +11,25 @@ class BasePoiCategorizationConfiguration:
                                               'global_foursquare': "global_foursquare/", 'dense_foursquare': "dense_foursquare/",
                                               'gowalla': "gowalla/"})
 
+        self.CLASS_WEIGHT = ("class_weight",
+                             {'10_categories': {'serm': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1},
+                                                'map': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1},
+                                                'stf': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1},
+                                                'mfa': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1},
+                                                'next': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1}},
+                              '8_categories': {'serm': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1},
+                                               'map': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1},
+                                               'stf': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1},
+                                               'mfa': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1},
+                                               'next': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1},
+                                               'garg': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1}},
+                              '7_categories': {'gcn': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1},
+                                               'arma': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1},
+                                               'poi_gnn': {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1}}})
+
         self.COUNTRY = ("country", {'BR': "BR/", 'US': "US/", 'JP': "JP/", 'Brazil': 'BR/', 'United States': 'US/'})
 
-        self.STATE = ("state", {'sp': "SP/", 'CA': "CA/", 'NY': "NY/", "": "", 'CALIFORNIA': "CA/", "TEXAS": "TX/"})
+        self.STATE = ("state", {'sp': "SP/", 'CA': "CA/", 'NY': "NY/", "": "", 'CALIFORNIA': "CA/", "TEXAS": "TX/", "TX": "TX/"})
 
         self.MAX_TIME_BETWEEN_RECORDS = ("max_time_between_records", {"1": "1_days/", "3": "3_days/", '': ""})
 

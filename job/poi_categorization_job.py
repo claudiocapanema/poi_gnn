@@ -123,7 +123,8 @@ class PoiCategorizationJob:
                                     max_size_matrices,
                                     max_size_paths,
                                     True,
-                                    True)
+                                    True,
+                                    7)
 
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
                               adjacency_weekend_df, temporal_weekend_df, distance_df, distance_week_df,
@@ -169,8 +170,10 @@ class PoiCategorizationJob:
                                                              max_size_paths,
                                                              base_report,
                                                              epochs,
+                                                             class_weight,
                                                              country,
-                                                             version)
+                                                             version,
+                                                             output_dir)
 
         print("------------- Location ------------")
         print(base_report)

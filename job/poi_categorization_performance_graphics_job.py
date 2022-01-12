@@ -21,6 +21,7 @@ class PoiCategorizationPerformanceGraphicsJob:
         replications = Input.get_instance().inputs['replications']
         graph_type = Input.get_instance().inputs['graph_type']
         country = Input.get_instance().inputs['country']
+        state = Input.get_instance().inputs['state']
         version = Input.get_instance().inputs['version']
 
         output_base_dir_poi_categorization = self.poi_categorization_configuration.OUTPUT_DIR[1]
@@ -30,8 +31,9 @@ class PoiCategorizationPerformanceGraphicsJob:
         graph_type_dir = self.poi_categorization_configuration.GRAPH_TYPE[1][graph_type]
         graph_type_directed_dir = self.poi_categorization_configuration.GRAPH_TYPE[1]['directed']
         country_dir = self.poi_categorization_baselines_configuration.COUNTRY[1][country]
+        state_dir = self.poi_categorization_baselines_configuration.STATE[1][state]
         version_dir = self.poi_categorization_configuration.VERSION[1][version]
-        base_dir = PoiCategorizationPerformanceGraphicsConfiguration.BASE_DIR.get_value()[dataset_name][graph_type][country][version]
+        base_dir = PoiCategorizationPerformanceGraphicsConfiguration.BASE_DIR.get_value()[dataset_name][graph_type][country][state][version]
         osm_categories_to_int = self.poi_categorization_baselines_configuration. \
             CATEGORIES[1][dataset_name][categories_type]
 
@@ -49,12 +51,12 @@ class PoiCategorizationPerformanceGraphicsJob:
             if model_name == "gpr":
                 output_dir = self.poi_categorization_baselines_configuration. \
                     output_dir(output_base_dir=output_base_dir, graph_type=graph_type_directed_dir,
-                               dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir,
+                               dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir, state_dir=state_dir,
                                model_name=model_name_dir)
             else:
                 output_dir = self.poi_categorization_baselines_configuration. \
                     output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir,
-                               dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir,
+                               dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir, state_dir=state_dir,
                                model_name=model_name_dir)
 
             output_dirs.append(output_dir+folds_replications)
@@ -74,7 +76,7 @@ class PoiCategorizationPerformanceGraphicsJob:
         category_type_dir = self.poi_categorization_configuration.CATEGORY_TYPE[1][categories_type]
         output_dir = self.poi_categorization_baselines_configuration. \
             output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir, dataset_type=dataset_type_dir,
-                       category_type=category_type_dir, country=country_dir, version=version_dir)
+                       category_type=category_type_dir, country=country_dir, state_dir=state_dir, version=version_dir)
         output_dirs.append(output_dir+folds_replications)
 
         print("ler", output_dirs)

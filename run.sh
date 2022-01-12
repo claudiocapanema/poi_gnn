@@ -347,13 +347,14 @@ CATEGORIZATION_BASELINES_CONFIG='{
           "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
           "users_steps_filename": "'$USERS_STEPS_FILENAME'",
           "ground_truth": "'$GROUND_TRUTH'",
-          "base_dir":"'$DENSE_FOURSQUARE_BASE_DIR'different_venues/matrizes/",
-          "adjacency_matrix_filename": "'$DENSE_FOURSQUARE_ADJACENCY_FILENAME'",
-          "temporal_matrix_filename": "'$DENSE_FOURSQUARE_TEMPORAL_FILENAME'",
+          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/",
+          "adjacency_matrix_filename": "'$GOWALLA_ADJACENCY_FILENAME_US'",
+           "temporal_matrix_filename": "'$GOWALLA_TEMPORAL_FILENAME_US'",
           "graph_type":"not_directed",
-          "dataset_name":"dense_foursquare",
-          "country":"Brazil",
-          "categories_type":"9_categories",
+          "dataset_name":"gowalla",
+          "country":"US",
+          "state":"TEXAS",
+          "categories_type":"7_categories",
           "baseline":"arma"
           }'
 
@@ -393,10 +394,11 @@ TRANSFER_LEARNING_CONFIG='{
 
 CATEGORIZATION_PERFORMANCE_GRAPHICS_CONFIG='{
           "job": "categorization_performance_graphics",
-          "dataset_name":"dense_foursquare",
-          "categories_type":"9_categories",
+          "dataset_name":"gowalla",
+          "categories_type":"7_categories",
           "graph_type":"not_directed",
-          "country":"BR",
+          "country":"US",
+          "state":"TX",
           "version":"normal",
           "folds":"5",
           "replications":"1"

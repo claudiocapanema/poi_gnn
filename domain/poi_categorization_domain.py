@@ -11,11 +11,12 @@ import sklearn.metrics as skm
 from tensorflow.keras import utils as np_utils
 
 from loader.file_loader import FileLoader
+from loader.poi_categorization_loader import PoiCategorizationLoader
 from extractor.file_extractor import FileExtractor
 from model.neural_network.poi_gnn.BR.gnn import GNN
 from model.neural_network.poi_gnn.US.gnn import GNNUS
 from model.neural_network.poi_gnn.path.gnn import GNNPath
-from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows
+from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category
 
 
 class PoiCategorizationDomain:
@@ -24,6 +25,7 @@ class PoiCategorizationDomain:
     def __init__(self, dataset_name):
         self.file_loader = FileLoader()
         self.file_extractor = FileExtractor()
+        self.poi_categorization_loader = PoiCategorizationLoader()
         self.dataset_name = dataset_name
 
     def _selecting_categories(self, categories: pd.Series):
@@ -126,7 +128,7 @@ class PoiCategorizationDomain:
         if user_matrix.shape[0] < k:
             k = user_matrix.shape[0]
         # select the k rows that have the highest sum
-        idx = top_k_rows(user_matrix, k)
+        idx = top_k_rows(user_matrix, k+5, user_category)
         user_matrix = user_matrix[idx[:,None], idx]
         user_matrix_week = user_matrix_week[idx[:, None], idx]
         user_matrix_weekend = user_matrix_weekend[idx[:, None], idx]
@@ -136,11 +138,11 @@ class PoiCategorizationDomain:
 
     def _resize_adjacency_and_category_matrices_baselines(self, user_matrix, user_category, max_size_matrices):
 
-        k = max_size_matrices
+        k = max_size_matrices + 5
         if user_matrix.shape[0] < k:
             k = user_matrix.shape[0]
         # select the k rows that have the highest sum
-        idx = top_k_rows(user_matrix, k)
+        idx = top_k_rows(user_matrix, k, user_category)
         user_matrix = user_matrix[idx[:,None], idx]
         user_category = user_category[idx]
 
@@ -267,6 +269,7 @@ class PoiCategorizationDomain:
                                 max_size_sequence,
                                 week,
                                 weekend,
+                                num_categories,
                                 model_name="poi_gnn"):
 
         matrices_list = []
@@ -313,6 +316,8 @@ class PoiCategorizationDomain:
             print("ERRO TAMANHO DA MATRIZ")
             exit()
 
+        max_events = 0
+        max_user = -1
         for i in range(len(ids)):
             # if i >= 1000:
             #     continue
@@ -350,26 +355,34 @@ class PoiCategorizationDomain:
                 if week and weekend:
                     user_matrix, user_matrix_week, user_matrix_weekend, user_category, idx = self._resize_adjacency_and_category_matrices(user_matrix, user_matrix_week, user_matrix_weekend, user_category, max_size_matrices)
                     #print("user matrix week: ", user_matrix_week)
+                    user_total = np.sum(user_matrix)
+                    if user_total > max_events:
+                        max_events = user_total
+                        max_user = i
                 else:
                     user_matrix, user_category, idx = self._resize_adjacency_and_category_matrices_baselines(
                         user_matrix, user_category, max_size_matrices)
-                if model_name == "gcn" or model_name == "gae":
-                    user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
-                elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
-                    user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
-                    user_matrix_week = sk.layers.ARMAConv.preprocess(user_matrix_week)
-                    user_matrix_weekend = sk.layers.ARMAConv.preprocess(user_matrix_weekend)
-                elif model_name == "diff":
-                    user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
+                # if model_name == "gcn" or model_name == "gae":
+                #     user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
+                # elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                #     user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
+                #     user_matrix_week = sk.layers.ARMAConv.preprocess(user_matrix_week)
+                #     user_matrix_weekend = sk.layers.ARMAConv.preprocess(user_matrix_weekend)
+                # elif model_name == "diff":
+                #     user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
             else:
                 user_matrix, user_category, idx = self._resize_adjacency_and_category_matrices_baselines(
                     user_matrix, user_category, max_size_matrices)
-                if model_name == "gcn" or model_name == "gae":
-                    user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
-                elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
-                    user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
-                elif model_name == "diff":
-                    user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
+                # if model_name == "gcn" or model_name == "gae":
+                #     user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
+                # elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                #     user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
+                # elif model_name == "diff":
+                #     user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
+
+            # if len(pd.Series(user_category).unique().tolist()) < num_categories - 1:
+            #     print("parou")
+            #     continue
 
             """feature"""
             user_temporal_matrix = temporal_df[i]
@@ -442,7 +455,6 @@ class PoiCategorizationDomain:
                 distance_matrices_weekend_list.append(user_distance_matrix_weekend)
                 duration_matrices_weekend_list.append(user_duration_matrix_weekend)
 
-
         self.features_num_columns = temporal_matrices_list[-1].shape[1]
         matrices_list = np.array(matrices_list)
         temporal_matrices_list = np.array(temporal_matrices_list)
@@ -464,6 +476,8 @@ class PoiCategorizationDomain:
             distance_matrices_weekend_list = np.array(distance_matrices_weekend_list)
             duration_matrices_weekend_list = np.array(duration_matrices_weekend_list)
         print("antes", matrices_list.shape, temporal_matrices_list.shape)
+
+        print("Maior usuário: ", max_user, " ", max_events)
 
         if model_name == "poi_gnn":
             if week and weekend:
@@ -488,6 +502,7 @@ class PoiCategorizationDomain:
         return np.array(ids)
 
     def k_fold_split_train_test(self,
+                                k,
                                 inputs,
                                 n_splits,
                                 week_type,
@@ -512,7 +527,9 @@ class PoiCategorizationDomain:
         classes_weights = []
         for train_indexes, test_indexes in kf.split(adjacency_list):
 
-            fold, class_weight = self._split_train_test(adjacency_list,
+            fold, class_weight = self._split_train_test(k,
+                                                        model_name,
+                                                        adjacency_list,
                                                         user_categories,
                                                         temporal_list,
                                                         distance_list,
@@ -526,7 +543,108 @@ class PoiCategorizationDomain:
 
         return folds, classes_weights
 
+    def preprocess_adjacency_matrix_train(self, k, model_name, adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train):
+
+        # new_adjacency_list_train = []
+        # new_user_categories_train = []
+        # new_temporal_list_train = []
+        # new_distance_list_train = []
+        # new_duration_list_train = []
+        print("tamanho: ", len(adjacency_list_train))
+        for i in range(len(adjacency_list_train)):
+
+            adjacency_train = adjacency_list_train[i]
+            category = user_categories_train[i]
+            #print("tipo: ", type(category), len(category))
+            temporal = temporal_list_train[i]
+
+            idx = top_k_rows_category(adjacency_train, k, category)
+
+            adjacency_train = adjacency_train[idx[:,None], idx]
+            category = category[idx]
+            category = np.asarray(category).astype(np.int32)
+            temporal = temporal[idx]
+            temporal = np.asarray(temporal).astype(np.float32)
+            user_categories_train[i] = category
+            temporal_list_train[i] = temporal
+
+            if len(distance_list_train) > 0:
+
+                distance = distance_list_train[i]
+                duration = duration_list_train[i]
+                distance = distance[idx[:,None], idx]
+                distance = np.asarray(distance).astype(np.float32)
+                duration = duration[idx[:,None], idx]
+                duration = np.asarray(duration).astype(np.float32)
+                distance_list_train[i] = distance
+                duration_list_train[i] = duration
+
+            if model_name == "gcn" or model_name == "gae":
+                adjacency_train = sk.layers.GCNConv.preprocess(ad)
+            elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                adjacency_train = sk.layers.ARMAConv.preprocess(adjacency_train)
+                user_matrix_week = sk.layers.ARMAConv.preprocess(adjacency_train)
+                user_matrix_weekend = sk.layers.ARMAConv.preprocess(adjacency_train)
+            elif model_name == "diff":
+                user_matrix = sk.layers.DiffusionConv.preprocess(adjacency_train)
+
+            adjacency_list_train[i] = adjacency_train
+
+        return adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train
+
+    def preprocess_adjacency_matrix_test(self, k, model_name, adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test):
+
+        # new_adjacency_list_test = []
+        # new_user_categories_test = []
+        # new_temporal_list_test = []
+        # new_distance_list_test = []
+        # new_duration_list_test = []
+        for i in range(len(adjacency_list_test)):
+
+            adjacency_test = adjacency_list_test[i]
+            category = user_categories_test[i]
+            temporal = temporal_list_test[i]
+
+            idx = top_k_rows(adjacency_test, k, category)
+
+            adjacency_test = adjacency_test[idx[:,None], idx]
+            adjacency_test = np.asarray(adjacency_test).astype(np.float32)
+            category = category[idx]
+            category = np.asarray(category).astype(np.int32)
+            temporal = temporal[idx]
+            temporal = np.asarray(temporal).astype(np.float32)
+            adjacency_list_test[i] = adjacency_test
+            user_categories_test[i] = category
+            temporal_list_test[i] = temporal
+
+            if len(distance_list_test) > 0:
+
+                distance = distance_list_test[i]
+                duration = duration_list_test[i]
+                distance = distance[idx[:,None], idx]
+                distance = np.asarray(distance).astype(np.float32)
+                duration = duration[idx[:,None], idx]
+                duration = np.asarray(duration).astype(np.float32)
+                distance_list_test[i] = distance
+                duration_list_test[i] = duration
+
+            if model_name == "gcn" or model_name == "gae":
+                adjacency_test = sk.layers.GCNConv.preprocess(adjacency_test)
+            elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                adjacency_train = sk.layers.ARMAConv.preprocess(adjacency_test)
+                user_matrix_week = sk.layers.ARMAConv.preprocess(adjacency_test)
+                user_matrix_weekend = sk.layers.ARMAConv.preprocess(adjacency_test)
+            elif model_name == "diff":
+                user_matrix = sk.layers.DiffusionConv.preprocess(adjacency_test)
+
+            adjacency_list_test[i] = adjacency_test
+
+        return adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test
+
+
     def _split_train_test(self,
+                          k,
+                          model_name,
                           adjacency_list,
                           user_categories,
                           temporal_list,
@@ -539,6 +657,7 @@ class PoiCategorizationDomain:
         # 'average', 'cv', 'median', 'radius', 'label'
         adjacency_list_train = adjacency_list[train_indexes]
         user_categories_train = user_categories[train_indexes]
+
         temporal_list_train = temporal_list[train_indexes]
         if len(distance_list) > 0:
             distance_list_train = distance_list[train_indexes]
@@ -546,6 +665,14 @@ class PoiCategorizationDomain:
         else:
             distance_list_train = []
             duration_list_train = []
+
+        adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train = self.\
+            preprocess_adjacency_matrix_train(k,
+                                              model_name,
+                                              adjacency_list_train,
+                                              user_categories_train,
+                                              temporal_list_train,
+                                              distance_list_train, duration_list_train)
 
 
         adjacency_list_test = adjacency_list[test_indexes]
@@ -558,7 +685,18 @@ class PoiCategorizationDomain:
             distance_list_test = []
             duration_list_test = []
 
-        flatten_train_category = user_categories_train.flatten()
+        adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test = self.\
+            preprocess_adjacency_matrix_test(k,
+                                             model_name,
+                                             adjacency_list_test,
+                                             user_categories_test,
+                                             temporal_list_test,
+                                             distance_list_test,
+                                             duration_list_test)
+
+        flatten_train_category = []
+        for categories_list in user_categories_train:
+            flatten_train_category += categories_list.tolist()
         flatten_train_category = pd.Series(flatten_train_category, name='category')
         flatten_train_category = flatten_train_category.astype('object')
         train_categories_freq = {e:0 for e in flatten_train_category.unique().tolist()}
@@ -588,6 +726,7 @@ class PoiCategorizationDomain:
                     adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test,
                     duration_list_test), class_weight
         else:
+            print("retornoo")
             return (adjacency_list_train, user_categories_train, temporal_list_train,
                     adjacency_list_test, user_categories_test, temporal_list_test), class_weight
 
@@ -610,8 +749,10 @@ class PoiCategorizationDomain:
                                                          max_size_sequence,
                                                          base_report,
                                                          epochs,
+                                                         class_weight,
                                                          country,
-                                                         version):
+                                                         version,
+                                                         output_dir):
 
         folds_histories = []
         folds_reports = []
@@ -630,7 +771,8 @@ class PoiCategorizationDomain:
             reports = []
             for j in range(n_replications):
 
-                history, report, model, accuracy = self.train_and_evaluate_model(fold,
+                history, report, model, accuracy = self.train_and_evaluate_model(i,
+                                                                                 fold,
                                                                                  fold_week,
                                                                                  fold_weekend,
                                                                                 class_weight,
@@ -641,6 +783,7 @@ class PoiCategorizationDomain:
                                                                                 epochs,
                                                                                 seed,
                                                                                 country,
+                                                                                output_dir,
                                                                                 version)
 
                 seed+=1
@@ -657,6 +800,7 @@ class PoiCategorizationDomain:
         return folds_histories, base_report, best_model
 
     def train_and_evaluate_model(self,
+                                 fold_number,
                                  fold,
                                  fold_week,
                                  fold_weekend,
@@ -668,6 +812,7 @@ class PoiCategorizationDomain:
                                  epochs,
                                  seed,
                                  country,
+                                 output_dir,
                                  version="normal",
                                  model=None):
 
@@ -682,6 +827,21 @@ class PoiCategorizationDomain:
         adjacency_train_weekend, y_train_weekend, temporal_train_weekend, distance_weekend_train, \
         duration_weekend_train, adjacency_test_weekend, y_test_weekend, temporal_test_weekend, distance_weekend_test, \
         duration_weekend_test = fold_weekend
+
+        max_total = 0
+        max_user = -1
+
+        for i in range(len(adjacency_test)):
+            user_total = np.sum(adjacency_test[i])
+            if user_total > max_total:
+                max_total = user_total
+                max_user = i
+
+        user_index = max_user
+        self.heatmap_matrices(str(fold_number), [adjacency_test[user_index], adjacency_test_week[user_index], adjacency_test_weekend[user_index],
+                               temporal_test[user_index], temporal_test_week[user_index], temporal_test_weekend[user_index]],
+                              ["Adjacency", "Adjacency (weekday)", "Adjacency (weekend)", "Temporal", "Temporal (weekday)", "Temporal (weekend)"],
+                              output_dir)
 
         input_train = [adjacency_train, adjacency_week_train, adjacency_train_weekend,
                        temporal_train, temporal_train_week, temporal_train_weekend, distance_train, distance_week_train, distance_weekend_train,
@@ -754,6 +914,12 @@ class PoiCategorizationDomain:
         # print(report)
 
         return h, report, model, report['accuracy']
+
+    def heatmap_matrices(self, fold_number, matrices, names, output_dir):
+
+        for matrix, name in zip(matrices, names):
+
+            self.poi_categorization_loader.heatmap(output_dir, matrix, name.replace(" ", "_")+"_"+fold_number, name, (10,10), True)
 
     def _add_location_report(self, location_report, report):
         for l_key in report:

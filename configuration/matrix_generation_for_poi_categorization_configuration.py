@@ -56,7 +56,7 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                          })
 
     NUM_USERS = ("num_users", {'dense_foursquare': 30000,
-                               'gowalla': 10000})
+                               'gowalla': 15000})
 
     # userid	placeid	datetime	lat	lon	city	category	local_datetime
 

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from configuration.poi_categorization_configuration import PoICategorizationConfiguration
 
@@ -34,21 +35,80 @@ def one_hot_decoding_predicted(data):
     new = np.array(new).flatten()
     return new
 
-def top_k_rows(data, k):
+def top_k_rows(data, k, user_category):
 
     row_sum = []
+    user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
+    adjusted_row_sum = []
     for i in range(len(data)):
-        row_sum.append([np.sum(data[i]), i])
+        row_sum.append([np.sum(data[i]), i, user_category[i]])
+        #user_unique_categories[user_category[i]] += 1
 
     row_sum = sorted(row_sum, reverse=True, key=lambda e:e[0])
+
+    # n_rows_to_remove = len(row_sum) - k
+    # count = 0
+    # for i in range(len(row_sum) -1, -1, -1):
+    #
+    #     category = row_sum[i][2]
+    #     if user_unique_categories[category] > 1 and count < n_rows_to_remove:
+    #         user_unique_categories[category] -= 1
+    #         count += 1
+    #     else:
+    #         adjusted_row_sum.append(row_sum[i])
+
+    #adjusted_row_sum = sorted(adjusted_row_sum, reverse=True, key=lambda e:e[0])
+
+
     # if len(row_sum) > k:
     # if row_sum[k][0] < 4:
     #     print("ola")
+    #print("Tamanho do row sum: ", len(adjusted_row_sum))
     row_sum = row_sum[:k]
-
+    #print("total: ", adjusted_row_sum)
     row_sum = [e[1] for e in row_sum]
 
+    #print("ids: ", adjusted_row_sum, " tamanho dos dados: ", len(data))
+
     return np.array(row_sum)
+
+def top_k_rows_category(data, k, user_category):
+
+    row_sum = []
+    user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
+    adjusted_row_sum = []
+    for i in range(len(data)):
+        row_sum.append([np.sum(data[i]), i, user_category[i]])
+        user_unique_categories[user_category[i]] += 1
+
+    row_sum = sorted(row_sum, reverse=True, key=lambda e:e[0])
+    #print("antes: ", row_sum)
+    n_rows_to_remove = len(row_sum) - k
+    count = 0
+    for i in range(len(row_sum) -1, -1, -1):
+
+        category = row_sum[i][2]
+        if user_unique_categories[category] > 1 and count < n_rows_to_remove:
+            user_unique_categories[category] -= 1
+            count += 1
+        else:
+            adjusted_row_sum.append(row_sum[i])
+
+    #adjusted_row_sum = sorted(adjusted_row_sum, reverse=True, key=lambda e:e[0])
+
+
+    # if len(row_sum) > k:
+    # if row_sum[k][0] < 4:
+    #     print("ola")
+    #print("Tamanho do row sum: ", len(adjusted_row_sum))
+    #row_sum = row_sum[:k]
+    #print("total: ", adjusted_row_sum)
+    adjusted_row_sum = [e[1] for e in adjusted_row_sum]
+
+    #print("ids: ", adjusted_row_sum, " tamanho dos dados: ", len(data))
+
+    return np.array(adjusted_row_sum)
+
 
 def filter_data_by_valid_category(user_matrix, user_category, osm_categories):
 
