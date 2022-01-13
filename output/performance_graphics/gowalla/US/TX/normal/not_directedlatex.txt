@@ -1,29 +1,29 @@
 "\begin{tabular}{llll}
 \toprule
-       &           &          ARMA &       POI-GNN \\
+       &           &              POI-GNN &                 ARMA \\
 \midrule
-Precision & Shopping &          0.26 &  textbf{0.29} \\
-       & Community &          0.34 &   textbf{0.4} \\
-       & Food &          0.32 &  textbf{0.36} \\
-       & Entertainment &  textbf{0.23} &           0.2 \\
-       & Travel &          0.29 &  textbf{0.34} \\
-       & Outdoors &          0.23 &  textbf{0.26} \\
-       & Nightlife &          0.34 &  textbf{0.36} \\
+Precision & Shopping &  textbf{0.323±0.012} &          0.316±0.017 \\
+       & Community &  textbf{0.426±0.015} &          0.369±0.018 \\
+       & Food &  textbf{0.428±0.009} &          0.406±0.009 \\
+       & Entertainment &          0.074±0.128 &  textbf{0.084±0.166} \\
+       & Travel &  textbf{0.364±0.153} &          0.233±0.116 \\
+       & Outdoors &  textbf{0.058±0.093} &          0.000±0.000 \\
+       & Nightlife &          0.425±0.021 &  textbf{0.468±0.026} \\
 \hline
-Recall & Shopping &          0.25 &  textbf{0.26} \\
-       & Community &  textbf{0.39} &          0.37 \\
-       & Food &          0.52 &  textbf{0.59} \\
-       & Entertainment &           0.0 &  textbf{0.03} \\
-       & Travel &          0.11 &  textbf{0.14} \\
-       & Outdoors &           0.2 &  textbf{0.25} \\
-       & Nightlife &          0.49 &  textbf{0.53} \\
-Fscore & Shopping &          0.25 &  textbf{0.27} \\
-       & Community &          0.37 &  textbf{0.38} \\
-       & Food &           0.4 &  textbf{0.45} \\
-       & Entertainment &          0.01 &  textbf{0.05} \\
-       & Travel &          0.16 &   textbf{0.2} \\
-       & Outdoors &          0.21 &  textbf{0.26} \\
-       & Nightlife &           0.4 &  textbf{0.43} \\
+Recall & Shopping &  textbf{0.317±0.012} &          0.230±0.029 \\
+       & Community &          0.356±0.026 &  textbf{0.362±0.026} \\
+       & Food &          0.730±0.007 &  textbf{0.769±0.013} \\
+       & Entertainment &  textbf{0.001±0.001} &          0.000±0.001 \\
+       & Travel &  textbf{0.035±0.016} &          0.010±0.007 \\
+       & Outdoors &  textbf{0.001±0.001} &          0.000±0.000 \\
+       & Nightlife &  textbf{0.440±0.035} &          0.336±0.023 \\
+Fscore & Shopping &  textbf{0.320±0.010} &          0.266±0.025 \\
+       & Community &  textbf{0.387±0.019} &          0.365±0.012 \\
+       & Food &  textbf{0.540±0.007} &          0.531±0.006 \\
+       & Entertainment &  textbf{0.001±0.003} &  textbf{0.001±0.001} \\
+       & Travel &  textbf{0.063±0.028} &          0.020±0.013 \\
+       & Outdoors &  textbf{0.001±0.002} &          0.000±0.000 \\
+       & Nightlife &  textbf{0.432±0.024} &          0.390±0.009 \\
 \bottomrule
 \end{tabular}
 "

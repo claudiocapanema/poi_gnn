@@ -82,7 +82,7 @@ class PoiCategorizationBaselinesJob:
                                     False,
                                     7,
                                     model_name)
-
+        print("apos preprocessamento: ", adjacency_df.shape)
         usuarios = adjacency_df.shape
 
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'categories': users_categories}}

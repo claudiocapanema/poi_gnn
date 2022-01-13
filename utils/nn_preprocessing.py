@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import networkx as nx
 
 from configuration.poi_categorization_configuration import PoICategorizationConfiguration
 
@@ -35,42 +36,22 @@ def one_hot_decoding_predicted(data):
     new = np.array(new).flatten()
     return new
 
-def top_k_rows(data, k, user_category):
+def top_k_rows(data, k):
 
     row_sum = []
-    user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
-    adjusted_row_sum = []
     for i in range(len(data)):
-        row_sum.append([np.sum(data[i]), i, user_category[i]])
-        #user_unique_categories[user_category[i]] += 1
+        row_sum.append([np.sum(data[i]), i])
 
     row_sum = sorted(row_sum, reverse=True, key=lambda e:e[0])
-
-    # n_rows_to_remove = len(row_sum) - k
-    # count = 0
-    # for i in range(len(row_sum) -1, -1, -1):
-    #
-    #     category = row_sum[i][2]
-    #     if user_unique_categories[category] > 1 and count < n_rows_to_remove:
-    #         user_unique_categories[category] -= 1
-    #         count += 1
-    #     else:
-    #         adjusted_row_sum.append(row_sum[i])
-
-    #adjusted_row_sum = sorted(adjusted_row_sum, reverse=True, key=lambda e:e[0])
-
-
     # if len(row_sum) > k:
     # if row_sum[k][0] < 4:
     #     print("ola")
-    #print("Tamanho do row sum: ", len(adjusted_row_sum))
     row_sum = row_sum[:k]
-    #print("total: ", adjusted_row_sum)
+
     row_sum = [e[1] for e in row_sum]
 
-    #print("ids: ", adjusted_row_sum, " tamanho dos dados: ", len(data))
-
     return np.array(row_sum)
+
 
 def top_k_rows_category(data, k, user_category):
 
@@ -108,6 +89,74 @@ def top_k_rows_category(data, k, user_category):
     #print("ids: ", adjusted_row_sum, " tamanho dos dados: ", len(data))
 
     return np.array(adjusted_row_sum)
+
+def to_networkx(adjacency_matrix):
+
+    new_adjacency_matrix = []
+    for i in range(len(adjacency_matrix)):
+
+        for j in range(len(adjacency_matrix)):
+            if adjacency_matrix[i][j] != 0:
+                new_adjacency_matrix.append((i, j, adjacency_matrix[i][j]))
+
+    g = nx.Graph()
+    g.add_weighted_edges_from(new_adjacency_matrix)
+    return g
+
+def from_networkx(g):
+
+    new_adjacency_matrix = [[0 for i in range(len(list(g.Nodes)))] for j in range(len(list(g.Nodes)))]
+
+    edges_list = list(g.Edges)
+
+    for i in edges_list:
+        from_node = i[0]
+        to_node = i[1]
+        weight = i[2]
+        new_adjacency_matrix[from_node][to_node] = weight
+
+    return new_adjacency_matrix
+
+def top_k_rows_centrality(data, k):
+
+    g = to_networkx(data)
+#    centrality = nx.eigenvector_centrality(g, max_iter=10000)
+#     centrality = nx.current_flow_betweenness_centrality(g)
+
+    #centrality_list = sorted([(v, float(f"{c:0.2f}")) for v, c in centrality.items()], reverse=True, key=lambda e: e[1])
+    nodes_degree = g.degree(list(g.Nodes))
+    nodes_degree = sorted(nodes_degree, reverse=True, key= lambda e: e[1])
+    idx = [i[0] for i in centrality_list]
+    idx = idx[:k]
+
+    return np.array(idx)
+
+def top_k_rows_order(data, k):
+
+    new_data = []
+    matrix_total = np.array(data).sum()
+    nodes_total = []
+    nodes_degree = []
+    for i in range(len(data)):
+
+        degree = 0
+        row = data[i]
+        row_total = sum(row)
+        row_total = row_total/matrix_total
+        for j in range(len(row)):
+
+            if row[j] != 0:
+                degree += 1
+        degree = degree/len(data)
+
+        new_data.append([i, (2*row_total*degree)/(row_total+degree)])
+
+    new_data = sorted(new_data, reverse=True, key= lambda e:e[1])
+    new_data = [i[0] for i in new_data]
+    new_data = new_data[:k]
+
+    return np.array(new_data)
+
 
 
 def filter_data_by_valid_category(user_matrix, user_category, osm_categories):

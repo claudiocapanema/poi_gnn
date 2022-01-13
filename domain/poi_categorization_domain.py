@@ -16,7 +16,7 @@ from extractor.file_extractor import FileExtractor
 from model.neural_network.poi_gnn.BR.gnn import GNN
 from model.neural_network.poi_gnn.US.gnn import GNNUS
 from model.neural_network.poi_gnn.path.gnn import GNNPath
-from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category
+from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category, top_k_rows_centrality, top_k_rows_order
 
 
 class PoiCategorizationDomain:
@@ -128,7 +128,7 @@ class PoiCategorizationDomain:
         if user_matrix.shape[0] < k:
             k = user_matrix.shape[0]
         # select the k rows that have the highest sum
-        idx = top_k_rows(user_matrix, k+5, user_category)
+        idx = top_k_rows(user_matrix, k)
         user_matrix = user_matrix[idx[:,None], idx]
         user_matrix_week = user_matrix_week[idx[:, None], idx]
         user_matrix_weekend = user_matrix_weekend[idx[:, None], idx]
@@ -138,11 +138,11 @@ class PoiCategorizationDomain:
 
     def _resize_adjacency_and_category_matrices_baselines(self, user_matrix, user_category, max_size_matrices):
 
-        k = max_size_matrices + 5
+        k = max_size_matrices
         if user_matrix.shape[0] < k:
             k = user_matrix.shape[0]
         # select the k rows that have the highest sum
-        idx = top_k_rows(user_matrix, k, user_category)
+        idx = top_k_rows_order(user_matrix, k)
         user_matrix = user_matrix[idx[:,None], idx]
         user_category = user_category[idx]
 
@@ -362,23 +362,23 @@ class PoiCategorizationDomain:
                 else:
                     user_matrix, user_category, idx = self._resize_adjacency_and_category_matrices_baselines(
                         user_matrix, user_category, max_size_matrices)
-                # if model_name == "gcn" or model_name == "gae":
-                #     user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
-                # elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
-                #     user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
-                #     user_matrix_week = sk.layers.ARMAConv.preprocess(user_matrix_week)
-                #     user_matrix_weekend = sk.layers.ARMAConv.preprocess(user_matrix_weekend)
-                # elif model_name == "diff":
-                #     user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
+                if model_name == "gcn" or model_name == "gae":
+                    user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
+                elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                    user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
+                    user_matrix_week = sk.layers.ARMAConv.preprocess(user_matrix_week)
+                    user_matrix_weekend = sk.layers.ARMAConv.preprocess(user_matrix_weekend)
+                elif model_name == "diff":
+                    user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
             else:
                 user_matrix, user_category, idx = self._resize_adjacency_and_category_matrices_baselines(
                     user_matrix, user_category, max_size_matrices)
-                # if model_name == "gcn" or model_name == "gae":
-                #     user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
-                # elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
-                #     user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
-                # elif model_name == "diff":
-                #     user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
+                if model_name == "gcn" or model_name == "gae":
+                    user_matrix = sk.layers.GCNConv.preprocess(user_matrix)
+                elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
+                    user_matrix = sk.layers.ARMAConv.preprocess(user_matrix)
+                elif model_name == "diff":
+                    user_matrix = sk.layers.DiffusionConv.preprocess(user_matrix)
 
             # if len(pd.Series(user_category).unique().tolist()) < num_categories - 1:
             #     print("parou")
@@ -545,42 +545,37 @@ class PoiCategorizationDomain:
 
     def preprocess_adjacency_matrix_train(self, k, model_name, adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train):
 
-        # new_adjacency_list_train = []
-        # new_user_categories_train = []
-        # new_temporal_list_train = []
-        # new_distance_list_train = []
-        # new_duration_list_train = []
-        print("tamanho: ", len(adjacency_list_train))
+        new_adjacency_list_train = []
+        new_user_categories_train = []
+        new_temporal_list_train = []
+        new_distance_list_train = []
+        new_duration_list_train = []
+        print("tamanho: ", len(adjacency_list_train), adjacency_list_train.shape)
         for i in range(len(adjacency_list_train)):
 
             adjacency_train = adjacency_list_train[i]
             category = user_categories_train[i]
-            #print("tipo: ", type(category), len(category))
             temporal = temporal_list_train[i]
 
-            idx = top_k_rows_category(adjacency_train, k, category)
+            idx = top_k_rows(adjacency_train, k)
 
             adjacency_train = adjacency_train[idx[:,None], idx]
             category = category[idx]
-            category = np.asarray(category).astype(np.int32)
             temporal = temporal[idx]
-            temporal = np.asarray(temporal).astype(np.float32)
-            user_categories_train[i] = category
-            temporal_list_train[i] = temporal
+            new_user_categories_train.append(category)
+            new_temporal_list_train.append(temporal)
 
             if len(distance_list_train) > 0:
 
                 distance = distance_list_train[i]
                 duration = duration_list_train[i]
                 distance = distance[idx[:,None], idx]
-                distance = np.asarray(distance).astype(np.float32)
                 duration = duration[idx[:,None], idx]
-                duration = np.asarray(duration).astype(np.float32)
-                distance_list_train[i] = distance
-                duration_list_train[i] = duration
+                new_distance_list_train.append(distance)
+                new_duration_list_train.append(duration)
 
             if model_name == "gcn" or model_name == "gae":
-                adjacency_train = sk.layers.GCNConv.preprocess(ad)
+                adjacency_train = sk.layers.GCNConv.preprocess(adjacency_train)
             elif model_name == "arma" or model_name == "arma_enhanced" or model_name == "poi_gnn":
                 adjacency_train = sk.layers.ARMAConv.preprocess(adjacency_train)
                 user_matrix_week = sk.layers.ARMAConv.preprocess(adjacency_train)
@@ -588,45 +583,39 @@ class PoiCategorizationDomain:
             elif model_name == "diff":
                 user_matrix = sk.layers.DiffusionConv.preprocess(adjacency_train)
 
-            adjacency_list_train[i] = adjacency_train
+            new_adjacency_list_train.append(adjacency_train)
 
-        return adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train
+        return np.array(new_adjacency_list_train), np.array(new_user_categories_train), np.array(new_temporal_list_train), np.array(new_distance_list_train), np.array(new_duration_list_train)
 
     def preprocess_adjacency_matrix_test(self, k, model_name, adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test):
 
-        # new_adjacency_list_test = []
-        # new_user_categories_test = []
-        # new_temporal_list_test = []
-        # new_distance_list_test = []
-        # new_duration_list_test = []
+        new_adjacency_list_test = []
+        new_user_categories_test = []
+        new_temporal_list_test = []
+        new_distance_list_test = []
+        new_duration_list_test = []
         for i in range(len(adjacency_list_test)):
 
             adjacency_test = adjacency_list_test[i]
             category = user_categories_test[i]
             temporal = temporal_list_test[i]
 
-            idx = top_k_rows(adjacency_test, k, category)
+            idx = top_k_rows(adjacency_test, k)
 
             adjacency_test = adjacency_test[idx[:,None], idx]
-            adjacency_test = np.asarray(adjacency_test).astype(np.float32)
             category = category[idx]
-            category = np.asarray(category).astype(np.int32)
             temporal = temporal[idx]
-            temporal = np.asarray(temporal).astype(np.float32)
-            adjacency_list_test[i] = adjacency_test
-            user_categories_test[i] = category
-            temporal_list_test[i] = temporal
+            new_user_categories_test.append(category)
+            new_temporal_list_test.append(temporal)
 
             if len(distance_list_test) > 0:
 
                 distance = distance_list_test[i]
                 duration = duration_list_test[i]
                 distance = distance[idx[:,None], idx]
-                distance = np.asarray(distance).astype(np.float32)
                 duration = duration[idx[:,None], idx]
-                duration = np.asarray(duration).astype(np.float32)
-                distance_list_test[i] = distance
-                duration_list_test[i] = duration
+                new_distance_list_test.append(distance)
+                new_duration_list_test.append(duration)
 
             if model_name == "gcn" or model_name == "gae":
                 adjacency_test = sk.layers.GCNConv.preprocess(adjacency_test)
@@ -637,9 +626,9 @@ class PoiCategorizationDomain:
             elif model_name == "diff":
                 user_matrix = sk.layers.DiffusionConv.preprocess(adjacency_test)
 
-            adjacency_list_test[i] = adjacency_test
+            new_adjacency_list_test.append(adjacency_test)
 
-        return adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test
+        return np.array(new_adjacency_list_test), np.array(new_user_categories_test), np.array(new_temporal_list_test), np.array(new_distance_list_test), np.array(new_duration_list_test)
 
 
     def _split_train_test(self,
@@ -666,13 +655,13 @@ class PoiCategorizationDomain:
             distance_list_train = []
             duration_list_train = []
 
-        adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train = self.\
-            preprocess_adjacency_matrix_train(k,
-                                              model_name,
-                                              adjacency_list_train,
-                                              user_categories_train,
-                                              temporal_list_train,
-                                              distance_list_train, duration_list_train)
+        # adjacency_list_train, user_categories_train, temporal_list_train, distance_list_train, duration_list_train = self.\
+        #     preprocess_adjacency_matrix_train(k,
+        #                                       model_name,
+        #                                       adjacency_list_train,
+        #                                       user_categories_train,
+        #                                       temporal_list_train,
+        #                                       distance_list_train, duration_list_train)
 
 
         adjacency_list_test = adjacency_list[test_indexes]
@@ -685,14 +674,14 @@ class PoiCategorizationDomain:
             distance_list_test = []
             duration_list_test = []
 
-        adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test = self.\
-            preprocess_adjacency_matrix_test(k,
-                                             model_name,
-                                             adjacency_list_test,
-                                             user_categories_test,
-                                             temporal_list_test,
-                                             distance_list_test,
-                                             duration_list_test)
+        # adjacency_list_test, user_categories_test, temporal_list_test, distance_list_test, duration_list_test = self.\
+        #     preprocess_adjacency_matrix_test(k,
+        #                                      model_name,
+        #                                      adjacency_list_test,
+        #                                      user_categories_test,
+        #                                      temporal_list_test,
+        #                                      distance_list_test,
+        #                                      duration_list_test)
 
         flatten_train_category = []
         for categories_list in user_categories_train:

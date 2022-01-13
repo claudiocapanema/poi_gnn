@@ -143,17 +143,20 @@ class PoiCategorizationJob:
         usuarios = len(adjacency_df)
 
         folds, class_weight = self.poi_categorization_domain.\
-            k_fold_split_train_test(inputs,
+            k_fold_split_train_test(max_size_matrices,
+                                    inputs,
                                     n_splits,
                                     'all_week')
 
         folds_week, class_weight_week = self.poi_categorization_domain. \
-            k_fold_split_train_test(inputs,
+            k_fold_split_train_test(max_size_matrices,
+                                    inputs,
                                     n_splits,
                                     'week')
 
         folds_weekend, class_weight_weekend = self.poi_categorization_domain. \
-            k_fold_split_train_test(inputs,
+            k_fold_split_train_test(max_size_matrices,
+                                    inputs,
                                     n_splits,
                                     'weekend')
 

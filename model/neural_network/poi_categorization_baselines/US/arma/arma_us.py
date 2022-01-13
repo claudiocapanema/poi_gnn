@@ -10,7 +10,7 @@ iterations = 1         # Number of iterations to approximate each ARMA(1)
 order = 1               # Order of the ARMA filter (number of parallel stacks)
 share_weights = True    # Share weights in each ARMA stack
 dropout = 0.5          # Dropout rate applied between layers
-dropout_skip = 0.5  # Dropout rate for the internal skip connection of ARMA
+dropout_skip = 0.4  # Dropout rate for the internal skip connection of ARMA
 l2_reg = 5e-5           # L2 regularization rate
 learning_rate = 1e-2    # Learning rate
 epochs = 15          # Number of training epochs
@@ -75,7 +75,6 @@ class ARMAUSModel:
         self.classes = classes
         self.features_num_columns = features_num_columns
         self.class_weight = [class_weight for i in range(max_size_matrices)]
-        print("ppppppppppppp", len(self.class_weight))
 
     def build(self, units1=300, output_size=8, dropout=0.5, seed=None):
         if seed is not None:
@@ -94,7 +93,7 @@ class ARMAUSModel:
                         activation='elu',
                         gcn_activation='gelu',
                         kernel_regularizer=l2(l2_reg))([X_input, A_input])
-        #x = Dropout(0.2)(x)
+        x = Dropout(0.3)(x)
         #tf.print("matrizz", x)
         gc_2 = ARMAConv(output_size,
                         iterations=1,

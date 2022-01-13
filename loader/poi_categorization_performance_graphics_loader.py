@@ -7,6 +7,7 @@ import seaborn as sns
 
 from IPython.display import display, HTML
 from extractor.file_extractor import FileExtractor
+from foundation.util.statistics_utils import t_distribution_test
 
 class PoiCategorizationPerformanceGraphicsLoader:
 
@@ -144,9 +145,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
             recall_means = {}
             fscore_means = {}
             for column in columns:
-                precision_means[column] = st.mean(precision[column].tolist())
-                recall_means[column] = st.mean(recall[column].tolist())
-                fscore_means[column] = st.mean(fscore[column].tolist())
+                precision_means[column] = t_distribution_test(precision[column].tolist())
+                recall_means[column] = t_distribution_test(recall[column].tolist())
+                fscore_means[column] = t_distribution_test(fscore[column].tolist())
 
             model_metrics = []
 
@@ -160,7 +161,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
             models_dict[model_name] = model_metrics
 
 
-        df = pd.DataFrame(models_dict, index=index).round(2)
+        df = pd.DataFrame(models_dict, index=index).round(4)
 
         output = base_dir
         print("bbbbbbbbb", base_dir)
@@ -184,6 +185,8 @@ class PoiCategorizationPerformanceGraphicsLoader:
             df[column] = np.array(column_values)
 
         df.columns = ['ARMA', 'POI-GNN']
+
+        df = df[['POI-GNN', 'ARMA']]
 
         display(HTML(df.to_html()))
 
@@ -213,7 +216,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
         for i in range(len(values)):
 
-            value = float(str(values[i])[:4])
+            value = str(values[i])[:5]
             list_of_means.append(value)
 
         max_value = max(list_of_means)
