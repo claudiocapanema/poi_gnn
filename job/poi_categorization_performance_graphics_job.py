@@ -63,10 +63,10 @@ class PoiCategorizationPerformanceGraphicsJob:
             new_models_names.append(model_name)
 
         # getting the metrics.csv directory of the hmrm
-        # if country != 'JP' and country != 'US':
-        #     model_name = 'hmrm'
-        #     new_models_names.append(model_name)
-        #     output_dirs.append("/home/claudio/Documentos/pycharm_projects/poi_detection/output/matrix_factorization_baseline/global_foursquare/BR/8_categories/5_folds/all_year_long/metrics_8_categories_no_balanced_weight.csv")
+        if (country == 'US' and dataset_name == "gowalla" and state == "TX"):
+            model_name = 'hmrm'
+            new_models_names.append(model_name)
+            output_dirs.append("/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_baselines_job/not_directed/gowalla/US/TX/7_categories/hmrm/5_folds/1_replications/")
 
         # getting the metrics.csv directory of the poi-gnn
         model_name = 'POI-GNN'

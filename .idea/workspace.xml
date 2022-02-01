@@ -7,6 +7,13 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -31,14 +38,20 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/foundation/util" />
+    <property name="com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File" value="TEXT" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/model/neural_network/poi_gnn/US" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/model/neural_network/poi_gnn/US" />
+      <recent name="$PROJECT_DIR$/model/neural_network/poi_gnn/BR" />
       <recent name="$PROJECT_DIR$/foundation/util" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/preprocessing/user_tracking" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -78,6 +91,23 @@
       <workItem from="1641944172739" duration="4748000" />
       <workItem from="1641985973555" duration="22636000" />
       <workItem from="1642041242883" duration="599000" />
+      <workItem from="1642443135393" duration="1310000" />
+      <workItem from="1642510582918" duration="388000" />
+      <workItem from="1642633783529" duration="1011000" />
+      <workItem from="1642694600873" duration="10942000" />
+      <workItem from="1642775600085" duration="4886000" />
+      <workItem from="1643037153402" duration="632000" />
+      <workItem from="1643285461286" duration="1925000" />
+      <workItem from="1643320392053" duration="1754000" />
+      <workItem from="1643371745111" duration="9885000" />
+      <workItem from="1643392091613" duration="2076000" />
+      <workItem from="1643397145670" duration="604000" />
+      <workItem from="1643577094263" duration="4790000" />
+      <workItem from="1643641412897" duration="2716000" />
+      <workItem from="1643656193257" duration="9396000" />
+      <workItem from="1643721475207" duration="3085000" />
+      <workItem from="1643730872198" duration="6000" />
+      <workItem from="1643731598478" duration="8000" />
     </task>
     <servers />
   </component>

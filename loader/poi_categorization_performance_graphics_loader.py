@@ -16,7 +16,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
     def _convert_names(self, names):
 
-        convert_dict = {'poi-gnn': 'POI-RGNN', 'arma': 'ARMA'}
+        convert_dict = {'poi-gnn': 'POI-RGNN', 'arma': 'ARMA', 'hmrm': 'HMRM'}
 
         for i in range(len(names)):
 
@@ -123,7 +123,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
     def export_reports(self, output_dirs, models_names, osm_categories_to_int, base_dir, dataset):
 
-        model_report = {'arma': {}, 'POI-GNN': {}}
+        model_report = {'arma': {}, 'POI-GNN': {}, 'hmrm': {}}
         print("saidas: ", models_names)
         for i in range(len(models_names)):
             model_name = models_names[i]
@@ -175,7 +175,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
         #max_values = df.idxmax(axis=1)
         max_values = self.idmax(df)
-        max_columns = {'arma': [], 'POI-GNN': []}
+        max_columns = {'arma': [], 'POI-GNN': [], 'hmrm': []}
         for max_value in max_values:
             row_index = max_value[0]
             column = max_value[1]
@@ -184,9 +184,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
             df[column] = np.array(column_values)
 
-        df.columns = ['ARMA', 'POI-GNN']
+        df.columns = ['ARMA', 'POI-GNN', 'HMRM']
 
-        df = df[['POI-GNN', 'ARMA']]
+        df = df[['POI-GNN', 'ARMA', 'HMRM']]
 
         display(HTML(df.to_html()))
 

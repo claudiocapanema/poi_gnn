@@ -131,31 +131,37 @@ def top_k_rows_centrality(data, k):
 
     return np.array(idx)
 
-def top_k_rows_order(data, k):
+def top_k_rows_order(graph, k):
 
-    new_data = []
-    matrix_total = np.array(data).sum()
-    nodes_total = []
-    nodes_degree = []
-    for i in range(len(data)):
+    new_graph = []
+    # soma dos pesos de todas as arestas do grafo
+    matrix_total = np.array(graph).sum()
+    for i in range(len(graph)):
 
         degree = 0
-        row = data[i]
+        row = graph[i]
+        # Métrica 1: soma dos pesos das arestas do vértice/PoI "i".
         row_total = sum(row)
+        # Métrica 1: ponderar os pesos das arestas do vértice/PoI "i" com base no peso total de todas as arestas do grafo.
         row_total = row_total/matrix_total
         for j in range(len(row)):
 
+            # Métrica 2 : contabilizar o grau do vértice/PoI "i".
             if row[j] != 0:
                 degree += 1
-        degree = degree/len(data)
+        # Métrica 2: grau do vértice/PoI "i" é ponderado com base na quantidade de vértices/PoIs do grafo.
+        degree = degree/len(graph)
 
-        new_data.append([i, (2*row_total*degree)/(row_total+degree)])
+        # Métrica resultante: aplicar as métricas 1 e 2 na fórmula do f1-score.
+        new_graph.append([i, (2*row_total*degree)/(row_total+degree)])
 
-    new_data = sorted(new_data, reverse=True, key= lambda e:e[1])
-    new_data = [i[0] for i in new_data]
-    new_data = new_data[:k]
+    # Ordenar os PoIs com base na métrica resultante (quanto maior o valor, melhor)
+    new_graph = sorted(new_graph, reverse=True, key= lambda e:e[1])
+    new_graph = [i[0] for i in new_graph]
+    # retorna o grafo com os Top k PoIs.
+    new_graph = new_graph[:k]
 
-    return np.array(new_data)
+    return np.array(new_graph)
 
 
 

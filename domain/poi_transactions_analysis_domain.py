@@ -17,7 +17,7 @@ from foundation.util.geospatial_utils import points_distance
 from loader.file_loader import FileLoader
 from loader.poi_transactions_loader import PoiTransactionsLoader
 from extractor.file_extractor import FileExtractor
-from model.neural_network.poi_gnn.BR.gnn import GNN
+from model.neural_network.poi_gnn.BR.gnn import GNNBR
 from model.neural_network.poi_gnn.US.gnn import GNNUS
 from model.neural_network.poi_gnn.path.gnn import GNNPath
 from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows
