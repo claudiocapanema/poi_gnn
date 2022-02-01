@@ -20,13 +20,15 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                             'category_column':'',
                             'locationid_column':'',
                             'datetime_column':''},
-                        'raw_gps':
-                             {'userid_column': 'userid',
-                              'category_column': 'category_algorithm',
-                              'personal_category_column': 'category_algorithm',
-                              'locationid_column': 'poi_id',
-                              'datetime_column': 'datetime',
-                              'osm_category_column': 'categories_osm_100_meters'},
+                        'user_tracking': {"datetime_column": "datetime",
+                                          "userid_column": "id",
+                                            "locationid_column": "poi_id",
+                                            "country_column": "country_name",
+                                            "state_column": "state_name",
+                                            "category_column": "poi_resulting_id",
+                                            "category_name_column": "poi_resulting",
+                                            "latitude_column": "latitude",
+                                            "longitude_column": "longitude"},
                         "global_foursquare": {"datetime_column": "local_datetime",
                                               "userid_column": "userid",
                                               "locationid_column": "placeid",
@@ -56,7 +58,8 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                          })
 
     NUM_USERS = ("num_users", {'dense_foursquare': 30000,
-                               'gowalla': 15000})
+                               'gowalla': 15000,
+                               'user_tracking': 10000})
 
     # userid	placeid	datetime	lat	lon	city	category	local_datetime
 

@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, power_transform
 
 import spektral as sk
 import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
 import sklearn.metrics as skm
 from tensorflow.keras import utils as np_utils
@@ -13,7 +14,7 @@ from tensorflow.keras import utils as np_utils
 from loader.file_loader import FileLoader
 from loader.poi_categorization_loader import PoiCategorizationLoader
 from extractor.file_extractor import FileExtractor
-from model.neural_network.poi_gnn.BR.gnn import GNN
+from model.neural_network.poi_gnn.BR.gnn import GNNBR
 from model.neural_network.poi_gnn.US.gnn import GNNUS
 from model.neural_network.poi_gnn.path.gnn import GNNPath
 from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category, top_k_rows_centrality, top_k_rows_order
@@ -854,12 +855,14 @@ class PoiCategorizationDomain:
 
         num_classes = max(y_train.flatten()) + 1
         max_size = max_size_matrices
+        lr = 0.001
         print("Quantidade de classes: ", num_classes)
-        if country == 'BR':
+        if country == 'BR' or country == "Brazil":
             if version == "normal":
                 print("Tipo de rede neural: NORMAL")
-                model = GNN(num_classes, max_size, max_size_sequence,
+                model = GNNBR(num_classes, max_size, max_size_sequence,
                             self.features_num_columns).build(seed=seed)
+                lr = 0.0001
             elif version == "PATH":
                 print("PATH")
                 model = GNNPath(num_classes, max_size, max_size_sequence,
@@ -869,11 +872,11 @@ class PoiCategorizationDomain:
                         self.features_num_columns).build(seed=seed)
         if country == 'US':
             batch = max_size * 1
-        elif country == 'BR':
+        elif country == 'BR' or country == 'Brazil':
             batch = max_size * 5
 
         print("Tamanho do batch: ", batch)
-        model.compile(optimizer="adam", loss=['categorical_crossentropy'],
+        model.compile(optimizer=Adam(learning_rate=lr), loss=['categorical_crossentropy'],
                       weighted_metrics=[tf.keras.metrics.CategoricalAccuracy(name="acc")
                                         ])
         y_train = np_utils.to_categorical(y_train, num_classes=num_classes)

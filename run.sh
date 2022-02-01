@@ -111,6 +111,24 @@ GOWALLA_DURATION_FILENAME_BR="duration_matrix_not_directed_48_9_categories_BR.cs
 GOWALLA_DURATION_WEEK_FILENAME_BR="duration_matrix_weekday_not_directed_48_9_categories_BR.csv"
 GOWALLA_DURATION_WEEKEND_FILENAME_BR="duration_matrix_weekend_not_directed_48_9_categories_BR.csv"
 
+# user tracking
+USER_TRACKING_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/users_steps_output/"
+USER_TRACKING_DATASET=${USER_TRACKING_BASE_DIR}"users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50.csv"
+USER_TRACKING_DATASET_5_CATEGORIES_BR=${USER_TRACKING_BASE_DIR}"users_steps_5_categories_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_br.csv"
+USER_TRACKING_ADJACENCY_FILENAME_BR="adjacency_matrix_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR="adjacency_matrix_weekday_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR="adjacency_matrix_weekend_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_TEMPORAL_FILENAME_BR="features_matrix_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR="features_matrix_weekday_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR="features_matrix_weekend_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_DISTANCE_FILENAME_BR="distance_matrix_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_DISTANCE_WEEK_FILENAME_BR="distance_matrix_weekday_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_DISTANCE_WEEKEND_FILENAME_BR="distance_matrix_weekend_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_DURATION_FILENAME_BR="duration_matrix_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_DURATION_WEEK_FILENAME_BR="duration_matrix_weekday_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_DURATION_WEEKEND_FILENAME_BR="duration_matrix_weekend_not_directed_48_5_categories_BR.csv"
+
+
 # us
 GOWALLA_ADJACENCY_FILENAME_US="adjacency_matrix_not_directed_48_7_categories_US.csv"
 GOWALLA_ADJACENCY_WEEK_FILENAME_US="adjacency_matrix_weekday_not_directed_48_7_categories_US.csv"
@@ -164,8 +182,8 @@ TRANSACTIONS_BASE_DIR="${GLOBAL_FOURSQUARE_BASE_DIR}transactions/"
 
 MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "job": "matrix_generation_for_poi_categorization",
-          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US'",
-          "base_dir":"'$GOWALLA_BASE_DIR'",
+          "users_checkin_filename": "'$USER_TRACKING_DATASET_5_CATEGORIES_BR'",
+          "base_dir":"'$USER_TRACKING_BASE_DIR'",
           "directed_folder":"directed/",
           "not_directed_folder":"not_directed/",
           "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
@@ -175,16 +193,64 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "hour48":"yes",
           "personal_features_matrix":"no",
           "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-          "country":"United States",
-          "state":"TEXAS",
+          "country":"Brazil",
+          "state":"",
           "different_venues":"yes",
           "max_time_between_records": "",
           "top_users":"40000",
           "directed":"no",
-          "dataset_name":"gowalla",
+          "dataset_name":"user_tracking",
           "pattern_matrices":"yes",
-          "categories_type":"7_categories"
+          "categories_type":"5_categories"
           }'
+
+#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+#          "job": "matrix_generation_for_poi_categorization",
+#          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US'",
+#          "base_dir":"'$GOWALLA_BASE_DIR'",
+#          "directed_folder":"directed/",
+#          "not_directed_folder":"not_directed/",
+#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+#          "hour48":"yes",
+#          "personal_features_matrix":"no",
+#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+#          "country":"United States",
+#          "state":"TEXAS",
+#          "different_venues":"yes",
+#          "max_time_between_records": "",
+#          "top_users":"40000",
+#          "directed":"no",
+#          "dataset_name":"gowalla",
+#          "pattern_matrices":"yes",
+#          "categories_type":"7_categories"
+#          }'
+
+#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+#          "job": "matrix_generation_for_poi_categorization",
+#          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US'",
+#          "base_dir":"'$GOWALLA_BASE_DIR'",
+#          "directed_folder":"directed/",
+#          "not_directed_folder":"not_directed/",
+#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+#          "hour48":"yes",
+#          "personal_features_matrix":"no",
+#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+#          "country":"United States",
+#          "state":"TEXAS",
+#          "different_venues":"yes",
+#          "max_time_between_records": "",
+#          "top_users":"40000",
+#          "directed":"no",
+#          "dataset_name":"gowalla",
+#          "pattern_matrices":"yes",
+#          "categories_type":"7_categories"
+#          }'
 
 #MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
 #          "job": "matrix_generation_for_poi_categorization",
@@ -288,30 +354,56 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
 #          "categories_type":"9_categories"
 #          }'
 
+#CATEGORIZATION_CONFIG='{
+#          "job": "categorization",
+#          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
+#          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
+#          "ground_truth": "'$GROUND_TRUTH'",
+#          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/",
+#          "adjacency_matrix_filename": "'$GOWALLA_ADJACENCY_FILENAME_US'",
+#          "temporal_matrix_filename": "'$GOWALLA_TEMPORAL_FILENAME_US'",
+#          "distance_matrix_filename":"'$GOWALLA_DISTANCE_FILENAME_US'",
+#          "duration_matrix_filename":"'$GOWALLA_DURATION_FILENAME_US'",
+#          "adjacency_matrix_week_filename": "'$GOWALLA_ADJACENCY_WEEK_FILENAME_US'",
+#          "adjacency_matrix_weekend_filename": "'$GOWALLA_ADJACENCY_WEEKEND_FILENAME_US'",
+#          "temporal_matrix_week_filename": "'$GOWALLA_TEMPORAL_WEEK_FILENAME_US'",
+#          "temporal_matrix_weekend_filename": "'$GOWALLA_TEMPORAL_WEEKEND_FILENAME_US'",
+#          "distance_matrix_week_filename":"'$GOWALLA_DISTANCE_WEEK_FILENAME_US'",
+#          "distance_matrix_weekend_filename":"'$GOWALLA_DISTANCE_WEEKEND_FILENAME_US'",
+#          "duration_matrix_week_filename":"'$GOWALLA_DURATION_WEEK_FILENAME_US'",
+#          "duration_matrix_weekend_filename":"'$GOWALLA_DURATION_WEEKEND_FILENAME_US'",
+#          "graph_type":"not_directed",
+#          "dataset_name":"gowalla",
+#          "country":"US",
+#          "state":"TEXAS",
+#          "version":"normal",
+#          "categories_type":"7_categories"
+#          }'
+
 CATEGORIZATION_CONFIG='{
           "job": "categorization",
           "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
           "users_steps_filename": "'$USERS_STEPS_FILENAME'",
           "ground_truth": "'$GROUND_TRUTH'",
-          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/",
-          "adjacency_matrix_filename": "'$GOWALLA_ADJACENCY_FILENAME_US'",
-          "temporal_matrix_filename": "'$GOWALLA_TEMPORAL_FILENAME_US'",
-          "distance_matrix_filename":"'$GOWALLA_DISTANCE_FILENAME_US'",
-          "duration_matrix_filename":"'$GOWALLA_DURATION_FILENAME_US'",
-          "adjacency_matrix_week_filename": "'$GOWALLA_ADJACENCY_WEEK_FILENAME_US'",
-          "adjacency_matrix_weekend_filename": "'$GOWALLA_ADJACENCY_WEEKEND_FILENAME_US'",
-          "temporal_matrix_week_filename": "'$GOWALLA_TEMPORAL_WEEK_FILENAME_US'",
-          "temporal_matrix_weekend_filename": "'$GOWALLA_TEMPORAL_WEEKEND_FILENAME_US'",
-          "distance_matrix_week_filename":"'$GOWALLA_DISTANCE_WEEK_FILENAME_US'",
-          "distance_matrix_weekend_filename":"'$GOWALLA_DISTANCE_WEEKEND_FILENAME_US'",
-          "duration_matrix_week_filename":"'$GOWALLA_DURATION_WEEK_FILENAME_US'",
-          "duration_matrix_weekend_filename":"'$GOWALLA_DURATION_WEEKEND_FILENAME_US'",
+          "base_dir":"'$USER_TRACKING_BASE_DIR'different_venues/",
+          "adjacency_matrix_filename": "'$USER_TRACKING_ADJACENCY_FILENAME_BR'",
+          "temporal_matrix_filename": "'$USER_TRACKING_TEMPORAL_FILENAME_BR'",
+          "distance_matrix_filename":"'$USER_TRACKING_DISTANCE_FILENAME_BR'",
+          "duration_matrix_filename":"'$USER_TRACKING_DURATION_FILENAME_BR'",
+          "adjacency_matrix_week_filename": "'$USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR'",
+          "adjacency_matrix_weekend_filename": "'$USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR'",
+          "temporal_matrix_week_filename": "'$USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR'",
+          "temporal_matrix_weekend_filename": "'$USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR'",
+          "distance_matrix_week_filename":"'$USER_TRACKING_DISTANCE_WEEK_FILENAME_BR'",
+          "distance_matrix_weekend_filename":"'$USER_TRACKING_DISTANCE_WEEKEND_FILENAME_BR'",
+          "duration_matrix_week_filename":"'$USER_TRACKING_DURATION_WEEK_FILENAME_BR'",
+          "duration_matrix_weekend_filename":"'$USER_TRACKING_DURATION_WEEKEND_FILENAME_BR'",
           "graph_type":"not_directed",
-          "dataset_name":"gowalla",
-          "country":"US",
-          "state":"TEXAS",
+          "dataset_name":"user_tracking",
+          "country":"Brazil",
+          "state":"",
           "version":"normal",
-          "categories_type":"7_categories"
+          "categories_type":"5_categories"
           }'
 
 

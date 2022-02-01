@@ -7,7 +7,7 @@ class BasePoiCategorizationConfiguration:
         self.N_REPLICATIONS = (
             "n_replications", 1, False, "number of replications/executions (minimum 1) of training and evaluation process")
 
-        self.DATASET_TYPE = ("dataset_type", {'foursquare': "foursquare/", 'weeplaces': "weeplaces/", 'raw_gps': "raw_gps/",
+        self.DATASET_TYPE = ("dataset_type", {'foursquare': "foursquare/", 'weeplaces': "weeplaces/", 'user_tracking': "user_tracking/",
                                               'global_foursquare': "global_foursquare/", 'dense_foursquare': "dense_foursquare/",
                                               'gowalla': "gowalla/"})
 
@@ -38,6 +38,7 @@ class BasePoiCategorizationConfiguration:
         self.GRAPH_TYPE = ("graph_type", {'directed':'directed/', 'not_directed': 'not_directed/'})
 
         self.CATEGORY_TYPE = ("category_type", {'osm': "13_categories/", 'reduced_osm': "9_categories/",
+                                                "5_categories": "5_categories/",
                                                 "7_categories": "7_categories/",
                                                 "9_categories": "9_categories/",
                                                 "8_categories": "8_categories/",
@@ -84,6 +85,14 @@ class BasePoiCategorizationConfiguration:
                                          'Educational': 6
                                          })
 
+        self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT = ("osm_5_categories_to_int",
+                                                      {'Other': 0,
+                                         'Leisure': 1,
+                                         'Tourism': 2,
+                                         'Amenity': 3,
+                                         'Shop': 4}
+                                                      )
+
         self.OSM_9_TO_7_CATEGORIES_TO_INT = ("osm_categories_to_int",
                                         {'Culture/Tourism': 0,
                                          'Home/Hotel': 1,
@@ -125,7 +134,7 @@ class BasePoiCategorizationConfiguration:
         self.FOURSQUARE_CATEGORIES_NAMES_TO_INT_OSM_FIRST_LEVEL_9_CATEGORIES = {'Arts & Crafts Store': 0, 'Home (private)': 1, 'Medical Center': 2, 'Food Truck': 3, 'Food & Drink Shop': 3, 'Coffee Shop': 3, 'Bus Station': 4, 'Bank': 2, 'Gastropub': 5, 'Electronics Store': 6, 'Mobile Phone Shop': 6, 'Café': 3, 'Automotive Shop': 6, 'Restaurant': 3, 'American Restaurant': 3, 'Government Building': 2, 'Airport': 4, 'Office': 2, 'Mexican Restaurant': 3, 'Music Venue': 5, 'Subway': 4, 'Student Center': 2, 'Park': 2, 'Burger Joint': 3, 'Sporting Goods Shop': 6, 'Pizza Place': 3, 'Jewelry Store': 6, 'Sandwich Place': 3, 'Clothing Store': 6, 'Ice Cream Shop': 3, 'Soup Place': 3, 'College Academic Building': 2, 'Department Store': 6, 'Playground': 5, 'Tattoo Parlor': 2, 'Mall': 6, 'University': 7, 'Music Store': 6, 'Salon / Barbershop': 2, 'General College & University': 2, 'Laundry Service': 2, 'Drugstore / Pharmacy': 6, 'Cuban Restaurant': 3, 'Other Nightlife': 5, 'Gym / Fitness Center': 2, 'Italian Restaurant': 3, 'Stadium': 5, 'Church': 8, 'Train Station': 4, 'Tanning Salon': 1, 'Hotel': 2, 'Miscellaneous Shop': 6, 'Bar': 3, 'Spanish Restaurant': 3, 'Asian Restaurant': 3, 'Factory': 8, 'School': 7, 'Burrito Place': 3, 'Fast Food Restaurant': 3, 'Dumpling Restaurant': 3, 'Cupcake Shop': 3, 'Caribbean Restaurant': 3, 'Hardware Store': 6, 'Performing Arts Venue': 0, 'Convenience Store': 6, 'French Restaurant': 3, 'Bookstore': 6, 'Bike Shop': 6, 'Campground': 5, 'Gas Station / Garage': 2, 'Parking': 2, 'Salad Place': 3, 'Art Gallery': 0, 'Video Game Store': 6, 'Toy / Game Store': 6, 'Event Space': 5, 'Vegetarian / Vegan Restaurant': 3, 'Sushi Restaurant': 3, 'Chinese Restaurant': 3, 'Latin American Restaurant': 3, 'Spa / Massage': 5, 'Paper / Office Supplies Store': 6, 'Candy Store': 3, 'Camera Store': 6, 'Breakfast Spot': 3, 'Southern / Soul Food Restaurant': 3, 'Cosmetics Shop': 6, 'Community College': 7, 'Fried Chicken Joint': 3, 'Plaza': 6, 'Dessert Shop': 3, 'Cemetery': 2, 'Museum': 0, 'Bagel Shop': 6, 'Arcade': 5, 'Concert Hall': 5, 'Athletic & Sport': 5, 'Middle Eastern Restaurant': 3, 'Theater': 5, 'Medical School': 7, 'Tea Room': 3, 'Movie Theater': 5, 'Comedy Club': 5, 'Seafood Restaurant': 3, 'Synagogue': 8, 'Donut Shop': 3, 'General Entertainment': 5, 'Pool': 5, 'Japanese Restaurant': 3, 'Arts & Entertainment': 5, 'Pet Store': 6, 'German Restaurant': 3, 'Indian Restaurant': 3, 'Garden': 5, 'Hot Dog Joint': 3, 'Steakhouse': 3, 'Smoke Shop': 5, 'Pool Hall': 5, 'Harbor / Marina': 2, 'Thai Restaurant': 3, 'Bakery': 3, 'Food': 3, 'College Theater': 7, 'Mediterranean Restaurant': 3, 'African Restaurant': 3, 'Outdoors & Recreation': 5, 'Beach': 5, 'Casino': 5, 'Malaysian Restaurant': 3, 'High School': 7, 'Snack Place': 3, 'Taxi': 4, 'College & University': 7, 'Record Shop': 6, 'Temple': 8, 'Historic Site': 0, 'Furniture / Home Store': 6, 'History Museum': 0, 'Bridal Shop': 6, 'Nursery School': 7, 'Antique Shop': 6, 'Taco Place': 3, 'South American Restaurant': 3, 'Law School': 7, 'Thrift / Vintage Store': 6, 'Brazilian Restaurant': 3, 'Winery': 3, 'Greek Restaurant': 3, 'Falafel Restaurant': 3, 'Tapas Restaurant': 3, 'Eastern European Restaurant': 3, 'Korean Restaurant': 3, 'Ski Area': 5, 'Rental Car Location': 4, 'Spiritual Center': 8, 'Science Museum': 0, 'Car Dealership': 6, 'Flea Market': 6, 'Art Museum': 0, 'Gift Shop': 6, 'Portuguese Restaurant': 3, 'Flower Shop': 6, 'Hobby Shop': 6, 'Car Wash': 2, 'Board Shop': 6, 'Cajun / Creole Restaurant': 3, 'Mac & Cheese Joint': 3, 'Shop & Service': 6, 'Vietnamese Restaurant': 3, 'Video Store': 6, 'Travel & Transport': 4, 'Dim Sum Restaurant': 3, 'Racetrack': 5, 'Elementary School': 7, 'Zoo': 5, 'Gaming Cafe': 3, 'Swiss Restaurant': 3, 'Travel Lounge': 4, 'Trade School': 7, 'Australian Restaurant': 3, 'Funeral Home': 2, 'Peruvian Restaurant': 3, 'College Stadium': 7, 'Bike Rental / Bike Share': 4, 'Filipino Restaurant': 3, 'Arepa Restaurant': 3, 'Turkish Restaurant': 3, 'Embassy / Consulate': 2, 'Aquarium': 5, 'Scandinavian Restaurant': 3, 'Middle School': 7, 'Financial or Legal Service': 2, 'Fish & Chips Shop': 6, 'Afghan Restaurant': 3, 'Motorcycle Shop': 6, 'Ethiopian Restaurant': 3, 'Gluten-free Restaurant': 3, 'Argentinian Restaurant': 3, 'Moroccan Restaurant': 3, 'Nightlife Spot': 5, 'Planetarium': 5, 'Storage Facility': 2, 'Molecular Gastronomy Restaurant': 3, 'Internet Cafe': 3, 'Military Base': 8, 'Public Art': 0, 'Market': 6, 'Photography Lab': 2, 'Garden Center': 5, 'Music School': 7, 'Pet Service': 2, 'Rest Area': 8, 'Library': 8, 'Sculpture Garden': 8}
 
         self.DATASET_CATEGORIES_TO_INT_OSM_CATEGORIES = ("dataset_categories_to_int_osm_categories",
-                                                         {"raw_gps": {"7_categories_osm": self.OSM_9_TO_7_CATEGORIES_TO_INT},
+                                                         {"user_tracking": {"5_categories": self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT},
                                                           "foursquare": {"osm": self.FOURSQUARE_CATEGORIES_NAMES_TO_INT_OSM_FIRST_LEVEL_13_CATEGORIES,
                                                                          "reduced_osm": self.FOURSQUARE_CATEGORIES_NAMES_TO_INT_OSM_FIRST_LEVEL_9_CATEGORIES}},
                                                          "")
@@ -158,12 +167,14 @@ class BasePoiCategorizationConfiguration:
         self.INT_TO_CATEGORIES = ("int_to_categories", {
             "dense_foursquare": {str(i): list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())[i] for i in
                                  range(len(list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())))},
-            "gowalla": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))}})
+            "gowalla": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))},
+        "user_tracking": {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))}})
 
         self.CATEGORIES = ("categories", {'weeplaces': {'7_categories_osm': self.OSM_7_CATEGORIES_TO_INT[1]},
                                           'global_foursquare': {'8_categories': self.GLOBAL_FOURSQUARE_8_CATEGORIES},
                                           'dense_foursquare': {'9_categories': self.DENSE_FORUSQUARE_9_CATEGORIES},
-                                          'gowalla': {'7_categories': self.GOWALLA_7_CATEGORIES}})
+                                          'gowalla': {'7_categories': self.GOWALLA_7_CATEGORIES},
+                                          'user_tracking': {'5_categories': list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())}})
 
         # MATRIX_MAX_SIZE = ("matrix_max_size", 1166, False, "max size of the adjacency matrix and features matrix")
 
@@ -202,6 +213,18 @@ class BasePoiCategorizationConfiguration:
                                                            'support': []}},
                                          "report")
 
+        self.REPORT_5_INT_CATEGORIES = ("report_5_int_categories",
+                                        {'0': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
+                                         '1': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
+                                         '2': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
+                                         '3': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
+                                         '4': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
+                                         'accuracy': [],
+                                         'macro avg': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
+                                         'weighted avg': {'precision': [], 'recall': [], 'f1-score': [],
+                                                          'support': []}},
+                                        "report")
+
         self.REPORT_7_INT_CATEGORIES = ("report_7_int_categories",
                                         {'0': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
                                          '1': {'precision': [], 'recall': [], 'f1-score': [], 'support': []},
@@ -218,6 +241,7 @@ class BasePoiCategorizationConfiguration:
 
         self.REPORT_MODEL = ("report_model",
                              {'reduced_osm': self.REPORT_9_INT_CATEGORIES[1],
+                              '5_categories': self.REPORT_5_INT_CATEGORIES[1],
                               '7_categories_osm': self.REPORT_7_INT_CATEGORIES[1],
                               '7_categories': self.REPORT_7_INT_CATEGORIES[1],
                               '9_categories': self.REPORT_9_INT_CATEGORIES[1],

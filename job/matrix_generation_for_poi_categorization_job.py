@@ -187,6 +187,7 @@ class MatrixGenerationForPoiCategorizationJob():
         if pattern_matrices == "yes":
             self.matrix_generation_for_poi_categorization_domain\
                 .generate_pattern_matrices(users_checkin,
+                                           dataset_name,
                                            adjacency_matrix_filename,
                                            adjacency_weekday_matrix_filename,
                                            adjacency_weekend_matrix_filename,

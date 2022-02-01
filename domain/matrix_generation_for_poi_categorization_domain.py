@@ -21,6 +21,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         self.max_events = 200
 
     def filter_user(self, user_checkin,
+                    dataset_name,
                     userid_column,
                    userid,
                    datetime_column,
@@ -35,11 +36,11 @@ class MatrixGenerationForPoiCategorizationDomain:
         #
         # else:
         #     categories = self.categories_preproccessing(categories, categories_to_int_osm)
-
-        if len(user_checkin[category_column].unique().tolist()) < 7:
-            return pd.DataFrame({'tipo': ['nan'], userid_column: [userid]})
-        else:
-            return pd.DataFrame({'tipo': ['bom'], userid_column: [userid]})
+        if dataset_name == "gowalla":
+            if len(user_checkin[category_column].unique().tolist()) < 7:
+                return pd.DataFrame({'tipo': ['nan'], userid_column: [userid]})
+        elif dataset_name == "user_tracking":
+                return pd.DataFrame({'tipo': ['bom'], userid_column: [userid]})
 
     def generate_user_matrices(self, user_checkin,
                                userid,
@@ -62,7 +63,8 @@ class MatrixGenerationForPoiCategorizationDomain:
         :return: adjacency, temporal, and path matrices
         """
 
-        user_checkin = user_checkin.sort_values(by=[datetime_column]).head(self.max_events)
+        user_checkin = user_checkin.sort_values(by=[datetime_column])
+        #user_checkin = user_checkin.head(self.max_events)
         latitude_list = user_checkin[latitude_column].tolist()
         longitude_list = user_checkin[longitude_column].tolist()
 
@@ -289,6 +291,7 @@ class MatrixGenerationForPoiCategorizationDomain:
 
     def generate_pattern_matrices(self,
                                   users_checkin,
+                                  dataset_name,
                                   adjacency_matrix_filename,
                                   adjacency_weekday_matrix_filename,
                                   adjacency_weekend_matrix_filename,
@@ -324,7 +327,7 @@ class MatrixGenerationForPoiCategorizationDomain:
 
         # shuffle
         users_checkin = users_checkin.sample(frac=1, random_state=1).reset_index(drop=True)
-
+        print(users_checkin)
         users_checkin = users_checkin.dropna(subset=[userid_column, category_column, locationid_column, datetime_column])
         users_checkin = users_checkin.query(category_column + " != ''")
         ids = users_checkin[userid_column].unique().tolist()
@@ -337,13 +340,14 @@ class MatrixGenerationForPoiCategorizationDomain:
         # limitar usuarios
         print("us", len(ids))
         #users_checkin = users_checkin.query(userid_column + " in "+str(ids[:num_users]))
-        selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
+        selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, dataset_name, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
         selected_ids = selected_ids.query("tipo != 'nan'")
         selected_ids = selected_ids[userid_column].tolist()
         users_checkin = users_checkin.query(userid_column + " in " + str(selected_ids))
         print("Quantidade de usuários: ", len(selected_ids))
         start = time.time()
-        users_checkin = users_checkin.groupby(userid_column).apply(lambda e: self.generate_user_matrices(e, e[userid_column].iloc[0],
+        users_checkin['userid'] = users_checkin[userid_column].to_numpy()
+        users_checkin = users_checkin.groupby('userid').apply(lambda e: self.generate_user_matrices(e, e['userid'].iloc[0],
                                                                                                          datetime_column,
                                                                                                          locationid_column,
                                                                                                          category_column,
