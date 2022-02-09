@@ -64,7 +64,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         """
 
         user_checkin = user_checkin.sort_values(by=[datetime_column])
-        #user_checkin = user_checkin.head(self.max_events)
+        user_checkin = user_checkin.head(self.max_events)
         latitude_list = user_checkin[latitude_column].tolist()
         longitude_list = user_checkin[longitude_column].tolist()
 
@@ -339,12 +339,12 @@ class MatrixGenerationForPoiCategorizationDomain:
         count = 0
         # limitar usuarios
         print("us", len(ids))
-        #users_checkin = users_checkin.query(userid_column + " in "+str(ids[:num_users]))
-        selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, dataset_name, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
-        selected_ids = selected_ids.query("tipo != 'nan'")
-        selected_ids = selected_ids[userid_column].tolist()
-        users_checkin = users_checkin.query(userid_column + " in " + str(selected_ids))
-        print("Quantidade de usuários: ", len(selected_ids))
+        users_checkin = users_checkin.query(userid_column + " in "+str(ids[:1000]))
+        # selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, dataset_name, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
+        # selected_ids = selected_ids.query("tipo != 'nan'")
+        # selected_ids = selected_ids[userid_column].tolist()
+        # users_checkin = users_checkin.query(userid_column + " in " + str(selected_ids))
+        # print("Quantidade de usuários: ", len(selected_ids))
         start = time.time()
         users_checkin['userid'] = users_checkin[userid_column].to_numpy()
         users_checkin = users_checkin.groupby('userid').apply(lambda e: self.generate_user_matrices(e, e['userid'].iloc[0],

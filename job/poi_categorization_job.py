@@ -36,6 +36,7 @@ class PoiCategorizationJob:
         duration_matrix_weekday_filename = Input.get_instance().inputs['duration_matrix_week_filename']
         duration_matrix_weekend_filename = Input.get_instance().inputs['duration_matrix_weekend_filename']
         dataset_name = Input.get_instance().inputs['dataset_name']
+        base = Input.get_instance().inputs['base']
         categories_type = Input.get_instance().inputs['categories_type']
         country = Input.get_instance().inputs['country']
         state = Input.get_instance().inputs['state']
@@ -50,16 +51,20 @@ class PoiCategorizationJob:
         n_splits = self.poi_categorization_configuration.N_SPLITS[1]
         n_replications = self.poi_categorization_configuration.N_REPLICATIONS[1]
         epochs = self.poi_categorization_configuration.EPOCHS[1][country]
-
+        print("contar", self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name])
+        print("ori", self.poi_categorization_configuration.INT_TO_CATEGORIES[1])
         output_base_dir = self.poi_categorization_configuration.OUTPUT_DIR[1]
         dataset_type_dir = self.poi_categorization_configuration.DATASET_TYPE[1][dataset_name]
         category_type_dir = self.poi_categorization_configuration.CATEGORY_TYPE[1][categories_type]
-        int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name]
+        int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name][categories_type]
         graph_type_dir = self.poi_categorization_configuration.GRAPH_TYPE[1][graph_type]
         country_dir = self.poi_categorization_configuration.COUNTRY[1][country]
         state_dir = self.poi_categorization_configuration.STATE[1][state]
         version_dir = self.poi_categorization_configuration.VERSION[1][version]
+        if len(base) > 0:
+            base = base + "/"
         output_dir = self.poi_categorization_configuration.output_dir(output_base_dir=output_base_dir,
+                                                                      base=base,
                                                                       graph_type=graph_type_dir,
                                                                       dataset_type=dataset_type_dir,
                                                                       country=country_dir,
@@ -68,12 +73,19 @@ class PoiCategorizationJob:
                                                                       state_dir=state_dir,
                                                                       max_time_between_records_dir="")
 
+
         base_report = self.poi_categorization_configuration.REPORT_MODEL[1][categories_type]
         max_time_between_records_dir = ""
+
         if len(state) > 0:
             base_dir = base_dir + graph_type + "/" + country_dir + state + "/" + max_time_between_records_dir
         else:
-            base_dir = base_dir + graph_type + "/" + country_dir + max_time_between_records_dir
+            base_dir = base_dir + base + graph_type + "/" + country_dir + max_time_between_records_dir
+
+        if len(base) > 0:
+            base = True
+        else:
+            base = False
 
         adjacency_matrix_filename = base_dir + adjacency_matrix_filename
         temporal_matrix_filename = base_dir + temporal_matrix_filename
@@ -174,6 +186,7 @@ class PoiCategorizationJob:
                                                              base_report,
                                                              epochs,
                                                              class_weight,
+                                                             base,
                                                              country,
                                                              version,
                                                              output_dir)

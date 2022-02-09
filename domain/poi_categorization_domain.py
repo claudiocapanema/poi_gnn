@@ -14,9 +14,10 @@ from tensorflow.keras import utils as np_utils
 from loader.file_loader import FileLoader
 from loader.poi_categorization_loader import PoiCategorizationLoader
 from extractor.file_extractor import FileExtractor
-from model.neural_network.poi_gnn.BR.gnn import GNNBR
+from model.neural_network.poi_gnn.BR.gnn_br_transfer_learning import GNNBR
 from model.neural_network.poi_gnn.US.gnn import GNNUS
 from model.neural_network.poi_gnn.path.gnn import GNNPath
+from model.neural_network.poi_gnn.US.gnn_base_model_for_transfer_learning import GNNUS_BaseModel
 from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category, top_k_rows_centrality, top_k_rows_order
 
 
@@ -740,6 +741,7 @@ class PoiCategorizationDomain:
                                                          base_report,
                                                          epochs,
                                                          class_weight,
+                                                         base,
                                                          country,
                                                          version,
                                                          output_dir):
@@ -773,6 +775,7 @@ class PoiCategorizationDomain:
                                                                                 epochs,
                                                                                 seed,
                                                                                 country,
+                                                                                 base,
                                                                                 output_dir,
                                                                                 version)
 
@@ -802,6 +805,7 @@ class PoiCategorizationDomain:
                                  epochs,
                                  seed,
                                  country,
+                                 base,
                                  output_dir,
                                  version="normal",
                                  model=None):
@@ -862,13 +866,17 @@ class PoiCategorizationDomain:
                 print("Tipo de rede neural: NORMAL")
                 model = GNNBR(num_classes, max_size, max_size_sequence,
                             self.features_num_columns).build(seed=seed)
-                lr = 0.0001
+                lr = 0.0005
             elif version == "PATH":
                 print("PATH")
                 model = GNNPath(num_classes, max_size, max_size_sequence,
                             self.features_num_columns).build(seed=seed)
         elif country == 'US':
-            model = GNNUS(num_classes, max_size, max_size_sequence,
+            if base:
+                model = GNNUS_BaseModel(num_classes, max_size, max_size_sequence,
+                              self.features_num_columns).build(seed=seed)
+            else:
+                model = GNNUS(num_classes, max_size, max_size_sequence,
                         self.features_num_columns).build(seed=seed)
         if country == 'US':
             batch = max_size * 1

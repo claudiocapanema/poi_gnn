@@ -52,7 +52,7 @@ class PoiCategorizationBaselinesJob:
         country_dir = self.poi_categorization_baselines_configuration.COUNTRY[1][country]
         state_dir = self.poi_categorization_baselines_configuration.STATE[1][state]
         category_type_dir = self.poi_categorization_baselines_configuration.CATEGORY_TYPE[1][categories_type]
-        int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name]
+        int_to_category = self.poi_categorization_configuration.INT_TO_CATEGORIES[1][dataset_name][categories_type]
         model_name_dir = self.poi_categorization_baselines_configuration.MODEL_NAME[1][model_name]
         graph_type_dir = self.poi_categorization_baselines_configuration.GRAPH_TYPE[1][graph_type]
         units = self.poi_categorization_baselines_configuration.UNITS[1][dataset_name][country][model_name]

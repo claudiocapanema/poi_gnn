@@ -25,7 +25,7 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                                             "locationid_column": "poi_id",
                                             "country_column": "country_name",
                                             "state_column": "state_name",
-                                            "category_column": "poi_resulting_id",
+                                            "category_column": "poi_resulting",
                                             "category_name_column": "poi_resulting",
                                             "latitude_column": "latitude",
                                             "longitude_column": "longitude"},
@@ -58,7 +58,7 @@ class MatrixGenerationForPoiCategorizationConfiguration(Enum):
                          })
 
     NUM_USERS = ("num_users", {'dense_foursquare': 30000,
-                               'gowalla': 15000,
+                               'gowalla': 2000,
                                'user_tracking': 10000})
 
     # userid	placeid	datetime	lat	lon	city	category	local_datetime

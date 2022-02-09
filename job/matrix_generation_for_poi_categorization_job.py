@@ -40,6 +40,7 @@ class MatrixGenerationForPoiCategorizationJob():
         categories_type = Input.get_instance().inputs['categories_type']
         personal_matrix = Input.get_instance().inputs['personal_features_matrix']
         hour48 = Input.get_instance().inputs['hour48']
+        base = Input.get_instance().inputs['base']
         country = Input.get_instance().inputs['country']
         state = Input.get_instance().inputs['state']
         max_time_between_records = Input.get_instance().inputs['max_time_between_records']
@@ -82,7 +83,7 @@ class MatrixGenerationForPoiCategorizationJob():
         country_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['country_column']
         state_column = MatrixGenerationForPoiCategorizationConfiguration.DATASET_COLUMNS.get_value()[dataset_name]['state_column']
         num_users = MatrixGenerationForPoiCategorizationConfiguration.NUM_USERS.get_value()[dataset_name]
-        category_to_int = self.poi_categorization_configuration.GOWALLA_7_CATEGORIES
+        category_to_int = self.poi_categorization_configuration.CATEGORIES_TO_INT[dataset_name][categories_type]
         max_time_between_records_dir = self.poi_categorization_configuration.MAX_TIME_BETWEEN_RECORDS[1][max_time_between_records]
 
         # get list of valid categories for the given dataset
@@ -146,19 +147,21 @@ class MatrixGenerationForPoiCategorizationJob():
         #     max_time_between_records = max_time_between_records + "/"
         if personal_matrix:
             directed = False
-            folder = base_dir + not_directed_folder + country_folder + state_folder + max_time_between_records_dir
+            folder = base_dir + base + "/" + not_directed_folder + country_folder + state_folder + max_time_between_records_dir
             adjacency_matrix_base_filename = folder + adjacency_matrix_base_filename + "not_directed_personal_" + hour_file + categories_type + ".csv"
             features_matrix_base_filename = folder + features_matrix_base_filename + "not_directed_personal_" + hour_file + categories_type + ".csv"
             sequence_matrix_base_filename = folder + sequence_matrix_base_filename + "not_directed_personal_" + hour_file + categories_type + ".csv"
         elif directed == "no":
             directed = False
-            folder = base_dir + different_venues_dir + not_directed_folder + country_folder + state_folder + max_time_between_records_dir
+            folder = base_dir + different_venues_dir + base + "/" + not_directed_folder + country_folder + state_folder + max_time_between_records_dir
+            print("Pasta: ", folder)
             self.folder_generation(folder)
             # features_matrix_base_filename = folder+features_matrix_base_filename+"not_directed_"+hour_file+categories_type+"_"+country+".csv"
             # sequence_matrix_base_filename = folder+sequence_matrix_base_filename+"not_directed_"+hour_file+categories_type+"_"+country+".csv"
 
             country = convert_country[country]
             adjacency_matrix_filename = folder + adjacency_matrix_base_filename + "_not_directed_" + hour_file + categories_type + "_" + country + ".csv"
+            print("nome matriz", adjacency_matrix_filename)
             adjacency_weekday_matrix_filename = folder + adjacency_matrix_base_filename + "_weekday_not_directed_"+hour_file+categories_type+"_"+country+".csv"
             adjacency_weekend_matrix_filename = folder+adjacency_matrix_base_filename + "_weekend_not_directed_"+hour_file+categories_type+"_"+country+".csv"
             temporal_matrix_filename = folder+features_matrix_base_filename + "_not_directed_"+hour_file+categories_type+"_"+country+".csv"

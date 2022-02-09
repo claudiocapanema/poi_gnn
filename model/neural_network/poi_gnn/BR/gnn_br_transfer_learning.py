@@ -180,7 +180,7 @@ class GNNBR:
         Duration_weekend_input = Input((self.max_size_matrices, self.max_size_matrices))
         # kernel_channels = 2
 
-        base_model = tf.keras.models.load_model("/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_job/not_directed/gowalla/US/TX/7_categories/5_folds/1_replications/")
+        base_model = tf.keras.models.load_model("output/poi_categorization_job/base/not_directed/gowalla/US/5_categories/5_folds/1_replications/")
         out = base_model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Distance_week_input, Distance_weekend_input, Duration_input, Duration_week_input, Duration_weekend_input])
 
         # out_temporal = ARMAConv(20, activation='elu',
@@ -237,7 +237,6 @@ class GNNBR:
         # #                         activation="softmax")([out_weekend_duration, A_weekend_input])
 
         # out = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration
-        out = Dense(5, activation='softmax')(out)
 
         model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Distance_week_input, Distance_weekend_input, Duration_input, Duration_week_input, Duration_weekend_input], outputs=[out])
 

@@ -87,10 +87,10 @@ class BasePoiCategorizationConfiguration:
 
         self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT = ("osm_5_categories_to_int",
                                                       {'Other': 0,
-                                         'Leisure': 1,
-                                         'Tourism': 2,
-                                         'Amenity': 3,
-                                         'Shop': 4}
+                                                       'Shop': 1,
+                                                        'Leisure': 2,
+                                                       'Amenity': 3,
+                                                        'Tourism': 4}
                                                       )
 
         self.OSM_9_TO_7_CATEGORIES_TO_INT = ("osm_categories_to_int",
@@ -164,22 +164,26 @@ class BasePoiCategorizationConfiguration:
                                      'Outdoors': 5,
                                      'Nightlife': 6}
 
+        self.CATEGORIES_TO_INT = {"gowalla": {"5_categories": self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1], "7_categories": self.GOWALLA_7_CATEGORIES},
+                                  "user_tracking": {"5_categories": self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1], "7_categories": self.GOWALLA_7_CATEGORIES}}
+
         self.INT_TO_CATEGORIES = ("int_to_categories", {
             "dense_foursquare": {str(i): list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())[i] for i in
                                  range(len(list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())))},
-            "gowalla": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))},
-        "user_tracking": {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))}})
+            "gowalla": {"7_categories": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))},
+                        "5_categories": {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))}},
+        "user_tracking": {'5_categories': {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))}}})
 
         self.CATEGORIES = ("categories", {'weeplaces': {'7_categories_osm': self.OSM_7_CATEGORIES_TO_INT[1]},
                                           'global_foursquare': {'8_categories': self.GLOBAL_FOURSQUARE_8_CATEGORIES},
                                           'dense_foursquare': {'9_categories': self.DENSE_FORUSQUARE_9_CATEGORIES},
-                                          'gowalla': {'7_categories': self.GOWALLA_7_CATEGORIES},
+                                          'gowalla': {'7_categories': self.GOWALLA_7_CATEGORIES, "5_categories": list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())},
                                           'user_tracking': {'5_categories': list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())}})
 
         # MATRIX_MAX_SIZE = ("matrix_max_size", 1166, False, "max size of the adjacency matrix and features matrix")
 
         self.MAX_SIZE_MATRICES = (
-            "max_size_matrices", 10, False, "max size of the adjacency matrices and features (row size) ones")
+            "max_size_matrices", 8, False, "max size of the adjacency matrices and features (row size) ones")
 
 
         self.REPORT_9_INT_CATEGORIES = ("report_9_int_categories",
@@ -247,8 +251,8 @@ class BasePoiCategorizationConfiguration:
                               '9_categories': self.REPORT_9_INT_CATEGORIES[1],
                               '8_categories': self.REPORT_8_INT_CATEGORIES[1]})
 
-    def output_dir(self, output_base_dir, graph_type, dataset_type, country, category_type, version="", model_name="", state_dir="", max_time_between_records_dir=""):
+    def output_dir(self, output_base_dir, base, graph_type, dataset_type, country, category_type, version="", model_name="", state_dir="", max_time_between_records_dir=""):
 
-        return output_base_dir+graph_type+dataset_type+country+state_dir+max_time_between_records_dir+category_type+version+model_name
+        return output_base_dir+base+graph_type+dataset_type+country+state_dir+max_time_between_records_dir+category_type+version+model_name
 
 
