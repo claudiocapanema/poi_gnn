@@ -152,7 +152,7 @@ class GNNUS_BaseModel:
 
         out = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration
 
-        model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Distance_week_input, Distance_weekend_input, Duration_input, Duration_week_input, Duration_weekend_input], outputs=[out])
+        model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Duration_input], outputs=[out])
 
         return model
 

@@ -93,45 +93,40 @@ class PoiCategorizationJob:
         duration_matrix_filename = base_dir + duration_matrix_filename
         adjacency_matrix_week_filename = base_dir + adjacency_matrix_week_filename
         temporal_matrix_week_filename = base_dir + temporal_matrix_week_filename
-        distance_matrix_weekday_filename = base_dir + distance_matrix_weekday_filename
-        duration_matrix_weekday_filename = base_dir + duration_matrix_weekday_filename
         adjacency_matrix_weekend_filename = base_dir + adjacency_matrix_weekend_filename
         temporal_matrix_weekend_filename = base_dir + temporal_matrix_weekend_filename
-        distance_magrix_weekend_filename = base_dir + distance_magrix_weekend_filename
-        duration_matrix_weekend_filename = base_dir + duration_matrix_weekend_filename
 
         self.files_verification(country, state, adjacency_matrix_filename, temporal_matrix_filename,
                            adjacency_matrix_week_filename, temporal_matrix_week_filename,
                            adjacency_matrix_weekend_filename, temporal_matrix_weekend_filename,
-                           distance_matrix_filename, distance_matrix_weekday_filename, distance_magrix_weekend_filename,
-                           duration_matrix_filename, duration_matrix_weekday_filename, duration_matrix_weekend_filename)
+                           distance_matrix_filename,
+                           duration_matrix_filename)
 
         # normal matrices
         adjacency_df, temporal_df, distance_df, duration_df = self.poi_categorization_domain.\
             read_matrix(adjacency_matrix_filename, temporal_matrix_filename, distance_matrix_filename, duration_matrix_filename)
         print("arquivos: \n", adjacency_matrix_filename)
+        print(adjacency_df)
         print(temporal_matrix_filename)
 
         # week matrices
         adjacency_week_df, temporal_week_df, distance_week_df, duration_week_df = self.poi_categorization_domain. \
-            read_matrix(adjacency_matrix_week_filename, temporal_matrix_week_filename, distance_matrix_weekday_filename, duration_matrix_weekday_filename)
+            read_matrix(adjacency_matrix_week_filename, temporal_matrix_week_filename)
         # weekend matrices
         adjacency_weekend_df, temporal_weekend_df, distance_weekend_df, duration_weekend_df = self.poi_categorization_domain. \
-            read_matrix(adjacency_matrix_weekend_filename, temporal_matrix_weekend_filename,
-                        distance_magrix_weekend_filename, duration_matrix_weekday_filename)
+            read_matrix(adjacency_matrix_weekend_filename, temporal_matrix_weekend_filename)
         print("Verificação de matrizes")
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
-                                   adjacency_weekend_df, temporal_weekend_df, distance_df, distance_week_df, distance_weekend_df, duration_df, duration_week_df, duration_weekend_df)
+                                   adjacency_weekend_df, temporal_weekend_df, distance_df, duration_df)
 
 
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'distance': distance_df, 'duration': duration_df},
-                  'week': {'adjacency': adjacency_week_df, 'temporal': temporal_week_df, 'distance': distance_week_df, 'duration': duration_week_df},
-                  'weekend': {'adjacency': adjacency_weekend_df, 'temporal': temporal_weekend_df, 'distance': distance_weekend_df, 'duration': duration_weekend_df}}
+                  'week': {'adjacency': adjacency_week_df, 'temporal': temporal_week_df},
+                  'weekend': {'adjacency': adjacency_weekend_df, 'temporal': temporal_weekend_df}}
 
         print("Preprocessing")
         users_categories, adjacency_df, temporal_df, distance_df, duration_df, adjacency_week_df, temporal_week_df,\
-        distance_week_df, duration_week_df, adjacency_weekend_df, temporal_weekend_df, \
-        distance_weekend_df, duration_weekend_df = self.poi_categorization_domain.adjacency_preprocessing(inputs,
+        adjacency_weekend_df, temporal_weekend_df = self.poi_categorization_domain.adjacency_preprocessing(inputs,
                                     max_size_matrices,
                                     max_size_paths,
                                     True,
@@ -139,18 +134,16 @@ class PoiCategorizationJob:
                                     7)
 
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
-                              adjacency_weekend_df, temporal_weekend_df, distance_df, distance_week_df,
-                                   distance_weekend_df, duration_df, duration_week_df, duration_weekend_df)
+                              adjacency_weekend_df, temporal_weekend_df, distance_df, distance_week_df)
 
 
 
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df,
                                'categories': users_categories, 'distance': distance_df, 'duration': duration_df},
                   'week': {'adjacency': adjacency_week_df, 'temporal': temporal_week_df,
-                           'categories': users_categories, 'distance': distance_week_df, 'duration': duration_week_df},
+                           'categories': users_categories},
                   'weekend': {'adjacency': adjacency_weekend_df, 'temporal': temporal_weekend_df,
-                              'categories': users_categories, 'distance': distance_weekend_df,
-                              'duration': duration_weekend_df}}
+                              'categories': users_categories}}
 
         usuarios = len(adjacency_df)
 
@@ -204,15 +197,12 @@ class PoiCategorizationJob:
     def files_verification(self, country, state, adjacency_matrix_filename, temporal_matrix_filename,
                            adjacency_matrix_week_filename, temporal_matrix_week_filename,
                            adjacency_matrix_weekend_filename, temporal_matrix_weekend_filename,
-                           distance_matrix_filename, distance_matrix_weekday_filename, distance_magrix_weekend_filename,
-                           duration_matrix_filename, duration_matrix_weekday_filename, duration_matrix_weekend_filename):
+                           distance_matrix_filename,
+                           duration_matrix_filename):
 
         if country not in adjacency_matrix_filename or country not in temporal_matrix_filename \
                 or country not in adjacency_matrix_week_filename or country not in adjacency_matrix_weekend_filename or country not in \
-                distance_matrix_filename \
-                or country not in distance_matrix_weekday_filename or country not in \
-                distance_magrix_weekend_filename or country not in duration_matrix_filename or country not in \
-                duration_matrix_weekday_filename or country not in duration_matrix_weekday_filename:
+                distance_matrix_filename:
 
             print("matrizes diferentes do país")
             print(adjacency_matrix_filename)
@@ -235,24 +225,22 @@ class PoiCategorizationJob:
             print(temporal_matrix_weekend_filename)
             raise
 
-        if 'week' not in adjacency_matrix_week_filename or 'week' not in temporal_matrix_week_filename or 'week' not in distance_matrix_weekday_filename or 'week' not in duration_matrix_weekday_filename:
+        if 'week' not in adjacency_matrix_week_filename or 'week' not in temporal_matrix_week_filename:
             print("matrizes diferentes de week")
             print(adjacency_matrix_week_filename)
             print(temporal_matrix_week_filename)
-            print(distance_matrix_weekday_filename)
-            print(duration_matrix_weekday_filename)
             raise
 
-        if 'weekend' not in adjacency_matrix_weekend_filename or 'weekend' not in temporal_matrix_weekend_filename or 'weekend' not in distance_magrix_weekend_filename or 'weekend' not in duration_matrix_weekend_filename:
+        if 'weekend' not in adjacency_matrix_weekend_filename or 'weekend' not in temporal_matrix_weekend_filename:
             print("matrizes diferentes weekend")
             print(adjacency_matrix_weekend_filename)
             print(temporal_matrix_weekend_filename)
             raise
 
     def matrices_verification(self, adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
-                              adjacency_weekend_df, temporal_weekend_df,  distance_df, distance_weekday_df, distance_weekend_df, duration_df, duration_weekday_df, duration_weekend_df):
+                              adjacency_weekend_df, temporal_weekend_df,  distance_df, duration_df):
 
-        if not(len(adjacency_df) == len(temporal_df) == len(adjacency_week_df) == len(temporal_week_df) == len(adjacency_weekend_df) == len(temporal_weekend_df) == len(distance_df) == len(distance_weekday_df) == len(distance_weekend_df) == len(duration_df) == len(duration_weekday_df) == len(duration_weekend_df)):
+        if not(len(adjacency_df) == len(temporal_df) == len(adjacency_week_df) == len(temporal_week_df) == len(adjacency_weekend_df) == len(temporal_weekend_df) == len(distance_df)):
             print("Matrizes com tamanhos diferentes")
             raise
         else:

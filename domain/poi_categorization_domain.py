@@ -281,13 +281,9 @@ class PoiCategorizationDomain:
         # week
         matrices_week_list = []
         temporal_matrices_week_list = []
-        distance_matrices_week_list = []
-        duration_matrices_week_list = []
         # weekend
         matrices_weekend_list = []
         temporal_matrices_weekend_list = []
-        distance_matrices_weekend_list = []
-        duration_matrices_weekend_list = []
 
         users_categories = []
         flatten_users_categories = []
@@ -305,13 +301,9 @@ class PoiCategorizationDomain:
             # week
             matrix_week_df = inputs['week']['adjacency']['matrices'].tolist()
             temporal_week_df = inputs['week']['temporal']['matrices'].tolist()
-            distance_week_df = inputs['week']['distance']['matrices'].tolist()
-            duration_week_df = inputs['week']['duration']['matrices'].tolist()
             # weekend
             matrix_weekend_df = inputs['weekend']['adjacency']['matrices'].tolist()
             temporal_weekend_df = inputs['weekend']['temporal']['matrices'].tolist()
-            distance_weekend_df = inputs['weekend']['distance']['matrices'].tolist()
-            duration_weekend_df = inputs['weekend']['duration']['matrices'].tolist()
 
 
         if len(ids) != len(matrix_df):
@@ -411,32 +403,12 @@ class PoiCategorizationDomain:
                 user_distance_matrix = json.loads(user_distance_matrix)
                 user_distance_matrix = np.array(user_distance_matrix)
                 user_distance_matrix = user_distance_matrix[idx[:,None], idx]
-                # week
-                user_distance_matrix_week = distance_week_df[i]
-                user_distance_matrix_week = json.loads(user_distance_matrix_week)
-                user_distance_matrix_week = np.array(user_distance_matrix_week)
-                user_distance_matrix_week = user_distance_matrix_week[idx[:,None], idx]
-                # weekend
-                user_distance_matrix_weekend = distance_weekend_df[i]
-                user_distance_matrix_weekend = json.loads(user_distance_matrix_weekend)
-                user_distance_matrix_weekend = np.array(user_distance_matrix_weekend)
-                user_distance_matrix_weekend = user_distance_matrix_weekend[idx[:,None], idx]
 
                 """duration"""
                 user_duration_matrix = duration_df[i]
                 user_duration_matrix = json.loads(user_duration_matrix)
                 user_duration_matrix = np.array(user_duration_matrix)
                 user_duration_matrix = user_duration_matrix[idx[:,None], idx]
-                # week
-                user_duration_matrix_week = duration_week_df[i]
-                user_duration_matrix_week = json.loads(user_duration_matrix_week)
-                user_duration_matrix_week = np.array(user_duration_matrix_week)
-                user_duration_matrix_week = user_duration_matrix_week[idx[:,None], idx]
-                # weekend
-                user_duration_matrix_weekend = duration_weekend_df[i]
-                user_duration_matrix_weekend = json.loads(user_duration_matrix_weekend)
-                user_duration_matrix_weekend = np.array(user_duration_matrix_weekend)
-                user_duration_matrix_weekend = user_duration_matrix_weekend[idx[:,None], idx]
 
             """"""
             matrices_list.append(user_matrix)
@@ -449,13 +421,9 @@ class PoiCategorizationDomain:
                 # week
                 matrices_week_list.append(user_matrix_week)
                 temporal_matrices_week_list.append(user_temporal_matrix_week)
-                distance_matrices_week_list.append(user_distance_matrix_week)
-                duration_matrices_week_list.append(user_duration_matrix_week)
                 # weekend
                 matrices_weekend_list.append(user_matrix_weekend)
                 temporal_matrices_weekend_list.append(user_temporal_matrix_weekend)
-                distance_matrices_weekend_list.append(user_distance_matrix_weekend)
-                duration_matrices_weekend_list.append(user_duration_matrix_weekend)
 
         self.features_num_columns = temporal_matrices_list[-1].shape[1]
         matrices_list = np.array(matrices_list)
@@ -468,15 +436,11 @@ class PoiCategorizationDomain:
             # week
             matrices_week_list = np.array(matrices_week_list)
             temporal_matrices_week_list = np.array(temporal_matrices_week_list)
-            distance_matrices_week_list = np.array(distance_matrices_week_list)
-            duration_matrices_week_list = np.array(duration_matrices_weekend_list)
 
             # weekend
             matrices_weekend_list = np.array(matrices_weekend_list)
             temporal_matrices_weekend_list = np.array(temporal_matrices_weekend_list)
             temporal_matrices_week_list = np.array(temporal_matrices_week_list)
-            distance_matrices_weekend_list = np.array(distance_matrices_weekend_list)
-            duration_matrices_weekend_list = np.array(duration_matrices_weekend_list)
         print("antes", matrices_list.shape, temporal_matrices_list.shape)
 
         print("Maior usuário: ", max_user, " ", max_events)
@@ -484,9 +448,7 @@ class PoiCategorizationDomain:
         if model_name == "poi_gnn":
             if week and weekend:
                 return (users_categories, matrices_list, temporal_matrices_list, distance_matrices_list, duration_matrices_list,
-                        matrices_week_list, temporal_matrices_week_list, distance_matrices_week_list,
-                        duration_matrices_week_list, matrices_weekend_list, temporal_matrices_weekend_list,
-                        distance_matrices_weekend_list, duration_matrices_weekend_list)
+                        matrices_week_list, temporal_matrices_week_list, matrices_weekend_list, temporal_matrices_weekend_list)
             else:
                 return (matrices_list, users_categories, temporal_matrices_list,distance_matrices_list,
                         duration_matrices_list, remove_users_ids)
@@ -513,7 +475,7 @@ class PoiCategorizationDomain:
         adjacency_list = inputs[week_type]['adjacency']
         temporal_list = inputs[week_type]['temporal']
         user_categories = inputs[week_type]['categories']
-        if model_name == "poi_gnn":
+        if model_name == "poi_gnn" and week_type == 'all_week':
             distance_list = inputs[week_type]['distance']
             duration_list = inputs[week_type]['duration']
         else:
@@ -815,12 +777,10 @@ class PoiCategorizationDomain:
         #print("enstrada test: ", adjacency_test.shape, features_test.shape, y_test.shape)
         adjacency_train, y_train, temporal_train, distance_train, duration_train, \
         adjacency_test, y_test, temporal_test, distance_test, duration_test = fold
-        adjacency_week_train, y_train_week, temporal_train_week, distance_week_train, duration_week_train, \
-        adjacency_test_week, y_test_week, temporal_test_week, distance_week_test, \
-        duration_week_test = fold_week
-        adjacency_train_weekend, y_train_weekend, temporal_train_weekend, distance_weekend_train, \
-        duration_weekend_train, adjacency_test_weekend, y_test_weekend, temporal_test_weekend, distance_weekend_test, \
-        duration_weekend_test = fold_weekend
+        adjacency_week_train, y_train_week, temporal_train_week,  \
+        adjacency_test_week, y_test_week, temporal_test_week = fold_week
+        adjacency_train_weekend, y_train_weekend, temporal_train_weekend, \
+        adjacency_test_weekend, y_test_weekend, temporal_test_weekend = fold_weekend
 
         max_total = 0
         max_user = -1
@@ -838,10 +798,10 @@ class PoiCategorizationDomain:
                               output_dir)
 
         input_train = [adjacency_train, adjacency_week_train, adjacency_train_weekend,
-                       temporal_train, temporal_train_week, temporal_train_weekend, distance_train, distance_week_train, distance_weekend_train,
-                       duration_train, distance_week_train, distance_weekend_train]
+                       temporal_train, temporal_train_week, temporal_train_weekend, distance_train,
+                       duration_train]
         input_test = [adjacency_test, adjacency_test_week, adjacency_test_weekend, temporal_test, temporal_test_week, temporal_test_weekend,
-                      distance_test, distance_week_test, distance_weekend_test, duration_test, duration_week_test, duration_weekend_test]
+                      distance_test, duration_test]
 
         print("Tamanho das matrizes de treino: ", adjacency_train.shape, temporal_train.shape,
               adjacency_week_train.shape, temporal_train_week.shape)

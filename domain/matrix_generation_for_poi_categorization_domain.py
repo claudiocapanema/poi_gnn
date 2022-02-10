@@ -81,9 +81,6 @@ class MatrixGenerationForPoiCategorizationDomain:
             temporal_matrix = [[0 for i in range(24)] for j in range(n_pois)]
         else:
             temporal_matrix = [[0 for i in range(48)] for j in range(n_pois)]
-        path_matrix = [[0 for i in range(len(user_checkin))] for j in range(n_pois)]
-        path_weekday_count = 0
-        path_weekend_count = 0
         categories_list = [-1 for i in range(n_pois)]
 
         datetimes = user_checkin[datetime_column].tolist()
@@ -123,12 +120,10 @@ class MatrixGenerationForPoiCategorizationDomain:
                     hour = datetimes[0].hour
                     temporal_matrix[placeids_int[0]][hour] += 1
                     temporal_weekday_matrix[placeids_int[0]][hour] += 1
-                    path_weekday_count+=1
                 else:
                     hour = datetimes[0].hour + 24
                     temporal_matrix[placeids_int[0]][hour] += 1
                     temporal_weekend_matrix[placeids_int[0]][hour - 24] += 1
-                    path_weekend_count += 1
             else:
                 hour = datetimes[0].hour
                 temporal_matrix[placeids_int[0]][hour] += 1
@@ -137,7 +132,6 @@ class MatrixGenerationForPoiCategorizationDomain:
                 temporal_matrix[placeids_int[0]][math.floor(datetimes[0].hour / 2)] += 1
             else:
                 temporal_matrix[placeids_int[0]][math.floor(datetimes[0].hour / 2) + 12] += 1
-        path_matrix[placeids_int[0]][0] = 1
         categories_list[0] = categories[0]
 
         count = 0
@@ -166,7 +160,7 @@ class MatrixGenerationForPoiCategorizationDomain:
                 distance = int(points_distance([lat_before, lng_before], [lat_current, lng_current]) / 1000)
                 distance = self._distance_importance(distance)
             else:
-                distance = max([distance_matrix[local_anterior][local_atual]])
+                distance = distance_matrix[local_anterior][local_atual]
 
             datetime_before = datetimes[anterior]
             datetime_current = datetimes[atual]
@@ -180,10 +174,8 @@ class MatrixGenerationForPoiCategorizationDomain:
                 adjacency_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
                 if datetimes[atual].weekday() < 5:
                     adjacency_weekday_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
-                    path_weekday_count+=1
                 else:
                     adjacency_weekend_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
-                    path_weekend_count+=1
             else:
                 adjacency_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
                 adjacency_matrix[placeids_int[atual]][placeids_int[anterior]] += 1
@@ -191,11 +183,9 @@ class MatrixGenerationForPoiCategorizationDomain:
                 if datetimes[atual].weekday() < 5:
                     adjacency_weekday_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
                     adjacency_weekday_matrix[placeids_int[atual]][placeids_int[anterior]] += 1
-                    path_weekday_count += 1
                 else:
                     adjacency_weekend_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
                     adjacency_weekend_matrix[placeids_int[atual]][placeids_int[anterior]] += 1
-                    path_weekend_count += 1
 
             if not personal_features_matrix:
                 if hour48:
@@ -216,7 +206,6 @@ class MatrixGenerationForPoiCategorizationDomain:
                 else:
                     temporal_matrix[placeids_int[atual]][math.floor(datetimes[atual].hour / 2) + 12] += 1
 
-            path_matrix[placeids_int[atual]][j] = 1
             categories_list[placeids_int[atual]] = categories[atual]
 
         if osm_category_column is not None:
@@ -254,7 +243,7 @@ class MatrixGenerationForPoiCategorizationDomain:
                              'adjacency_weekend': [adjacency_weekend_matrix], 'temporal': [temporal_matrix],
                              'distance': [distance_matrix], 'duration': [duration_matrix],
                              'temporal_weekday': [temporal_weekday_matrix], 'temporal_weekend': [temporal_weekend_matrix],
-                             'path': [path_matrix], 'category': [categories_list]})
+                             'category': [categories_list]})
 
     def generate_pattern_matrices(self,
                                   users_checkin,
@@ -297,7 +286,9 @@ class MatrixGenerationForPoiCategorizationDomain:
         print(users_checkin)
         users_checkin = users_checkin.dropna(subset=[userid_column, category_column, locationid_column, datetime_column])
         users_checkin = users_checkin.query(category_column + " != ''")
-        ids = users_checkin[userid_column].unique().tolist()
+        #ids = users_checkin.groupby('userid').count().sort_values('placeid', ascending=False).reset_index()['userid'].tolist()
+        ids = users_checkin.groupby('userid').count().reset_index().query("placeid > 200").sample(frac=1, random_state=1)['userid'].tolist()
+        #ids = users_checkin[userid_column].unique().tolist()
         new_ids = []
         adj_matrices_column = []
         feat_matrices_column = []
@@ -306,7 +297,8 @@ class MatrixGenerationForPoiCategorizationDomain:
         count = 0
         # limitar usuarios
         print("us", len(ids))
-        users_checkin = users_checkin.query(userid_column + " in "+str(ids[:1000]))
+
+        users_checkin = users_checkin.query(userid_column + " in "+str(ids[:6000]))
         # selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, dataset_name, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
         # selected_ids = selected_ids.query("tipo != 'nan'")
         # selected_ids = selected_ids[userid_column].tolist()
@@ -338,7 +330,6 @@ class MatrixGenerationForPoiCategorizationDomain:
         temporal_matrix_df = users_checkin[['userid', 'temporal', 'category']]
         temporal_weekday_matrix_df = users_checkin[['userid', 'temporal_weekday', 'category']]
         temporal_weekend_matrix_df = users_checkin[['userid', 'temporal_weekend', 'category']]
-        path_matrix_df = users_checkin[['userid', 'path', 'category']]
         distance_matrix_df = users_checkin[['userid', 'distance', 'category']]
         duration_matrix_df = users_checkin[['userid', 'duration', 'category']]
 
@@ -348,7 +339,6 @@ class MatrixGenerationForPoiCategorizationDomain:
         temporal_matrix_df.columns = ['user_id', 'matrices', 'category']
         temporal_weekday_matrix_df.columns = ['user_id', 'matrices', 'category']
         temporal_weekend_matrix_df.columns = ['user_id', 'matrices', 'category']
-        path_matrix_df.columns = ['user_id', 'matrices', 'category']
         distance_matrix_df.columns = ['user_id', 'matrices', 'category']
         duration_matrix_df.columns = ['user_id', 'matrices', 'category']
         # adjacency_matrix_df = pd.DataFrame(data={"user_id": new_ids,
@@ -369,7 +359,6 @@ class MatrixGenerationForPoiCategorizationDomain:
                 temporal_matrix_df,
                 temporal_weekday_matrix_df,
                 temporal_weekend_matrix_df,
-                path_matrix_df,
                 distance_matrix_df,
                 duration_matrix_df]
 
@@ -379,7 +368,6 @@ class MatrixGenerationForPoiCategorizationDomain:
                         temporal_matrix_filename,
                         temporal_weekday_matrix_filename,
                         temporal_weekend_matrix_filename,
-                        path_matrix_filename,
                        distance_matrix_filename,
                        duration_matrix_filename
                        ]
