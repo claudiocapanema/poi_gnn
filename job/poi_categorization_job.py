@@ -38,6 +38,9 @@ class PoiCategorizationJob:
         dataset_name = Input.get_instance().inputs['dataset_name']
         base = Input.get_instance().inputs['base']
         categories_type = Input.get_instance().inputs['categories_type']
+        location_location_filename = Input.get_instance().inputs['location_location_filename']
+        location_time_filename = Input.get_instance().inputs['location_time_filename']
+        int_to_locationid_filename = Input.get_instance().inputs['int_to_locationid_filename']
         country = Input.get_instance().inputs['country']
         state = Input.get_instance().inputs['state']
         version = Input.get_instance().inputs['version']
@@ -78,7 +81,7 @@ class PoiCategorizationJob:
         max_time_between_records_dir = ""
 
         if len(state) > 0:
-            base_dir = base_dir + graph_type + "/" + country_dir + state + "/" + max_time_between_records_dir
+            base_dir = base_dir + base + graph_type + "/" + country_dir + state + "/" + max_time_between_records_dir
         else:
             base_dir = base_dir + base + graph_type + "/" + country_dir + max_time_between_records_dir
 
@@ -119,26 +122,33 @@ class PoiCategorizationJob:
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
                                    adjacency_weekend_df, temporal_weekend_df, distance_df, duration_df)
 
-
-        inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'distance': distance_df, 'duration': duration_df},
+        location_location = self.file_extractor.read_npz(base_dir +location_location_filename)
+        location_time = self.file_extractor.read_csv(base_dir + location_time_filename)
+        int_to_locationid = self.file_extractor.read_csv(base_dir + int_to_locationid_filename)
+        inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'distance': distance_df, 'duration': duration_df,
+                               'location_location': location_location, 'location_time': location_time, 'int_to_locationid': int_to_locationid},
                   'week': {'adjacency': adjacency_week_df, 'temporal': temporal_week_df},
                   'weekend': {'adjacency': adjacency_weekend_df, 'temporal': temporal_weekend_df}}
 
+
+
         print("Preprocessing")
         users_categories, adjacency_df, temporal_df, distance_df, duration_df, adjacency_week_df, temporal_week_df,\
-        adjacency_weekend_df, temporal_weekend_df = self.poi_categorization_domain.adjacency_preprocessing(inputs,
+        adjacency_weekend_df, temporal_weekend_df, location_time_df, selected_users = self.poi_categorization_domain.adjacency_preprocessing(inputs,
                                     max_size_matrices,
                                     max_size_paths,
                                     True,
                                     True,
                                     7)
 
+        selected_users = pd.DataFrame({'selected_users': selected_users})
+
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
                               adjacency_weekend_df, temporal_weekend_df, distance_df, distance_week_df)
 
 
 
-        inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df,
+        inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'location_time': location_time_df,
                                'categories': users_categories, 'distance': distance_df, 'duration': duration_df},
                   'week': {'adjacency': adjacency_week_df, 'temporal': temporal_week_df,
                            'categories': users_categories},
@@ -184,6 +194,8 @@ class PoiCategorizationJob:
                                                              version,
                                                              output_dir)
 
+        selected_users.to_csv(output_dir + "selected_users.csv", index=False)
+        print("base: ", base_dir)
         print("------------- Location ------------")
         print(base_report)
         base_report = self.poi_categorization_domain.preprocess_report(base_report, int_to_category)

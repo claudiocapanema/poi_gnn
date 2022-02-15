@@ -31,3 +31,14 @@ def t_distribution_test(x, confidence=0.95):
     #print("Library: ", library_variation, " local: ", average_variation)
 
     return str(mean) + u"\u00B1" + average_variation
+
+def pmi(joint_frequency, n, frequency_left, frequency_right):
+
+    cal = (joint_frequency * n)/(frequency_left * frequency_right)
+    re = 0
+    if cal > 0:
+        re = math.log(cal)
+        if math.isinf(re):
+            re = 16664
+
+    return re

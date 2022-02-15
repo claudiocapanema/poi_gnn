@@ -115,6 +115,7 @@ class GNNUS_BaseModel:
         A_week_input = Input((self.max_size_matrices, self.max_size_matrices))
         Duration_week_input = Input((self.max_size_matrices, self.max_size_matrices))
         Duration_weekend_input = Input((self.max_size_matrices, self.max_size_matrices))
+        Location_time_input = Input((self.max_size_matrices, self.features_num_columns))
         # kernel_channels = 2
 
         out_temporal = ARMAConv(20, activation='elu',
@@ -150,9 +151,11 @@ class GNNUS_BaseModel:
         out_duration = ARMAConv(self.classes,
                                 activation="softmax")([out_duration, A_input])
 
-        out = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration
+        out_location_time = Dense(self.classes, activation='softmax')(Location_time_input)
 
-        model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Duration_input], outputs=[out])
+        out = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration + tf.Variable(1.) * out_location_time
+
+        model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Duration_input, Location_time_input], outputs=[out])
 
         return model
 

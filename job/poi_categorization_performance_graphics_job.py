@@ -23,6 +23,10 @@ class PoiCategorizationPerformanceGraphicsJob:
         country = Input.get_instance().inputs['country']
         state = Input.get_instance().inputs['state']
         version = Input.get_instance().inputs['version']
+        base = Input.get_instance().inputs['base']
+
+        if len(base) > 0:
+            base = base + "/"
 
         output_base_dir_poi_categorization = self.poi_categorization_configuration.OUTPUT_DIR[1]
         model_names = PoiCategorizationPerformanceGraphicsConfiguration.MODELS_NAMES.get_value()
@@ -50,12 +54,12 @@ class PoiCategorizationPerformanceGraphicsJob:
             model_name_dir = self.poi_categorization_baselines_configuration.MODEL_NAME[1][model_name]
             if model_name == "gpr":
                 output_dir = self.poi_categorization_baselines_configuration. \
-                    output_dir(output_base_dir=output_base_dir, graph_type=graph_type_directed_dir,
+                    output_dir(output_base_dir=output_base_dir, base="", graph_type=graph_type_directed_dir,
                                dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir, state_dir=state_dir,
                                model_name=model_name_dir)
             else:
                 output_dir = self.poi_categorization_baselines_configuration. \
-                    output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir,
+                    output_dir(output_base_dir=output_base_dir, base=base, graph_type=graph_type_dir,
                                dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir, state_dir=state_dir,
                                model_name=model_name_dir)
 
@@ -75,7 +79,7 @@ class PoiCategorizationPerformanceGraphicsJob:
         dataset_type_dir = self.poi_categorization_configuration.DATASET_TYPE[1][dataset_name]
         category_type_dir = self.poi_categorization_configuration.CATEGORY_TYPE[1][categories_type]
         output_dir = self.poi_categorization_baselines_configuration. \
-            output_dir(output_base_dir=output_base_dir, graph_type=graph_type_dir, dataset_type=dataset_type_dir,
+            output_dir(output_base_dir=output_base_dir, base=base, graph_type=graph_type_dir, dataset_type=dataset_type_dir,
                        category_type=category_type_dir, country=country_dir, state_dir=state_dir, version=version_dir)
         output_dirs.append(output_dir+folds_replications)
 

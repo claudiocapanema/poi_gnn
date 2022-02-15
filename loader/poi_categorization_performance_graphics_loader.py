@@ -60,24 +60,66 @@ class PoiCategorizationPerformanceGraphicsLoader:
             #
             # macro_fscore = total_fscore/len(columns)
             macro_fscore_list += macro_fscore
-            model_name_list += [model_name]*len(accuracy)
+            model_name_list += [model_name.upper()]*len(accuracy)
             accuracy_list += accuracy
             weighted_fscore_list += weighted_fscore
 
         metrics = pd.DataFrame({'Solution': model_name_list, 'Accuracy': accuracy_list,
                                 'Macro f1-score': macro_fscore_list, 'Weighted f1-score': weighted_fscore_list})
 
+        sort_order = {'POI-GNN': 1, 'HMRM': 2, 'ARMA': 3}
+        metrics['order'] = np.array([sort_order[solution] for solution in metrics['Solution'].tolist()])
+        metrics = metrics.sort_values(by='order')
+        print("entrou")
+        # title = ''
+        # filename = 'barplot_accuracy_ci'
+        # self.barplot_with_values(metrics, 'Solution', 'Accuracy', base_dir, filename, title)
+        #
+        # #title = 'Macro average fscore'
+        # filename = 'barplot_macro_avg_fscore_ci'
+        # self.barplot_with_values(metrics, 'Solution', 'Macro f1-score', base_dir, filename, title)
+        #
+        # #title = 'Weighted average fscore'
+        # filename = 'barplot_weighted_avg_fscore_ci'
+        # self.barplot_with_values(metrics, 'Solution', 'Weighted f1-score', base_dir, filename, title)
+        #
+        # metrics = pd.DataFrame({'Solution': model_name_list, 'Accuracy': accuracy_list,
+        #                         'Macro f1-score': macro_fscore_list, 'Weighted f1-score': weighted_fscore_list})
+
+        print(metrics)
         title = ''
         filename = 'barplot_accuracy_ci'
-        self.barplot_with_values(metrics, 'Solution', 'Accuracy', base_dir, filename, title)
+        # mpl.use("pgf")
+        # mpl.rcParams.update({
+        #     "pgf.texsystem": "pdflatex",
+        #     'font.family': 'serif',
+        #     'text.usetex': True,
+        #     'pgf.rcfonts': False,
+        # })
+        sns.set(style='whitegrid')
 
-        #title = 'Macro average fscore'
+        # fig, ax = plt.subplots(ncols=1, nrows=3, sharex=True, figsize=(14,20), tight_layout=True)
+        fig, ax = plt.subplots(ncols=3, nrows=1, sharey=True, sharex=True, figsize=(35, 15), tight_layout=True)
+
+        self.barplot_with_values(metrics, 'Solution', 'Accuracy', base_dir, filename, title, dataset, ax, 2)
+
+        # title = 'Macro average fscore'
         filename = 'barplot_macro_avg_fscore_ci'
-        self.barplot_with_values(metrics, 'Solution', 'Macro f1-score', base_dir, filename, title)
+        self.barplot_with_values(metrics, 'Solution', 'Macro f1-score', base_dir, filename, title, dataset, ax, 0)
 
-        #title = 'Weighted average fscore'
+        # title = 'Weighted average fscore'
         filename = 'barplot_weighted_avg_fscore_ci'
-        self.barplot_with_values(metrics, 'Solution', 'Weighted f1-score', base_dir, filename, title)
+        self.barplot_with_values(metrics, 'Solution', 'Weighted f1-score', base_dir, filename, title, dataset, ax, 1)
+        # plt.ylim(0, 0.5)
+        # plt.tick_params(labelsize=18)
+        # plt.grid(True)
+        # fig.subplots_adjust(top=0.5, bottom=0, left=0, right=1)
+
+        # fig.tight_layout(pad=1)
+        # plt.savefig(dataset + '_metrics_horizontal_latex.pgf')
+        print("calculou")
+        fig.savefig(base_dir + "_metrics_horizontal.png", bbox_inches='tight', dpi=400)
+        plt.figure()
 
 
     def barplot(self, metrics, x_column, y_column, base_dir, file_name, title):
@@ -87,35 +129,58 @@ class PoiCategorizationPerformanceGraphicsLoader:
         figure = figure.get_figure()
         figure.savefig(base_dir + file_name + ".png", bbox_inches='tight', dpi=400)
 
-    def barplot_with_values(self, metrics, x_column, y_column, base_dir, file_name, title):
+    def barplot_with_values(self, metrics, x_column, y_column, base_dir, file_name, title, dataset, ax, index):
         Path(base_dir).mkdir(parents=True, exist_ok=True)
-        plt.figure(figsize=(8, 5))
-        sns.set(font_scale=1.2, style='whitegrid')
-        figure = sns.barplot(x=x_column, y=y_column, data=metrics)
+        # plt.figure(figsize=(8, 5))
+        # sns.set(font_scale=1.2, style='whitegrid')
+        # if y_column == 'Macro f1-score':
+        #     order = ['MAP', 'STF-RNN', 'MHSA+PE', 'SERM', 'GARG', 'MFA-RNN']
+        # elif y_column == 'Accuracy':
+        #     order = ['STF-RNN', 'MAP', 'MHSA+PE', 'SERM', 'GARG', 'MFA-RNN']
+        # else:
+        #     order = ['MAP', 'STF-RNN', 'MHSA+PE', 'SERM', 'GARG', 'MFA-RNN']
+        # order = list(reversed(order))
+        # ax[index].set_ylim(0, 0.5)
+        size = 35
+        sorted_values = sorted(metrics[y_column].tolist())
+        maximum = sorted_values[-1]
+        if dataset == "users_steps":
+            # ax[index].set_ylim(0, maximum * 1.14)
+            y_labels = {'macro': [28, 38, 30, 35, 35, 45], 'weighted': [22, 22, 22, 22, 22, 22],
+                        'accuracy': [22, 22, 22, 22, 22, 22]}
+            # y_labels = {'macro': [22, 22, 22, 22, 22, 22], 'weighted': [22, 22, 22, 22, 22, 22], 'accuracy': [22, 22, 22, 22, 22, 22]}
+        else:
+            y_labels = {'macro': [30, 30, 30, 30, 30, 30], 'weighted': [30, 30, 30, 30, 30, 30],
+                        'accuracy': [30, 30, 30, 30, 30, 30]}
+            # ax[index].set_ylim(0, maximum * 1.14)
+            if 'weighted' in file_name:
+                # ax[index].set_ylim(0, maximum * 1.2)
+                pass
+        plt.ylim(0, maximum * 1.2)
 
+        # ax[index].set_aspect(5)
+        figure = sns.barplot(x=x_column, y=y_column, data=metrics, ax=ax[index])
+
+        figure.set_ylabel(y_column, fontsize=size)
+        figure.set_xlabel(x_column, fontsize=size)
+        # figure0.tick_params(labelsize=10)
         y_label = "accuracy"
         count = 0
-        y_labels = {'macro': [17, 24, 20, 17, 20, 20], 'weighted': [11, 11, 11, 11, 11, 11], 'accuracy': [11, 11, 11, 11, 11, 11]}
+
         if "macro" in file_name:
             y_label = "macro"
         elif "weighted" in file_name:
             y_label = "weighted"
         for p in figure.patches:
             figure.annotate(format(p.get_height(), '.2f'),
-                             (p.get_x() + p.get_width() / 2., p.get_height()),
-                             ha='center', va='center',
-                             xytext=(0, y_labels[y_label][count]),
-                             textcoords='offset points')
+                            (p.get_x() + p.get_width() / 2., p.get_height()),
+                            ha='center', va='center',
+                            size=size,
+                            xytext=(0, y_labels[y_label][count]),
+                            textcoords='offset points')
             count += 1
-        figure = figure.get_figure()
-        # plt.legend(bbox_to_anchor=(0.65, 0.74),
-        #            borderaxespad=0)
-        sorted_values = sorted(metrics[y_column].tolist())
-        maximum = sorted_values[-1]
-        plt.ylim(0, maximum*1.2)
-        # ax.yticks(labels=[df['Precision'].tolist()])
-        figure.savefig(base_dir + file_name + ".png", bbox_inches='tight', dpi=400)
-        plt.figure()
+        ax[index].tick_params(axis='x', labelsize=size - 4, rotation=20)
+        ax[index].tick_params(axis='y', labelsize=size - 4)
 
     def output_dir(self, output_base_dir, dataset_type, category_type, model_name=""):
 
@@ -186,7 +251,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
         df.columns = ['ARMA', 'POI-GNN', 'HMRM']
 
-        df = df[['POI-GNN', 'ARMA', 'HMRM']]
+        df = df[['POI-GNN', 'HMRM', 'ARMA']]
 
         display(HTML(df.to_html()))
 

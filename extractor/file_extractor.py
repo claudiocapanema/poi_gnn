@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import os
 from tensorflow.keras.models import load_model
+from scipy import sparse
 
 from foundation.configuration.input import Input
 
@@ -22,7 +23,7 @@ class FileExtractor:
             #print(pd.read_csv(filename).iloc[30551])
             df = pd.read_csv(filename, dtype=dtypes_columns, encoding='utf-8')
 
-        return df
+        return df.sample(frac=1, random_state=3)
 
     def read_multiples_csv(self, dir):
 
@@ -54,3 +55,7 @@ class FileExtractor:
             data = json.loads(file.read())
 
         return data
+
+    def read_npz(self, filename):
+
+        return sparse.load_npz(filename)

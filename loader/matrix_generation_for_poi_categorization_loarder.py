@@ -2,6 +2,8 @@ from pathlib import Path
 from matplotlib import pyplot
 import numpy as np
 import pandas as pd
+import os
+import time
 
 from loader.file_loader import FileLoader
 
@@ -14,6 +16,12 @@ class MatrixGenerationForPoiCategorizationLoader(FileLoader):
                                            files, files_names):
 
         for i in range(len(files)):
-            file = files[i]
-            file_name = files_names[i]
-            self.save_df_to_csv(file, file_name)
+            try:
+                file = files[i]
+                file_name = files_names[i]
+                self.save_df_to_csv(file, file_name)
+            except:
+                time.sleep(8)
+                file = files[i]
+                file_name = files_names[i]
+                self.save_df_to_csv(file, file_name)

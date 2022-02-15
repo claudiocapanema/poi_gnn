@@ -36,6 +36,9 @@ def one_hot_decoding_predicted(data):
     new = np.array(new).flatten()
     return new
 
+import random
+
+
 def top_k_rows(data, k):
 
     row_sum = []
@@ -49,6 +52,7 @@ def top_k_rows(data, k):
     row_sum = row_sum[:k]
 
     row_sum = [e[1] for e in row_sum]
+    random.seed(1)
 
     return np.array(row_sum)
 

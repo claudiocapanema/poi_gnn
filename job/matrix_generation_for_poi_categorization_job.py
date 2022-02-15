@@ -176,6 +176,9 @@ class MatrixGenerationForPoiCategorizationJob():
             duration_matrix_filename = folder + duration_matrix_base_filename + "_not_directed_" + hour_file + categories_type + "_" + country + ".csv"
             duration_weekday_matrix_filename = folder + duration_matrix_base_filename + "_weekday_not_directed_" + hour_file + categories_type + "_" + country + ".csv"
             duration_weekend_matrix_filename = folder + duration_matrix_base_filename + "_weekend_not_directed_" + hour_file + categories_type + "_" + country + ".csv"
+            location_locaion_pmi_matrix_filename = folder + "location_location_pmi_matrix_" + categories_type + "_" + country + ".npz"
+            location_time_pmi_matrix_filename = folder + "location_time_pmi_matrix_" + categories_type + "_" + country + ".csv"
+            int_to_locationid_filename = folder + "int_to_locationid_" + categories_type + "_" + country + ".csv"
         else:
             directed = True
             folder = base_dir + directed_folder
@@ -206,6 +209,9 @@ class MatrixGenerationForPoiCategorizationJob():
                                            duration_matrix_filename,
                                            duration_weekday_matrix_filename,
                                            duration_weekend_matrix_filename,
+                                           location_locaion_pmi_matrix_filename,
+                                           location_time_pmi_matrix_filename,
+                                           int_to_locationid_filename,
                                            userid_column,
                                            category_column,
                                            locationid_column,

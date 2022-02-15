@@ -96,6 +96,7 @@ GLOBAL_FOURQUARE_USER_METRICS_FILENAME_US="files/global_foursquare_user_metrics_
 # gowalla
 GOWALLA_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/matrices_poi_categorization/"
 GOWALLA_LOCAL_DATETIME_US="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_7_categories_local_datetime_columns_reduced_us.csv"
+GOWALLA_LOCAL_DATETIME_US_TEXAS="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_7_categories_local_datetime_columns_reduced_us_texas.csv"
 GOWALLA_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/directed/"
 GOWALLA_NOT_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/not_directed/"
 GOWALLA_ADJACENCY_FILENAME_BR="adjacency_matrix_not_directed_48_5_categories_BR.csv"
@@ -110,6 +111,9 @@ GOWALLA_DISTANCE_WEEKEND_FILENAME_BR="distance_matrix_weekend_not_directed_48_5_
 GOWALLA_DURATION_FILENAME_BR="duration_matrix_not_directed_48_5_categories_BR.csv"
 GOWALLA_DURATION_WEEK_FILENAME_BR="duration_matrix_weekday_not_directed_48_5_categories_BR.csv"
 GOWALLA_DURATION_WEEKEND_FILENAME_BR="duration_matrix_weekend_not_directed_48_5_categories_BR.csv"
+GOWALLA_LOCATION_LOCATION_PMI_MATRIX_US_TEXAS="location_location_pmi_matrix_7_categories_US.npz"
+GOWALLA_LOCATION_TIME_PMI_MATRIX_US_TEXAS="location_time_pmi_matrix_7_categories_US.csv"
+GOWALLA_INT_TO_LOCATIONID_US_TEXAS="int_to_locationid_7_categories_US.csv"
 
 # us
 GOWALLA_LOCAL_DATETIME_BR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_5_categories_osm_local_datetime_columns_reduced_us.csv"
@@ -209,7 +213,7 @@ TRANSACTIONS_BASE_DIR="${GLOBAL_FOURSQUARE_BASE_DIR}transactions/"
 # base model
 MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "job": "matrix_generation_for_poi_categorization",
-          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US'",
+          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US_TEXAS'",
           "base_dir":"'$GOWALLA_BASE_DIR'",
           "directed_folder":"directed/",
           "not_directed_folder":"not_directed/",
@@ -221,7 +225,7 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "personal_features_matrix":"no",
           "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
           "country":"United States",
-          "state":"",
+          "state":"TEXAS",
           "different_venues":"yes",
           "max_time_between_records": "",
           "top_users":"40000",
@@ -427,11 +431,14 @@ CATEGORIZATION_CONFIG='{
           "distance_matrix_weekend_filename":"'$GOWALLA_DISTANCE_WEEKEND_FILENAME_US'",
           "duration_matrix_week_filename":"'$GOWALLA_DURATION_WEEK_FILENAME_US'",
           "duration_matrix_weekend_filename":"'$GOWALLA_DURATION_WEEKEND_FILENAME_US'",
+          "location_location_filename":"'$GOWALLA_LOCATION_LOCATION_PMI_MATRIX_US_TEXAS'",
+          "location_time_filename":"'$GOWALLA_LOCATION_TIME_PMI_MATRIX_US_TEXAS'",
+          "int_to_locationid_filename":"'$GOWALLA_INT_TO_LOCATIONID_US_TEXAS'",
           "graph_type":"not_directed",
           "dataset_name":"gowalla",
           "country":"US",
           "base":"base",
-          "state":"",
+          "state":"TEXAS",
           "version":"normal",
           "categories_type":"7_categories"
           }'
@@ -552,6 +559,7 @@ CATEGORIZATION_PERFORMANCE_GRAPHICS_CONFIG='{
           "country":"US",
           "state":"TX",
           "version":"normal",
+          "base":"",
           "folds":"5",
           "replications":"1"
           }'
