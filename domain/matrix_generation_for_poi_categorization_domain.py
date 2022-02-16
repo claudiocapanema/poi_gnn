@@ -406,9 +406,16 @@ class MatrixGenerationForPoiCategorizationDomain:
             users_checkins["time"] = [d.time() for d in users_checkins[datetime_column]]
             number_of_locations = len(users_checkins[locationid_column].unique())
             self.LL = sparse.lil_matrix(
-                (number_of_locations, number_of_locations)).todok()  ##location co occurency represents memory for save memory
-
+                (number_of_locations, number_of_locations))  ##location co occurency represents memory for save memory
+            cont = 0
+            init = time.time()
             for user_id in users_checkins[userid_column].unique():
+                if cont % 100 == 0:
+                    end = time.time()
+                    print("usuário: ", cont)
+                    print("duração: ", (end - init)/60)
+
+                cont += 1
                 users_checkins_sorted = users_checkins[users_checkins[userid_column] == user_id].sort_values(by=[datetime_column])
                 locations = users_checkins_sorted[locationid_column].tolist()
 
@@ -423,19 +430,37 @@ class MatrixGenerationForPoiCategorizationDomain:
                             break
                         self.LL[current_location, locationid_to_int[locations[j + i]]] += 1
 
-            sum_of_dl = np.sum(self.LL)
-            l_occurrency = np.sum(self.LL, axis=1).reshape(-1, 1)
-            c_occurrency = np.sum(self.LL, axis=0).reshape(1, -1)
+            init = time.time()
+            sum_of_dl = self.LL.sum()
+            l_occurrency = self.LL.sum(axis=1)
+            c_occurrency = self.LL.sum(axis=0)
+            end = time.time()
+            print("Preencheu a matriz localização x localização", (end - init)/60)
+            init = time.time()
 
-            with np.errstate(divide='ignore'):
-                for i in range(number_of_locations):
-                    line = self.LL[i].toarray()
-                    p = (line * sum_of_dl) / (l_occurrency[i] * c_occurrency)
-                    p[p == np.inf] = 0
+
+            row, column = self.LL.nonzero()
+            for i, j in zip(row, column):
+
+                try:
+                    p = (self.LL[i, j] * number_of_locations) / ( l_occurrency[i, 0] * c_occurrency[0, j])
                     np.nan_to_num(p, copy=False, nan=0)
                     p = np.maximum(p, 1)
-                    self.LL[i] = np.maximum(np.log2(p), 0)
-
+                    self.LL[i, j] = np.maximum(np.log2(p), 0)
+                except:
+                    print(self.LL[i, j], number_of_locations)
+                    print(l_occurrency[i])
+                    print(c_occurrency)
+                    print(c_occurrency[0, j])
+            # for i in range(number_of_locations):
+            #     line = self.LL[i].toarray()
+            #     p = (line * sum_of_dl) / (l_occurrency[i] * c_occurrency)
+            #     p[p == np.inf] = 0
+            #     np.nan_to_num(p, copy=False, nan=0)
+            #     p = np.maximum(p, 1)
+            #     self.LL[i] = np.maximum(np.log2(p), 0)
+            end = time.time()
+            print("calculou os totais", (end - init)/60)
             ##No sparse implementation
             """ Dl = np.zeros((number_of_locations, number_of_locations))
             for i in range(len(locations)):
@@ -561,15 +586,8 @@ class MatrixGenerationForPoiCategorizationDomain:
                                   temporal_matrix_filename,
                                   temporal_weekday_matrix_filename,
                                   temporal_weekend_matrix_filename,
-                                  path_matrix_filename,
-                                  path_weekeday_matrix_filename,
-                                  path_weekend_matrix_filename,
                                   distance_matrix_filename,
-                                  distance_weekday_matrix_filename,
-                                  distance_weekend_matrix_filename,
                                   duration_matrix_filename,
-                                  duration_weekday_matrix_filename,
-                                  duration_weekend_matrix_filename,
                                   location_location_pmi_matrix_filename,
                                   location_time_omi_matrix_filename,
                                   int_to_locationid_filename,
@@ -607,8 +625,8 @@ class MatrixGenerationForPoiCategorizationDomain:
         count = 0
         # limitar usuarios
         print("us", len(ids))
-
-        users_checkin = users_checkin.query(userid_column + " in "+str(ids[:2000]))
+        num_users = 7000
+        users_checkin = users_checkin.query(userid_column + " in "+str(ids[:num_users]))
         # selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, dataset_name, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
         # selected_ids = selected_ids.query("tipo != 'nan'")
         # selected_ids = selected_ids[userid_column].tolist()
@@ -633,10 +651,10 @@ class MatrixGenerationForPoiCategorizationDomain:
         self.matrix_generation_for_poi_categorization_loader.save_df_to_csv(pd.DataFrame({'locationid': keys, 'int': values}), int_to_locationid_filename)
         lt = ""
         self.LT = ""
-        # self._create_location_coocurrency_matrix(users_checkin, userid_column, datetime_column, locationid_column, locationid_to_int)
-        # print("terminou LL")
-        # self.matrix_generation_for_poi_categorization_loader.save_sparse_matrix_to_npz(sparse.csr_matrix(self.LL), location_location_pmi_matrix_filename)
-
+        self._create_location_coocurrency_matrix(users_checkin, userid_column, datetime_column, locationid_column, locationid_to_int)
+        print("terminou LL")
+        self.matrix_generation_for_poi_categorization_loader.save_sparse_matrix_to_npz(sparse.csr_matrix(self.LL), location_location_pmi_matrix_filename)
+        self.LL = ""
         users_checkin = users_checkin.groupby('userid').apply(lambda e: self.generate_user_matrices(e, e['userid'].iloc[0],
                                                                                                          datetime_column,
                                                                                                          locationid_column,

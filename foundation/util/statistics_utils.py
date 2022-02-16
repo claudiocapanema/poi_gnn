@@ -34,6 +34,9 @@ def t_distribution_test(x, confidence=0.95):
 
 def pmi(joint_frequency, n, frequency_left, frequency_right):
 
+    print("entradas")
+    print(joint_frequency, n, frequency_left, frequency_right)
+    exit()
     cal = (joint_frequency * n)/(frequency_left * frequency_right)
     re = 0
     if cal > 0:

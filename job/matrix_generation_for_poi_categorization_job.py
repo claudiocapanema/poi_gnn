@@ -11,6 +11,7 @@ from configuration.poi_categorization_configuration import PoICategorizationConf
 from configuration.matrix_generation_for_poi_categorization_configuration import MatrixGenerationForPoiCategorizationConfiguration
 from loader.poi_categorization_loader import PoiCategorizationLoader
 from pathlib import Path
+from numba import jit
 
 class MatrixGenerationForPoiCategorizationJob():
 
@@ -21,6 +22,7 @@ class MatrixGenerationForPoiCategorizationJob():
         self.poi_categorization_loader = PoiCategorizationLoader()
         self.poi_categorization_configuration = PoICategorizationConfiguration()
 
+    @jit(nopython=True, parallel=True)
     def start(self):
         osm_category_column = None
         users_checkin_filename = Input.get_instance().inputs['users_checkin_filename']
@@ -200,15 +202,8 @@ class MatrixGenerationForPoiCategorizationJob():
                                            temporal_matrix_filename,
                                            temporal_weekday_matrix_filename,
                                            temporal_weekend_matrix_filename,
-                                           path_matrix_filename,
-                                           path_weekeday_matrix_filename,
-                                           path_weekend_matrix_filename,
                                            distance_matrix_filename,
-                                           distance_weekday_matrix_filename,
-                                           distance_weekend_matrix_filename,
                                            duration_matrix_filename,
-                                           duration_weekday_matrix_filename,
-                                           duration_weekend_matrix_filename,
                                            location_locaion_pmi_matrix_filename,
                                            location_time_pmi_matrix_filename,
                                            int_to_locationid_filename,
