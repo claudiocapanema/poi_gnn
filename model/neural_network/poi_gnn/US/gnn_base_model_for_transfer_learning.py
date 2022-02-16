@@ -116,6 +116,7 @@ class GNNUS_BaseModel:
         Duration_week_input = Input((self.max_size_matrices, self.max_size_matrices))
         Duration_weekend_input = Input((self.max_size_matrices, self.max_size_matrices))
         Location_time_input = Input((self.max_size_matrices, self.features_num_columns))
+        Location_location_input = Input((self.max_size_matrices, self.max_size_matrices))
         # kernel_channels = 2
 
         out_temporal = ARMAConv(20, activation='elu',
@@ -151,11 +152,26 @@ class GNNUS_BaseModel:
         out_duration = ARMAConv(self.classes,
                                 activation="softmax")([out_duration, A_input])
 
-        out_location_time = Dense(self.classes, activation='softmax')(Location_time_input)
+        out_location = ARMAConv(20, activation='elu',
+                                gcn_activation='gelu')([Location_time_input, Location_location_input])
+        # out_location = Dropout(0.3)(out_location)
+        # out_location = ARMAConv(self.classes,
+        #                         activation="softmax")([out_duration, Location_location_input])
 
-        out = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration + tf.Variable(1.) * out_location_time
+        out_location_time = Dense(22, activation='relu')(Location_time_input)
+        out_location_time = Dense(self.classes, activation='softmax')(out_location_time)
+        out_location_location = Dense(22, activation='relu')(Location_location_input)
+        out_location_location = Dense(self.classes, activation='softmax')(out_location_location)
 
-        model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Duration_input, Location_time_input], outputs=[out])
+        out_dense = tf.Variable(1.) * out_location_time + tf.Variable(1.) * out_location_location
+        out_dense = Dense(self.classes, activation='softmax')(out_dense)
+
+        #out = tf.Variable(2.) * out_location_time + tf.Variable(2.) * out_location_location
+        out_gnn = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration
+        out_gnn = Dense(self.classes, activation='softmax')(out_gnn)
+        out = tf.Variable(1.) * out_gnn + out_dense
+
+        model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Duration_input, Location_time_input, Location_location_input], outputs=[out])
 
         return model
 

@@ -134,7 +134,7 @@ class PoiCategorizationJob:
 
         print("Preprocessing")
         users_categories, adjacency_df, temporal_df, distance_df, duration_df, adjacency_week_df, temporal_week_df,\
-        adjacency_weekend_df, temporal_weekend_df, location_time_df, selected_users = self.poi_categorization_domain.adjacency_preprocessing(inputs,
+        adjacency_weekend_df, temporal_weekend_df, location_time_df, location_location_df, selected_users = self.poi_categorization_domain.adjacency_preprocessing(inputs,
                                     max_size_matrices,
                                     max_size_paths,
                                     True,
@@ -149,7 +149,8 @@ class PoiCategorizationJob:
 
 
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'location_time': location_time_df,
-                               'categories': users_categories, 'distance': distance_df, 'duration': duration_df},
+                               'location_location': location_location_df, 'categories': users_categories,
+                               'distance': distance_df, 'duration': duration_df},
                   'week': {'adjacency': adjacency_week_df, 'temporal': temporal_week_df,
                            'categories': users_categories},
                   'weekend': {'adjacency': adjacency_weekend_df, 'temporal': temporal_weekend_df,
