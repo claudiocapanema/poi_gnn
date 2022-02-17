@@ -28,12 +28,7 @@ def one_hot_decoding_predicted(data):
 
     new = []
     for e in data:
-        node_label = []
-        for node in e:
-            node_label.append(np.argmax(node))
-        new.append(node_label)
-
-    new = np.array(new).flatten()
+        new.append(np.argmax(e))
     return new
 
 import random

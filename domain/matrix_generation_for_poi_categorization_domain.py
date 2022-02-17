@@ -14,6 +14,9 @@ from foundation.util.geospatial_utils import points_distance
 from loader.matrix_generation_for_poi_categorization_loarder import MatrixGenerationForPoiCategorizationLoader
 from extractor.file_extractor import FileExtractor
 from foundation.util.statistics_utils import pmi
+import skmob
+
+from skmob.measures.individual import k_radius_of_gyration
 
 
 class MatrixGenerationForPoiCategorizationDomain:
@@ -407,6 +410,9 @@ class MatrixGenerationForPoiCategorizationDomain:
             number_of_locations = len(users_checkins[locationid_column].unique())
             self.LL = sparse.lil_matrix(
                 (number_of_locations, number_of_locations))  ##location co occurency represents memory for save memory
+            self.LL_radius = [{} for i in range(number_of_locations)]
+            self.LL_frequency = [[] for i in range(number_of_locations)]
+
             cont = 0
             init = time.time()
             for user_id in users_checkins[userid_column].unique():
@@ -417,10 +423,30 @@ class MatrixGenerationForPoiCategorizationDomain:
 
                 cont += 1
                 users_checkins_sorted = users_checkins[users_checkins[userid_column] == user_id].sort_values(by=[datetime_column])
+                print("antes")
+                print(users_checkins_sorted)
+                locations_frequency = users_checkins_sorted.groupby(locationid_column).count().reset_index()[[locationid_column, 'userid']]
+                locations_frequency.columns = np.array([locationid_column, 'count'])
+                locations_frequency['count'] = locations_frequency['count'] / len(locations_frequency)
+                user_locations_frequency = locations_frequency[locationid_column].tolist()
+                user_locations_frequency_count = locations_frequency['count'].tolist()
+                for j in range(len(user_locations_frequency)):
+                    current_location_frequency = locationid_to_int[user_locations_frequency[j]]
+                    count = user_locations_frequency_count[j]
+                    self.LL_frequency[current_location_frequency].append(count)
                 locations = users_checkins_sorted[locationid_column].tolist()
+                latitudes = users_checkins_sorted['latitude'].tolist()
+                longitudes = users_checkins_sorted['longitude'].tolist()
 
+                previous_location = locations[0]
                 for i in range(len(locations)):
                     current_location = locationid_to_int[locations[i]]
+                    if i > 0 and i < len(locations) -1:
+                        future_location = locations[i+1]
+                        if len(self.LL_radius[current_location]) == 0:
+                            self.LL_radius[current_location] = {previous_location, locations[i], future_location}
+                        else:
+                            self.LL_radius[current_location].update({previous_location, future_location})
                     for j in range(1, 6):
                         if ((i - j) < 0):
                             break
@@ -429,6 +455,30 @@ class MatrixGenerationForPoiCategorizationDomain:
                         if (i + j) > len(locations) - 1:
                             break
                         self.LL[current_location, locationid_to_int[locations[j + i]]] += 1
+
+            for i in range(len(self.LL_frequency)):
+                self.LL_frequency[i] = [st.mean(self.LL_frequency[i]), st.median(self.LL_frequency[i]), st.stdev(self.LL_frequency[i])]
+            print(self.LL_frequency)
+            exit()
+            # df = None
+            # init = time.time()
+            # for i in range(len(self.LL_radius)):
+            #
+            #     location_trajectory = users_checkins[users_checkins[locationid_column].isin(list(self.LL_radius[i]))][[datetime_column, 'latitude', 'longitude']]
+            #     location_trajectory['poi_in'] = np.array([i for i in range(len(location_trajectory))])
+            #     if df is None:
+            #         df = location_trajectory
+            #     else:
+            #         df = pd.concat([df, location_trajectory], ignore_index=True)
+            #
+            # tdf = skmob.TrajDataFrame(df, latitude='latitude', longitude='longitude', datetime=datetime_column,
+            #                           user_id='poi_int')
+            #
+            # krg_df = k_radius_of_gyration(tdf, k=20)
+            # end = time.time()
+            # print(krg_df)
+            # print("Duração raio de giro: ", (end - init)/60)
+            # exit()
 
             init = time.time()
             sum_of_dl = self.LL.sum()
@@ -625,7 +675,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         count = 0
         # limitar usuarios
         print("us", len(ids))
-        num_users = 7000
+        num_users = 100
         users_checkin = users_checkin.query(userid_column + " in "+str(ids[:num_users]))
         # selected_ids = users_checkin.groupby(userid_column).apply(lambda e: self.filter_user(e, dataset_name, userid_column, e[userid_column].iloc[0], datetime_column, category_column))
         # selected_ids = selected_ids.query("tipo != 'nan'")
@@ -644,17 +694,21 @@ class MatrixGenerationForPoiCategorizationDomain:
         keys = list(locationid_to_int.keys())
         values = list(locationid_to_int.values())
         int_to_location_id = {values[i]: keys[i] for i in range(len(keys))}
+        categories = [users_checkin[users_checkin[locationid_column] == unique_locationsids[i]][category_column].iloc[0] for i in range(len(unique_locationsids))]
+        print("categorias")
         self._create_LT_matrix(users_checkin, locationid_column, datetime_column, locationid_to_int)
         print("terminou LT")
         lt = pd.DataFrame(self.LT, columns=[str(i) for i in range(self.LT.shape[1])])
-        self.matrix_generation_for_poi_categorization_loader.save_df_to_csv(lt, location_time_omi_matrix_filename)
-        self.matrix_generation_for_poi_categorization_loader.save_df_to_csv(pd.DataFrame({'locationid': keys, 'int': values}), int_to_locationid_filename)
+        lt['category'] = np.array(categories)
+        #self.matrix_generation_for_poi_categorization_loader.save_df_to_csv(lt, location_time_omi_matrix_filename)
+        #self.matrix_generation_for_poi_categorization_loader.save_df_to_csv(pd.DataFrame({'locationid': keys, 'int': values}), int_to_locationid_filename)
         lt = ""
         self.LT = ""
         self._create_location_coocurrency_matrix(users_checkin, userid_column, datetime_column, locationid_column, locationid_to_int)
         print("terminou LL")
-        self.matrix_generation_for_poi_categorization_loader.save_sparse_matrix_to_npz(sparse.csr_matrix(self.LL), location_location_pmi_matrix_filename)
+        #self.matrix_generation_for_poi_categorization_loader.save_sparse_matrix_to_npz(sparse.csr_matrix(self.LL), location_location_pmi_matrix_filename)
         self.LL = ""
+        exit()
         users_checkin = users_checkin.groupby('userid').apply(lambda e: self.generate_user_matrices(e, e['userid'].iloc[0],
                                                                                                          datetime_column,
                                                                                                          locationid_column,

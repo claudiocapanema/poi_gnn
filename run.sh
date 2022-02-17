@@ -94,7 +94,7 @@ GLOBAL_FOURQUARE_USER_METRICS_FILENAME_2012_2013_BR="files/global_foursquare_use
 GLOBAL_FOURQUARE_USER_METRICS_FILENAME_US="files/global_foursquare_user_metrics_US.csv"
 
 # gowalla
-GOWALLA_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/matrices_poi_categorization/"
+GOWALLA_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/matrices_poi_categorization/mlp/"
 GOWALLA_LOCAL_DATETIME_US="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_7_categories_local_datetime_columns_reduced_us.csv"
 GOWALLA_LOCAL_DATETIME_US_TEXAS="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/gowalla_checkins_7_categories_local_datetime_columns_reduced_us_texas.csv"
 GOWALLA_DIRECTED_FOLDER=${GOWALLA_BASE_DIR}"matrices/directed/"

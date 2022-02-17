@@ -133,8 +133,7 @@ class PoiCategorizationJob:
 
 
         print("Preprocessing")
-        users_categories, adjacency_df, temporal_df, distance_df, duration_df, adjacency_week_df, temporal_week_df,\
-        adjacency_weekend_df, temporal_weekend_df, location_time_df, location_location_df, selected_users = self.poi_categorization_domain.adjacency_preprocessing(inputs,
+        users_categories, location_time_df, location_location_df, selected_users = self.poi_categorization_domain.adjacency_preprocessing(inputs,
                                     max_size_matrices,
                                     max_size_paths,
                                     True,
@@ -164,22 +163,24 @@ class PoiCategorizationJob:
                                     n_splits,
                                     'all_week')
 
-        folds_week, class_weight_week = self.poi_categorization_domain. \
-            k_fold_split_train_test(max_size_matrices,
-                                    inputs,
-                                    n_splits,
-                                    'week')
-
-        folds_weekend, class_weight_weekend = self.poi_categorization_domain. \
-            k_fold_split_train_test(max_size_matrices,
-                                    inputs,
-                                    n_splits,
-                                    'weekend')
+        # folds_week, class_weight_week = self.poi_categorization_domain. \
+        #     k_fold_split_train_test(max_size_matrices,
+        #                             inputs,
+        #                             n_splits,
+        #                             'week')
+        #
+        # folds_weekend, class_weight_weekend = self.poi_categorization_domain. \
+        #     k_fold_split_train_test(max_size_matrices,
+        #                             inputs,
+        #                             n_splits,
+        #                             'weekend')
 
         print("class weight: ", class_weight)
-        inputs_folds = {'all_week': {'folds': folds, 'class_weight': class_weight},
-                        'week': {'folds': folds_week, 'class_weight': class_weight_week},
-                        'weekend': {'folds': folds_weekend, 'class_weight': class_weight_weekend}}
+        # inputs_folds = {'all_week': {'folds': folds, 'class_weight': class_weight},
+        #                 'week': {'folds': folds_week, 'class_weight': class_weight_week},
+        #                 'weekend': {'folds': folds_weekend, 'class_weight': class_weight_weekend}}
+
+        inputs_folds = {'all_week': {'folds': folds, 'class_weight': class_weight}}
 
         print("Treino")
         folds_histories, base_report, model = self.poi_categorization_domain.\
