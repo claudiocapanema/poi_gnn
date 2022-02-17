@@ -59,7 +59,7 @@ class PoiCategorizationPerformanceGraphicsJob:
                                model_name=model_name_dir)
             else:
                 output_dir = self.poi_categorization_baselines_configuration. \
-                    output_dir(output_base_dir=output_base_dir, base=base, graph_type=graph_type_dir,
+                    output_dir(output_base_dir=output_base_dir, base="", graph_type=graph_type_dir,
                                dataset_type=dataset_type_dir, category_type=category_type_dir, country=country_dir, state_dir=state_dir,
                                model_name=model_name_dir)
 

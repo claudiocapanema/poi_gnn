@@ -559,7 +559,7 @@ CATEGORIZATION_PERFORMANCE_GRAPHICS_CONFIG='{
           "country":"US",
           "state":"TX",
           "version":"normal",
-          "base":"",
+          "base":"base",
           "folds":"5",
           "replications":"1"
           }'

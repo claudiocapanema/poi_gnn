@@ -163,13 +163,31 @@ class GNNUS_BaseModel:
         out_location_location = Dense(22, activation='relu')(Location_location_input)
         out_location_location = Dense(self.classes, activation='softmax')(out_location_location)
 
+        out_adjacency = Dense(22, activation='relu')(A_input)
+        out_adjacency = Dense(self.classes, activation='softmax')(out_adjacency)
+
+        out_adjacency_week = Dense(22, activation='relu')(A_week_input)
+        out_adjacency_week = Dense(self.classes, activation='softmax')(out_adjacency_week)
+
+        out_adjacency_weekend = Dense(22, activation='relu')(A_weekend_input)
+        out_adjacency_weekend = Dense(self.classes, activation='softmax')(out_adjacency_weekend)
+
+        out_dense_temporal = Dense(22, activation='relu')(A_input)
+        out_dense_temporal = Dense(self.classes, activation='softmax')(out_dense_temporal)
+
+        out_dense_distance = Dense(22, activation='relu')(Distance_input)
+        out_dense_distance = Dense(self.classes, activation='softmax')(out_dense_distance)
+
+        out_dense_duration = Dense(22, activation='relu')(Duration_input)
+        out_dense_duration = Dense(self.classes, activation='softmax')(out_dense_duration)
+
         out_dense = tf.Variable(1.) * out_location_time + tf.Variable(1.) * out_location_location
         out_dense = Dense(self.classes, activation='softmax')(out_dense)
 
         #out = tf.Variable(2.) * out_location_time + tf.Variable(2.) * out_location_location
         out_gnn = tf.Variable(1.) * out_temporal + tf.Variable(1.) * out_week_temporal + tf.Variable(1.) * out_weekend_temporal + tf.Variable(1.) * out_distance + tf.Variable(1.) * out_duration
         out_gnn = Dense(self.classes, activation='softmax')(out_gnn)
-        out = tf.Variable(1.) * out_gnn + out_dense
+        out = tf.Variable(1.) * out_dense + tf.Variable(1.) * out_gnn
 
         model = Model(inputs=[A_input, A_week_input, A_weekend_input, Temporal_input, Temporal_week_input, Temporal_weekend_input, Distance_input, Duration_input, Location_time_input, Location_location_input], outputs=[out])
 
