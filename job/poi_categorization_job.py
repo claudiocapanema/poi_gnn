@@ -122,7 +122,7 @@ class PoiCategorizationJob:
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
                                    adjacency_weekend_df, temporal_weekend_df, distance_df, duration_df)
 
-        location_location = self.file_extractor.read_npz(base_dir +location_location_filename)
+        location_location = self.file_extractor.read_csv(base_dir +location_location_filename)
         location_time = self.file_extractor.read_csv(base_dir + location_time_filename)
         int_to_locationid = self.file_extractor.read_csv(base_dir + int_to_locationid_filename)
         inputs = {'all_week': {'adjacency': adjacency_df, 'temporal': temporal_df, 'distance': distance_df, 'duration': duration_df,

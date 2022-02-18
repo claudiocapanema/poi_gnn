@@ -308,7 +308,7 @@ class PoiCategorizationDomain:
             distance_df = inputs['all_week']['distance']['matrices'].tolist()
             duration_df = inputs['all_week']['duration']['matrices'].tolist()
             visited_location_ids = inputs['all_week']['adjacency']['visited_location_ids'].tolist()
-            location_location_df = inputs['all_week']['location_location']
+            location_location_df = inputs['all_week']['location_location'].to_numpy()[:, :3]
             location_time_df = inputs['all_week']['location_time'][[str(i) for i in range(48)]].to_numpy()
             locationid_to_int = inputs['all_week']['int_to_locationid']
             locationid_to_int_ids = locationid_to_int['locationid'].tolist()
@@ -868,7 +868,7 @@ class PoiCategorizationDomain:
                 model = GNNUS_BaseModel(num_classes, max_size, max_size_sequence,
                         self.features_num_columns).build(seed=seed)
         if country == 'US':
-            batch = max_size * 10
+            batch = max_size * 8
         elif country == 'BR' or country == 'Brazil':
             batch = max_size * 5
 
@@ -880,8 +880,8 @@ class PoiCategorizationDomain:
         #                       ["Adjacency", "Adjacency (weekday)", "Adjacency (weekend)", "Temporal", "Temporal (weekday)", "Temporal (weekend)"],
         #                       output_dir)
 
-        input_train = [location_time_train, location_location_train][0]
-        input_test = [location_time_test, location_location_test][0]
+        input_train = [location_time_train, location_location_train]
+        input_test = [location_time_test, location_location_test]
 
         print("train")
         print(location_time_train)
