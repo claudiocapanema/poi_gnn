@@ -135,18 +135,21 @@ USER_TRACKING_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/us
 USER_TRACKING_DATASET=${USER_TRACKING_BASE_DIR}"users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50.csv"
 USER_TRACKING_DATASET_5_CATEGORIES_BR=${USER_TRACKING_BASE_DIR}"users_steps_5_categories_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_br.csv"
 USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES=${USER_TRACKING_BASE_DIR}"users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_gowalla_categories_br.csv"
-USER_TRACKING_ADJACENCY_FILENAME_BR="adjacency_matrix_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR="adjacency_matrix_weekday_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR="adjacency_matrix_weekend_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_TEMPORAL_FILENAME_BR="features_matrix_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR="features_matrix_weekday_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR="features_matrix_weekend_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_DISTANCE_FILENAME_BR="distance_matrix_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_DISTANCE_WEEK_FILENAME_BR="distance_matrix_weekday_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_DISTANCE_WEEKEND_FILENAME_BR="distance_matrix_weekend_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_DURATION_FILENAME_BR="duration_matrix_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_DURATION_WEEK_FILENAME_BR="duration_matrix_weekday_not_directed_48_5_categories_BR.csv"
-USER_TRACKING_DURATION_WEEKEND_FILENAME_BR="duration_matrix_weekend_not_directed_48_5_categories_BR.csv"
+USER_TRACKING_ADJACENCY_FILENAME_BR="adjacency_matrix_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR="adjacency_matrix_weekday_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR="adjacency_matrix_weekend_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_TEMPORAL_FILENAME_BR="features_matrix_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR="features_matrix_weekday_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR="features_matrix_weekend_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_DISTANCE_FILENAME_BR="distance_matrix_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_DISTANCE_WEEK_FILENAME_BR="distance_matrix_weekday_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_DISTANCE_WEEKEND_FILENAME_BR="distance_matrix_weekend_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_DURATION_FILENAME_BR="duration_matrix_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_DURATION_WEEK_FILENAME_BR="duration_matrix_weekday_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_DURATION_WEEKEND_FILENAME_BR="duration_matrix_weekend_not_directed_48_7_categories_BR.csv"
+USER_TRACKING_LOCATION_LOCATION_PMI_MATRIX_BR="location_location_pmi_matrix_7_categories_BR.npz"
+USER_TRACKING_LOCATION_TIME_PMI_MATRIX_BR="location_time_pmi_matrix_7_categories_BR.csv"
+USER_TRACKING_INT_TO_LOCATIONID_BR="int_to_locationid_7_categories_BR.csv"
 
 # poi transactions analysis
 # antigo
@@ -427,10 +430,6 @@ CATEGORIZATION_CONFIG='{
           "adjacency_matrix_weekend_filename": "'$GOWALLA_ADJACENCY_WEEKEND_FILENAME_US'",
           "temporal_matrix_week_filename": "'$GOWALLA_TEMPORAL_WEEK_FILENAME_US'",
           "temporal_matrix_weekend_filename": "'$GOWALLA_TEMPORAL_WEEKEND_FILENAME_US'",
-          "distance_matrix_week_filename":"'$GOWALLA_DISTANCE_WEEK_FILENAME_US'",
-          "distance_matrix_weekend_filename":"'$GOWALLA_DISTANCE_WEEKEND_FILENAME_US'",
-          "duration_matrix_week_filename":"'$GOWALLA_DURATION_WEEK_FILENAME_US'",
-          "duration_matrix_weekend_filename":"'$GOWALLA_DURATION_WEEKEND_FILENAME_US'",
           "location_location_filename":"'$GOWALLA_LOCATION_LOCATION_PMI_MATRIX_US_TEXAS'",
           "location_time_filename":"'$GOWALLA_LOCATION_TIME_PMI_MATRIX_US_TEXAS'",
           "int_to_locationid_filename":"'$GOWALLA_INT_TO_LOCATIONID_US_TEXAS'",
@@ -460,17 +459,16 @@ CATEGORIZATION_CONFIG='{
 #          "adjacency_matrix_weekend_filename": "'$USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR'",
 #          "temporal_matrix_week_filename": "'$USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR'",
 #          "temporal_matrix_weekend_filename": "'$USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR'",
-#          "distance_matrix_week_filename":"'$USER_TRACKING_DISTANCE_WEEK_FILENAME_BR'",
-#          "distance_matrix_weekend_filename":"'$USER_TRACKING_DISTANCE_WEEKEND_FILENAME_BR'",
-#          "duration_matrix_week_filename":"'$USER_TRACKING_DURATION_WEEK_FILENAME_BR'",
-#          "duration_matrix_weekend_filename":"'$USER_TRACKING_DURATION_WEEKEND_FILENAME_BR'",
+#          "location_location_filename":"'$USER_TRACKING_LOCATION_LOCATION_PMI_MATRIX_BR'",
+#          "location_time_filename":"'$USER_TRACKING_LOCATION_TIME_PMI_MATRIX_BR'",
+#          "int_to_locationid_filename":"'$USER_TRACKING_INT_TO_LOCATIONID_BR'",
 #          "graph_type":"not_directed",
 #          "dataset_name":"user_tracking",
 #          "country":"BR",
 #          "base":"base",
 #          "state":"",
 #          "version":"normal",
-#          "categories_type":"5_categories"
+#          "categories_type":"7_categories"
 #          }'
 
 

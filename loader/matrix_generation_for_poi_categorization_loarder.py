@@ -19,9 +19,9 @@ class MatrixGenerationForPoiCategorizationLoader(FileLoader):
             try:
                 file = files[i]
                 file_name = files_names[i]
-                self.save_df_to_csv(file, file_name)
+                self.save_df_to_csv(file, file_name, 'a')
             except:
                 time.sleep(8)
                 file = files[i]
                 file_name = files_names[i]
-                self.save_df_to_csv(file, file_name)
+                self.save_df_to_csv(file, file_name, 'a')

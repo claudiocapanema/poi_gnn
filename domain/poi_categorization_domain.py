@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import json
+
+import spektral.layers
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, power_transform
 
@@ -270,6 +272,7 @@ class PoiCategorizationDomain:
 
         location_time = location_time[idx]
         location_location = location_location[idx[:,None], idx].toarray()
+        location_location = sk.layers.GCNConv.preprocess(location_location)
 
         return location_time, location_location
 
@@ -422,7 +425,9 @@ class PoiCategorizationDomain:
                 user_temporal_matrix_weekend = user_temporal_matrix_weekend[idx]
                 # location time
                 user_location_time, user_location_location = self._filter_pmi_matrix(location_time_df, location_location_df, locationid_to_int, user_visited)
+                user_location_time = self._min_max_normalize(user_location_time)
                 location_time_list.append(user_location_time)
+                user_location_location = spektral.layers.ARMAConv.preprocess(user_location_location)
                 location_location_list.append(user_location_location)
 
             if model_name == "poi_gnn":
@@ -846,13 +851,18 @@ class PoiCategorizationDomain:
         max_size = max_size_matrices
         lr = 0.001
         print("Quantidade de classes: ", num_classes)
+        print("Tamanho maximo", max_size_matrices)
+        print("Tamanho das matrizes de treino: ", adjacency_train.shape, temporal_train.shape,
+              adjacency_week_train.shape, temporal_train_week.shape, distance_train.shape, duration_train.shape, location_time_train.shape, location_location_train.shape)
 
+        print("Tamanho das matrizes de teste: ", adjacency_test.shape, temporal_test.shape,
+              adjacency_test_week.shape, temporal_test_week.shape, distance_test.shape, duration_test.shape, location_time_test.shape, location_location_train.shape)
         if country == 'BR' or country == "Brazil":
             if version == "normal":
                 print("Tipo de rede neural: NORMAL")
                 model = GNNBR(num_classes, max_size, max_size_sequence,
                             self.features_num_columns).build(seed=seed)
-                lr = 0.0005
+                lr = 0.001
             elif version == "PATH":
                 print("PATH")
                 model = GNNPath(num_classes, max_size, max_size_sequence,
@@ -866,16 +876,16 @@ class PoiCategorizationDomain:
                 model = GNNUS_BaseModel(num_classes, max_size, max_size_sequence,
                         self.features_num_columns).build(seed=seed)
         if country == 'US':
-            batch = max_size * 1
+            batch = max_size * 2
         elif country == 'BR' or country == 'Brazil':
-            batch = max_size * 5
+            batch = max_size * 4
 
         print("Tamanho do batch: ", batch)
 
         user_index = max_user
         self.heatmap_matrices(str(fold_number), [adjacency_test[user_index], adjacency_test_week[user_index], adjacency_test_weekend[user_index],
-                               temporal_test[user_index], temporal_test_week[user_index], temporal_test_weekend[user_index]],
-                              ["Adjacency", "Adjacency (weekday)", "Adjacency (weekend)", "Temporal", "Temporal (weekday)", "Temporal (weekend)"],
+                               temporal_test[user_index], temporal_test_week[user_index], temporal_test_weekend[user_index], location_time_test[user_index], location_location_test[user_index]],
+                              ["Adjacency", "Adjacency (weekday)", "Adjacency (weekend)", "Temporal", "Temporal (weekday)", "Temporal (weekend)", "Location_time", "Location_location"],
                               output_dir)
 
         input_train = [adjacency_train, adjacency_week_train, adjacency_train_weekend,
@@ -884,11 +894,7 @@ class PoiCategorizationDomain:
         input_test = [adjacency_test, adjacency_test_week, adjacency_test_weekend, temporal_test, temporal_test_week, temporal_test_weekend,
                       distance_test, duration_test, location_time_test, location_location_test]
 
-        print("Tamanho das matrizes de treino: ", adjacency_train.shape, temporal_train.shape,
-              adjacency_week_train.shape, temporal_train_week.shape)
 
-        print("Tamanho das matrizes de teste: ", adjacency_test.shape, temporal_test.shape,
-              adjacency_test_week.shape, temporal_test_week.shape)
         # verifying whether categories arrays are equal
         compare1 = y_train == y_train_week
         compare2 = y_train_week == y_train_weekend

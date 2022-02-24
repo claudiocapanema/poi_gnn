@@ -22,7 +22,6 @@ class MatrixGenerationForPoiCategorizationJob():
         self.poi_categorization_loader = PoiCategorizationLoader()
         self.poi_categorization_configuration = PoICategorizationConfiguration()
 
-    @jit(nopython=True, parallel=True)
     def start(self):
         osm_category_column = None
         users_checkin_filename = Input.get_instance().inputs['users_checkin_filename']

@@ -12,6 +12,7 @@ if __name__ == "__main__":
     df = df[df['poi_resulting'] != 'Commuting']
     df = df[df['poi_resulting'] != 'Other']
 
-    print(df)
+    print("uarios")
+    print(len(df['id'].unique().tolist()))
 
     df.to_csv(USER_TRACKING_LOCAL_DATETIME_GOWALLA_CATEGORIES_BR, index=False)
