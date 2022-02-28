@@ -119,17 +119,27 @@ class PoiCategorizationPerformanceGraphicsLoader:
         # plt.savefig(dataset + '_metrics_horizontal_latex.pgf')
         print("calculou")
         fig.savefig(base_dir + "_metrics_horizontal.png", bbox_inches='tight', dpi=400)
+        fig.savefig(base_dir + "_metrics_horizontal.pdf", bbox_inches='tight', dpi=400)
+
         plt.figure()
 
 
     def barplot(self, metrics, x_column, y_column, base_dir, file_name, title):
+        plt.legend(frameon=False)
+        plt.rc('pgf', texsystem='pdflatex')
         Path(base_dir).mkdir(parents=True, exist_ok=True)
         plt.figure()
         figure = sns.barplot(x=x_column, y=y_column, data=metrics).set_title(title)
+        plt.figure(dpi=400)
+        plt.xticks(rotation=30)
+        plt.legend(fontsize=40)
         figure = figure.get_figure()
         figure.savefig(base_dir + file_name + ".png", bbox_inches='tight', dpi=400)
+        figure.savefig(base_dir + file_name + ".pdf", bbox_inches='tight', dpi=400)
 
     def barplot_with_values(self, metrics, x_column, y_column, base_dir, file_name, title, dataset, ax, index):
+        plt.legend(frameon=False)
+        plt.rc('pgf', texsystem='pdflatex')
         Path(base_dir).mkdir(parents=True, exist_ok=True)
         # plt.figure(figsize=(8, 5))
         # sns.set(font_scale=1.2, style='whitegrid')
@@ -163,6 +173,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
         figure.set_ylabel(y_column, fontsize=size)
         figure.set_xlabel(x_column, fontsize=size)
+        plt.figure(dpi=400)
+        plt.xticks(rotation=30)
+        plt.legend(fontsize=40)
         # figure0.tick_params(labelsize=10)
         y_label = "accuracy"
         count = 0
@@ -181,6 +194,8 @@ class PoiCategorizationPerformanceGraphicsLoader:
             count += 1
         ax[index].tick_params(axis='x', labelsize=size - 4, rotation=20)
         ax[index].tick_params(axis='y', labelsize=size - 4)
+
+
 
     def output_dir(self, output_base_dir, dataset_type, category_type, model_name=""):
 

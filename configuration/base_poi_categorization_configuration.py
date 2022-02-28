@@ -172,7 +172,8 @@ class BasePoiCategorizationConfiguration:
                                  range(len(list(self.DENSE_FORUSQUARE_9_CATEGORIES.keys())))},
             "gowalla": {"7_categories": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))},
                         "5_categories": {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))}},
-        "user_tracking": {'5_categories': {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))}}})
+        "user_tracking": {'5_categories': {str(i): list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1].keys())[i] for i in range(len(list(self.USER_TRACKING_OSM_5_CATEGORIES_TO_INT[1])))},
+                            "7_categories": {str(i): list(self.GOWALLA_7_CATEGORIES.keys())[i] for i in range(len(list(self.GOWALLA_7_CATEGORIES)))}}})
 
         self.CATEGORIES = ("categories", {'weeplaces': {'7_categories_osm': self.OSM_7_CATEGORIES_TO_INT[1]},
                                           'global_foursquare': {'8_categories': self.GLOBAL_FOURSQUARE_8_CATEGORIES},
@@ -183,7 +184,7 @@ class BasePoiCategorizationConfiguration:
         # MATRIX_MAX_SIZE = ("matrix_max_size", 1166, False, "max size of the adjacency matrix and features matrix")
 
         self.MAX_SIZE_MATRICES = (
-            "max_size_matrices", 8, False, "max size of the adjacency matrices and features (row size) ones")
+            "max_size_matrices", 3, False, "max size of the adjacency matrices and features (row size) ones")
 
 
         self.REPORT_9_INT_CATEGORIES = ("report_9_int_categories",

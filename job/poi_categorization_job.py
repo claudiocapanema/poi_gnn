@@ -139,7 +139,8 @@ class PoiCategorizationJob:
                                     max_size_paths,
                                     True,
                                     True,
-                                    7)
+                                    7,
+                                    dataset_name)
 
         selected_users = pd.DataFrame({'selected_users': selected_users})
 

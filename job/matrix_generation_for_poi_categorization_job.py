@@ -111,7 +111,10 @@ class MatrixGenerationForPoiCategorizationJob():
             categories = users_checkin[category_name_column].tolist()
             categories_int = []
             for i in range(len(categories)):
-                categories_int.append(category_to_int[categories[i]])
+                if categories[i] == 'Other':
+                    categories_int.append(-1)
+                else:
+                    categories_int.append(category_to_int[categories[i]])
             category_column = category_column + "_id"
             users_checkin[category_column] = np.array(categories_int)
 

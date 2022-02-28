@@ -135,6 +135,7 @@ USER_TRACKING_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/us
 USER_TRACKING_DATASET=${USER_TRACKING_BASE_DIR}"users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50.csv"
 USER_TRACKING_DATASET_5_CATEGORIES_BR=${USER_TRACKING_BASE_DIR}"users_steps_5_categories_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_br.csv"
 USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES=${USER_TRACKING_BASE_DIR}"users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_gowalla_categories_br.csv"
+USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES_TRANSFER_LEARNING=${USER_TRACKING_BASE_DIR}"users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_gowalla_categories_transfer_learning_br.csv"
 USER_TRACKING_ADJACENCY_FILENAME_BR="adjacency_matrix_not_directed_48_7_categories_BR.csv"
 USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR="adjacency_matrix_weekday_not_directed_48_7_categories_BR.csv"
 USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR="adjacency_matrix_weekend_not_directed_48_7_categories_BR.csv"
@@ -214,10 +215,35 @@ TRANSACTIONS_BASE_DIR="${GLOBAL_FOURSQUARE_BASE_DIR}transactions/"
 #          }'
 
 # base model
+#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+#          "job": "matrix_generation_for_poi_categorization",
+#          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US_TEXAS'",
+#          "base_dir":"'$GOWALLA_BASE_DIR'",
+#          "directed_folder":"directed/",
+#          "not_directed_folder":"not_directed/",
+#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+#          "hour48":"yes",
+#          "personal_features_matrix":"no",
+#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+#          "country":"United States",
+#          "state":"",
+#          "different_venues":"yes",
+#          "max_time_between_records": "",
+#          "top_users":"40000",
+#          "directed":"no",
+#          "dataset_name":"gowalla",
+#          "pattern_matrices":"yes",
+#          "base":"base",
+#          "categories_type":"7_categories"
+#          }'
+
 MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "job": "matrix_generation_for_poi_categorization",
-          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US_TEXAS'",
-          "base_dir":"'$GOWALLA_BASE_DIR'",
+          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES_TRANSFER_LEARNING'",
+          "base_dir":"'$USER_TRACKING_BASE_DIR'",
           "directed_folder":"directed/",
           "not_directed_folder":"not_directed/",
           "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
@@ -227,17 +253,18 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "hour48":"yes",
           "personal_features_matrix":"no",
           "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-          "country":"United States",
-          "state":"TEXAS",
+          "country":"Brazil",
+          "state":"",
           "different_venues":"yes",
           "max_time_between_records": "",
           "top_users":"40000",
           "directed":"no",
-          "dataset_name":"gowalla",
+          "dataset_name":"user_tracking",
           "pattern_matrices":"yes",
-          "base":"base",
+          "base":"predict",
           "categories_type":"7_categories"
           }'
+
 
 #MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
 #          "job": "matrix_generation_for_poi_categorization",
@@ -416,31 +443,31 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
 #          }'
 
 # base
-CATEGORIZATION_CONFIG='{
-          "job": "categorization",
-          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
-          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
-          "ground_truth": "'$GROUND_TRUTH'",
-          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/",
-          "adjacency_matrix_filename": "'$GOWALLA_ADJACENCY_FILENAME_US'",
-          "temporal_matrix_filename": "'$GOWALLA_TEMPORAL_FILENAME_US'",
-          "distance_matrix_filename":"'$GOWALLA_DISTANCE_FILENAME_US'",
-          "duration_matrix_filename":"'$GOWALLA_DURATION_FILENAME_US'",
-          "adjacency_matrix_week_filename": "'$GOWALLA_ADJACENCY_WEEK_FILENAME_US'",
-          "adjacency_matrix_weekend_filename": "'$GOWALLA_ADJACENCY_WEEKEND_FILENAME_US'",
-          "temporal_matrix_week_filename": "'$GOWALLA_TEMPORAL_WEEK_FILENAME_US'",
-          "temporal_matrix_weekend_filename": "'$GOWALLA_TEMPORAL_WEEKEND_FILENAME_US'",
-          "location_location_filename":"'$GOWALLA_LOCATION_LOCATION_PMI_MATRIX_US_TEXAS'",
-          "location_time_filename":"'$GOWALLA_LOCATION_TIME_PMI_MATRIX_US_TEXAS'",
-          "int_to_locationid_filename":"'$GOWALLA_INT_TO_LOCATIONID_US_TEXAS'",
-          "graph_type":"not_directed",
-          "dataset_name":"gowalla",
-          "country":"US",
-          "base":"base",
-          "state":"TEXAS",
-          "version":"normal",
-          "categories_type":"7_categories"
-          }'
+#CATEGORIZATION_CONFIG='{
+#          "job": "categorization",
+#          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
+#          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
+#          "ground_truth": "'$GROUND_TRUTH'",
+#          "base_dir":"'$GOWALLA_BASE_DIR'different_venues/",
+#          "adjacency_matrix_filename": "'$GOWALLA_ADJACENCY_FILENAME_US'",
+#          "temporal_matrix_filename": "'$GOWALLA_TEMPORAL_FILENAME_US'",
+#          "distance_matrix_filename":"'$GOWALLA_DISTANCE_FILENAME_US'",
+#          "duration_matrix_filename":"'$GOWALLA_DURATION_FILENAME_US'",
+#          "adjacency_matrix_week_filename": "'$GOWALLA_ADJACENCY_WEEK_FILENAME_US'",
+#          "adjacency_matrix_weekend_filename": "'$GOWALLA_ADJACENCY_WEEKEND_FILENAME_US'",
+#          "temporal_matrix_week_filename": "'$GOWALLA_TEMPORAL_WEEK_FILENAME_US'",
+#          "temporal_matrix_weekend_filename": "'$GOWALLA_TEMPORAL_WEEKEND_FILENAME_US'",
+#          "location_location_filename":"'$GOWALLA_LOCATION_LOCATION_PMI_MATRIX_US_TEXAS'",
+#          "location_time_filename":"'$GOWALLA_LOCATION_TIME_PMI_MATRIX_US_TEXAS'",
+#          "int_to_locationid_filename":"'$GOWALLA_INT_TO_LOCATIONID_US_TEXAS'",
+#          "graph_type":"not_directed",
+#          "dataset_name":"gowalla",
+#          "country":"US",
+#          "base":"base",
+#          "state":"TEXAS",
+#          "version":"normal",
+#          "categories_type":"7_categories"
+#          }'
 
 
 
@@ -470,6 +497,32 @@ CATEGORIZATION_CONFIG='{
 #          "version":"normal",
 #          "categories_type":"7_categories"
 #          }'
+
+CATEGORIZATION_CONFIG='{
+          "job": "categorization",
+          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
+          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
+          "ground_truth": "'$GROUND_TRUTH'",
+          "base_dir":"'$USER_TRACKING_BASE_DIR'different_venues/",
+          "adjacency_matrix_filename": "'$USER_TRACKING_ADJACENCY_FILENAME_BR'",
+          "temporal_matrix_filename": "'$USER_TRACKING_TEMPORAL_FILENAME_BR'",
+          "distance_matrix_filename":"'$USER_TRACKING_DISTANCE_FILENAME_BR'",
+          "duration_matrix_filename":"'$USER_TRACKING_DURATION_FILENAME_BR'",
+          "adjacency_matrix_week_filename": "'$USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR'",
+          "adjacency_matrix_weekend_filename": "'$USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR'",
+          "temporal_matrix_week_filename": "'$USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR'",
+          "temporal_matrix_weekend_filename": "'$USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR'",
+          "location_location_filename":"'$USER_TRACKING_LOCATION_LOCATION_PMI_MATRIX_BR'",
+          "location_time_filename":"'$USER_TRACKING_LOCATION_TIME_PMI_MATRIX_BR'",
+          "int_to_locationid_filename":"'$USER_TRACKING_INT_TO_LOCATIONID_BR'",
+          "graph_type":"not_directed",
+          "dataset_name":"user_tracking",
+          "country":"BR",
+          "base":"predict",
+          "state":"",
+          "version":"normal",
+          "categories_type":"7_categories"
+          }'
 
 
 BASELINES_CONFIG='{
@@ -536,17 +589,29 @@ CATEGORIZATION_BASELINE_GPR_CONFIG='{
           }'
 
 TRANSFER_LEARNING_CONFIG='{
-          "job": "categorization",
+          "job": "transfer_learning",
           "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
           "users_steps_filename": "'$USERS_STEPS_FILENAME'",
-          "ground_truth": "'$RAW_GPS_GROUND_TRUTH'",
-          "users_checkin_filename": "'$WEEPLACES_DATASET'",
-          "adjacency_matrix_filename": "'$RAW_GPS_ADJACENCY_MATRIX_FILENAME'",
-          "feature_matrix_filename": "'$RAW_GPS_FEATURE_MATRIX_FILENAME'",
-          "user_metrics":"'$RAW_GPS_USER_METRICS_FILENAME'",
+          "ground_truth": "'$GROUND_TRUTH'",
+          "base_dir":"'$USER_TRACKING_BASE_DIR'different_venues/",
+          "adjacency_matrix_filename": "'$USER_TRACKING_ADJACENCY_FILENAME_BR'",
+          "temporal_matrix_filename": "'$USER_TRACKING_TEMPORAL_FILENAME_BR'",
+          "distance_matrix_filename":"'$USER_TRACKING_DISTANCE_FILENAME_BR'",
+          "duration_matrix_filename":"'$USER_TRACKING_DURATION_FILENAME_BR'",
+          "adjacency_matrix_week_filename": "'$USER_TRACKING_ADJACENCY_WEEK_FILENAME_BR'",
+          "adjacency_matrix_weekend_filename": "'$USER_TRACKING_ADJACENCY_WEEKEND_FILENAME_BR'",
+          "temporal_matrix_week_filename": "'$USER_TRACKING_TEMPORAL_WEEK_FILENAME_BR'",
+          "temporal_matrix_weekend_filename": "'$USER_TRACKING_TEMPORAL_WEEKEND_FILENAME_BR'",
+          "location_location_filename":"'$USER_TRACKING_LOCATION_LOCATION_PMI_MATRIX_BR'",
+          "location_time_filename":"'$USER_TRACKING_LOCATION_TIME_PMI_MATRIX_BR'",
+          "int_to_locationid_filename":"'$USER_TRACKING_INT_TO_LOCATIONID_BR'",
           "graph_type":"not_directed",
-          "dataset_name":"weeplaces",
-          "categories_type":"7_categories_osm"
+          "dataset_name":"user_tracking",
+          "country":"BR",
+          "base":"base",
+          "state":"",
+          "version":"normal",
+          "categories_type":"7_categories"
           }'
 
 CATEGORIZATION_PERFORMANCE_GRAPHICS_CONFIG='{

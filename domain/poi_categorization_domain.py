@@ -126,13 +126,16 @@ class PoiCategorizationDomain:
 
         return self.file_extractor.read_csv(filename).drop_duplicates(subset=['user_id'])
 
-    def _resize_adjacency_and_category_matrices(self, user_matrix, user_matrix_week, user_matrix_weekend, user_category, max_size_matrices):
+    def _resize_adjacency_and_category_matrices(self, user_matrix, user_matrix_week, user_matrix_weekend, user_category, max_size_matrices, dataset_name):
 
         k = max_size_matrices
         if user_matrix.shape[0] < k:
             k = user_matrix.shape[0]
         # select the k rows that have the highest sum
-        idx = top_k_rows(user_matrix, k)
+        if dataset_name == "user_tracking":
+            idx = top_k_rows_category(user_matrix, k, user_category)
+        else:
+            idx = top_k_rows(user_matrix, k)
         user_matrix = user_matrix[idx[:,None], idx]
         user_matrix_week = user_matrix_week[idx[:, None], idx]
         user_matrix_weekend = user_matrix_weekend[idx[:, None], idx]
@@ -283,6 +286,7 @@ class PoiCategorizationDomain:
                                 week,
                                 weekend,
                                 num_categories,
+                                dataset_name,
                                 model_name="poi_gnn"):
 
         matrices_list = []
@@ -374,7 +378,7 @@ class PoiCategorizationDomain:
             # matrices get new size, equal for everyone
             if model_name == "poi_gnn":
                 if week and weekend:
-                    user_matrix, user_matrix_week, user_matrix_weekend, user_category, idx = self._resize_adjacency_and_category_matrices(user_matrix, user_matrix_week, user_matrix_weekend, user_category, max_size_matrices)
+                    user_matrix, user_matrix_week, user_matrix_weekend, user_category, idx = self._resize_adjacency_and_category_matrices(user_matrix, user_matrix_week, user_matrix_weekend, user_category, max_size_matrices, dataset_name)
                     #print("user matrix week: ", user_matrix_week)
                     user_total = np.sum(user_matrix)
                     if user_total > max_events:
@@ -878,7 +882,7 @@ class PoiCategorizationDomain:
         if country == 'US':
             batch = max_size * 2
         elif country == 'BR' or country == 'Brazil':
-            batch = max_size * 4
+            batch = 1
 
         print("Tamanho do batch: ", batch)
 

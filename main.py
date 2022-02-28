@@ -10,6 +10,7 @@ from job.poi_categorization_baselines_job import PoiCategorizationBaselinesJob
 from job.poi_categorization_performance_graphics_job import PoiCategorizationPerformanceGraphicsJob
 from job.matrix_generation_for_poi_categorization_job import MatrixGenerationForPoiCategorizationJob
 from job.poi_transactions_analysis_job import PoiTransactionsAnalysisJob
+from job.poi_categorization_transfer_learning_job import PoiCategorizationTransferLearningJob
 from job.hmrm_job import HmrmBaseline
 from job.poi_categorization_baseline_gpr_job import PoiCategorizationBaselineGPRJob
 from foundation.configuration.input import Input
@@ -37,6 +38,8 @@ def start_job(args):
         job = PoiCategorizationBaselineGPRJob()
     elif job_name == "poi_transactions":
         job = PoiTransactionsAnalysisJob()
+    elif job_name =="transfer_learning":
+        job = PoiCategorizationTransferLearningJob()
 
     job.start()
 
