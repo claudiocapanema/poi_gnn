@@ -56,28 +56,52 @@ def top_k_rows(data, k):
 
     return np.array(row_sum)
 
+def split_graph(data, k, split):
+
+    graph = []
+
+    if data.ndim == 2:
+        for i in range(1, split+1):
+            matrix = data[k*(i - 1) : k*i, k*(i - 1) : k*i]
+            graph.append(matrix)
+    else:
+        for i in range(1, split+1):
+            matrix = data[k*(i - 1) : k*i]
+            graph.append(matrix)
+
+    return np.array(graph)
 
 def top_k_rows_category(data, k, user_category):
 
     row_sum = []
     user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
+    categories_weights = {0: 1, 1: 1, 2: 4, 3: 6, 4: 3, 5: 3, 6: 7}
     adjusted_row_sum = []
     for i in range(len(data)):
-        row_sum.append([np.sum(data[i]), i, user_category[i]])
+        category = user_category[i]
+        category_weight = categories_weights[category]
+        row_sum.append([np.sum(data[i]), i, category, category_weight])
         user_unique_categories[user_category[i]] += 1
 
-    row_sum = sorted(row_sum, reverse=True, key=lambda e:e[0])
+    row_sum = sorted(row_sum, reverse=True, key=lambda e:e[3])
     #print("antes: ", row_sum)
     n_rows_to_remove = len(row_sum) - k
     count = 0
-    for i in range(len(row_sum) -1, -1, -1):
 
-        category = row_sum[i][2]
-        if user_unique_categories[category] > 1 and count < n_rows_to_remove:
-            user_unique_categories[category] -= 1
-            count += 1
-        else:
-            adjusted_row_sum.append(row_sum[i])
+    add = {i: True for i in pd.Series(user_category).unique().tolist()}
+    added = []
+    while count < k:
+
+        for i in range(len(row_sum)):
+            category = row_sum[i][2]
+
+            if add[category] and i not in added and count < k:
+                adjusted_row_sum.append(row_sum[i])
+                add[category] = False
+                added.append(i)
+                count += 1
+
+        add = {i: True for i in pd.Series(user_category).unique().tolist()}
 
     #adjusted_row_sum = sorted(adjusted_row_sum, reverse=True, key=lambda e:e[0])
 
@@ -89,6 +113,55 @@ def top_k_rows_category(data, k, user_category):
     #row_sum = row_sum[:k]
     #print("total: ", adjusted_row_sum)
     adjusted_row_sum = [e[1] for e in adjusted_row_sum]
+
+    #print("ids: ", adjusted_row_sum, " tamanho dos dados: ", len(data))
+
+    return np.array(adjusted_row_sum)
+
+def top_k_rows_category_user_tracking(data, k, user_category):
+
+    row_sum = []
+    user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
+    categories_weights = {0: 1, 1: 1, 2: 4, 3: 6, 4: 3, 5: 3, 6: 7}
+    adjusted_row_sum = []
+    for i in range(len(data)):
+        category = user_category[i]
+        category_weight = categories_weights[category]
+        row_sum.append([np.sum(data[i]), i, category, category_weight])
+        user_unique_categories[user_category[i]] += 1
+
+    row_sum = sorted(row_sum, reverse=True, key=lambda e:e[3])
+    adjusted_row_sum = row_sum[:k]
+    adjusted_row_sum = [i[1] for i in adjusted_row_sum]
+    #print("antes: ", row_sum)
+    # n_rows_to_remove = len(row_sum) - k
+    # count = 0
+    #
+    # add = {i: True for i in pd.Series(user_category).unique().tolist()}
+    # added = []
+    # while count < k:
+    #
+    #     for i in range(len(row_sum)):
+    #         category = row_sum[i][2]
+    #
+    #         if add[category] and i not in added and count < k:
+    #             adjusted_row_sum.append(row_sum[i])
+    #             add[category] = False
+    #             added.append(i)
+    #             count += 1
+    #
+    #     add = {i: True for i in pd.Series(user_category).unique().tolist()}
+    #
+    # #adjusted_row_sum = sorted(adjusted_row_sum, reverse=True, key=lambda e:e[0])
+    #
+    #
+    # # if len(row_sum) > k:
+    # # if row_sum[k][0] < 4:
+    # #     print("ola")
+    # #print("Tamanho do row sum: ", len(adjusted_row_sum))
+    # #row_sum = row_sum[:k]
+    # #print("total: ", adjusted_row_sum)
+    # adjusted_row_sum = [e[1] for e in adjusted_row_sum]
 
     #print("ids: ", adjusted_row_sum, " tamanho dos dados: ", len(data))
 

@@ -866,7 +866,7 @@ class PoiCategorizationDomain:
                 print("Tipo de rede neural: NORMAL")
                 model = GNNBR(num_classes, max_size, max_size_sequence,
                             self.features_num_columns).build(seed=seed)
-                lr = 0.001
+                lr = 0.01
             elif version == "PATH":
                 print("PATH")
                 model = GNNPath(num_classes, max_size, max_size_sequence,

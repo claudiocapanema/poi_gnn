@@ -20,7 +20,7 @@ from model.neural_network.poi_gnn.BR.gnn_br_transfer_learning import GNNBR
 from model.neural_network.poi_gnn.US.gnn import GNNUS
 from model.neural_network.poi_gnn.path.gnn import GNNPath
 from model.neural_network.poi_gnn.US.gnn_base_model_for_transfer_learning import GNNUS_BaseModel
-from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category, top_k_rows_centrality, \
+from utils.nn_preprocessing import one_hot_decoding_predicted, top_k_rows, top_k_rows_category, top_k_rows_category_user_tracking, top_k_rows_centrality, \
     top_k_rows_order, split_graph
 
 
@@ -130,7 +130,7 @@ class PoiCategorizationTransferLearningDomain:
     def _resize_adjacency_and_category_matrices(self, user_matrix, user_matrix_week, user_matrix_weekend, user_category, max_size_matrices, dataset_name):
 
         more_matrices = 1
-
+        remain = False
         k_original = max_size_matrices
         size = user_matrix.shape[0]
         if size < k_original:
@@ -139,16 +139,44 @@ class PoiCategorizationTransferLearningDomain:
             k = int(np.floor(size/k_original) * k_original)
         # select the k rows that have the highest sum
         if dataset_name == "user_tracking":
-            idx = top_k_rows_category(user_matrix, k, user_category)
+            idx = top_k_rows_category_user_tracking(user_matrix, k, user_category)
         else:
             idx = top_k_rows(user_matrix, k)
-        user_matrix = user_matrix[idx[:,None], idx]
+
+        not_used_ids = []
+        for i in range(len(idx)):
+
+            if i not in idx:
+                not_used_ids.append(i)
+
+        if len(not_used_ids) > 0 or size < max_size_matrices:
+
+            add_more = max_size_matrices - len(not_used_ids)
+
+            count = 0
+            i = 0
+            for i in idx:
+
+                if count < add_more:
+
+                    not_used_ids.append(i)
+                    count += 1
+
+                else:
+
+                    break
+
+        idx = np.array(idx.tolist() + not_used_ids)
+
+        user_matrix = user_matrix[idx[:, None], idx]
         user_matrix_week = user_matrix_week[idx[:, None], idx]
         user_matrix_weekend = user_matrix_weekend[idx[:, None], idx]
         user_category = user_category[idx]
 
-        if k > k_original:
+        if k > k_original or len(not_used_ids) > 0:
             k_split = int(np.floor(size/k_original))
+            if len(not_used_ids) > 0:
+                k_split += 1
             user_matrix = split_graph(user_matrix, k_original, k_split)
             user_matrix_week = split_graph(user_matrix_week, k_original, k_split)
             user_matrix_weekend = split_graph(user_matrix_weekend, k_original, k_split)
@@ -356,6 +384,7 @@ class PoiCategorizationTransferLearningDomain:
         max_user = -1
         selected_users = []
         print("olaa")
+        remove = 0
         for i in range(len(ids)):
 
             number_of_matrices = 1
@@ -379,9 +408,10 @@ class PoiCategorizationTransferLearningDomain:
             user_visited = visited_location_ids[i]
             user_visited = json.loads(user_visited)
             user_visited = np.array(user_visited)
-            if user_matrices.shape[0] < max_size_matrices:
-                remove_users_ids.append(user_id)
-                continue
+            # if user_matrices.shape[0] < max_size_matrices:
+            #     remove_users_ids.append(user_id)
+            #     remove += 1
+            #     continue
             size = user_matrices.shape[0]
             if size > maior:
                 maior = size
@@ -435,6 +465,8 @@ class PoiCategorizationTransferLearningDomain:
                     selected_users.append(user_id)
             """"""
         df_selected_users_visited_locations = pd.DataFrame({'id': selected_users, 'poi_id': selected_visited_locations})
+        print("lvisitas", len(df_selected_users_visited_locations))
+        print("usuários", len(ids), " removidos: ", remove)
         self.features_num_columns = temporal_matrices_list[-1].shape[1]
         matrices_list = np.array(matrices_list)
         location_time_list = np.array(location_time_list)

@@ -221,6 +221,7 @@ class MatrixGenerationForPoiCategorizationJob():
                                            top_users,
                                            max_time_between_records,
                                            num_users,
+                                           base,
                                            hour48,
                                            osm_category_column)
         else:

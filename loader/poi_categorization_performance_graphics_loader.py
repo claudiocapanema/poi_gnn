@@ -120,6 +120,8 @@ class PoiCategorizationPerformanceGraphicsLoader:
         print("calculou")
         fig.savefig(base_dir + "_metrics_horizontal.png", bbox_inches='tight', dpi=400)
         fig.savefig(base_dir + "_metrics_horizontal.pdf", bbox_inches='tight', dpi=400)
+        fig.savefig(base_dir + "_metrics_horizontal.svg", bbox_inches='tight', dpi=400)
+        fig.savefig(base_dir + "_metrics_horizontal.svg", bbox_inches='tight', dpi=400)
 
         plt.figure()
 

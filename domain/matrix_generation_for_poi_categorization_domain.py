@@ -63,6 +63,7 @@ class MatrixGenerationForPoiCategorizationDomain:
                                longitude_column,
                                osm_category_column,
                                dataset_name,
+                               base,
                                files_names,
                                differemt_venues, personal_features_matrix, hour48, directed, max_time_between_records):
         """
@@ -83,7 +84,8 @@ class MatrixGenerationForPoiCategorizationDomain:
         longitude_list = user_checkin[longitude_column].tolist()
 
         # matrices initialization
-        visited_location_ids = user_checkin[locationid_column].unique().tolist()
+        visited_location_ids = user_checkin[locationid_column].tolist()
+        visited_location_ids_real = []
         n_pois = len(visited_location_ids)
         adjacency_matrix = [[0 for i in range(n_pois)] for j in range(n_pois)]
         adjacency_weekday_matrix = [[0 for i in range(n_pois)] for j in range(n_pois)]
@@ -112,7 +114,10 @@ class MatrixGenerationForPoiCategorizationDomain:
         #
         # else:
         #     categories = self.categories_preproccessing(categories, categories_to_int_osm)
-        min_categories_ = {'gowalla': 5, 'user_tracking': 2}
+        if base != "predict":
+            min_categories_ = {'gowalla': 5, 'user_tracking': 1}
+        else:
+            min_categories_ = {'gowalla': 5, 'user_tracking': 2}
         min_categories = min_categories_[dataset_name]
         if len(user_checkin[category_column].unique().tolist()) < min_categories:
             print("Usuário com poucas categorias diferentes visitadas")
@@ -155,13 +160,13 @@ class MatrixGenerationForPoiCategorizationDomain:
             local_anterior = placeids_int[anterior]
             local_atual = placeids_int[atual]
             # retirar eventos muito esparços
-            if len(max_time_between_records) > 0:
-                if (datetimes[atual] - datetimes[anterior]) > max_timedelta:
-                    continue
-            # retirar eventos consecutivos em um mesmo estabelecimento
-            if differemt_venues:
-                if placeids[anterior] == placeids[atual]:
-                    continue
+            # if len(max_time_between_records) > 0:
+            #     if (datetimes[atual] - datetimes[anterior]) > max_timedelta:
+            #         continue
+            # # retirar eventos consecutivos em um mesmo estabelecimento
+            # if differemt_venues:
+            #     if placeids[anterior] == placeids[atual]:
+            #         continue
 
             lat_before = latitude_list[anterior]
             lng_before = longitude_list[anterior]
@@ -197,6 +202,8 @@ class MatrixGenerationForPoiCategorizationDomain:
                 else:
                     adjacency_weekend_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
                     adjacency_weekend_matrix[placeids_int[atual]][placeids_int[anterior]] += 1
+
+            visited_location_ids_real.append(visited_location_ids[atual])
 
             if not personal_features_matrix:
                 if hour48:
@@ -251,7 +258,7 @@ class MatrixGenerationForPoiCategorizationDomain:
 
         duration_matrix = self._summarize_categories_distance_matrix(duration_matrix)
 
-        visited_location_ids = pd.Series(visited_location_ids).unique().tolist()
+        visited_location_ids_real = user_checkin[locationid_column].unique().tolist()
 
         if len(pd.Series(categories_list).unique().tolist()) < min_categories:
             print("Usuário com poucas categorias diferentes visitadas")
@@ -274,7 +281,7 @@ class MatrixGenerationForPoiCategorizationDomain:
                              'adjacency_weekend': [adjacency_weekend_matrix], 'temporal': [temporal_matrix],
                              'distance': [distance_matrix], 'duration': [duration_matrix],
                              'temporal_weekday': [temporal_weekday_matrix], 'temporal_weekend': [temporal_weekend_matrix],
-                             'visited_location_ids': [visited_location_ids],
+                             'visited_location_ids': [visited_location_ids_real],
                              'category': [categories_list]})
 
         user_checkin = user_checkin[columns]
@@ -720,6 +727,7 @@ class MatrixGenerationForPoiCategorizationDomain:
                                   top_users,
                                   max_time_between_records,
                                   num_users,
+                                  base,
                                   hour48=True,
                                   osm_category_column=None):
 
@@ -794,6 +802,7 @@ class MatrixGenerationForPoiCategorizationDomain:
                                                                                                          longitude_column,
                                                                                                          osm_category_column,
                                                                                                          dataset_name,
+                                                                                                         base,
                                                                                                          files_names,
                                                                                                          differemt_venues, personal_features_matrix, hour48, directed, max_time_between_records))
 

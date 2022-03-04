@@ -160,7 +160,8 @@ class PoiCategorizationTransferLearningJob:
                                                              version,
                                                              output_dir)
 
-        df_selected_users_visited_locations['category'] = np.array(y_predicted)
+        df_selected_users_visited_locations['category'] = np.array([int_to_category[str(i)] for i in y_predicted])
+        df_selected_users_visited_locations['category_id'] = np.array(y_predicted)
 
         df_selected_users_visited_locations.to_csv(
             "/media/claudio/Data/backup_win_hd/Downloads/doutorado/users_steps_output/users_steps_10_mil_limite_500_pontos_local_datetime_with_detected_pois_with_osm_pois_50_gowalla_categories_transfer_learning_predict_br.csv",
