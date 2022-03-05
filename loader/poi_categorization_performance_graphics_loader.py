@@ -270,6 +270,31 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
         df = df[['POI-GNN', 'HMRM', 'ARMA']]
 
+        # get improvements
+        poi_gnn = [float(i.replace("textbf{", "").replace("}", "")[:5]) for i in df['POI-GNN'].to_numpy()]
+        hmrm = [float(i.replace("textbf{", "").replace("}", "")[:5]) for i in df['HMRM'].to_numpy()]
+        arma = [float(i.replace("textbf{", "").replace("}", "")[:5]) for i in df['ARMA'].to_numpy()]
+        difference = []
+        for i in range(14, len(poi_gnn)):
+            min_ = max([arma[i], hmrm[i]])
+            max_ = min([arma[i], hmrm[i]])
+            value = poi_gnn[i]
+            if min_ < value:
+                min_ = value - min_
+            else:
+                min_ = 0
+            if max_ < value:
+                max_ = value - max_
+            else:
+                max_ = 0
+
+            s = str(round(min_*100, 3)) + "\%--" + str(round(max_*100, 3)) + "\%"
+            difference.append([round(value, 3), round(hmrm[i], 3), round(arma[i], 3), round(min_, 3), round(max_, 3), s])
+
+        difference_df = pd.DataFrame(difference, columns=['base', 'hmrm', 'arma', 'min', 'max', 'texto'])
+
+        difference_df.to_csv(output + "difference.csv", index=False)
+
         display(HTML(df.to_html()))
 
 

@@ -935,7 +935,7 @@ class PoiCategorizationDomain:
         y_predict_location = one_hot_decoding_predicted(y_predict_location)
         y_test = one_hot_decoding_predicted(y_test)
         report = skm.classification_report(y_test, y_predict_location, output_dict=True)
-        # print(report)
+        print(report)
 
         return h, report, model, report['accuracy']
 
