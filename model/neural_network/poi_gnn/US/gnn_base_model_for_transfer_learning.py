@@ -153,16 +153,26 @@ class GNNUS_BaseModel:
         out_duration = ARMAConv(self.classes,
                                 activation="softmax")([out_duration, A_input])
 
+
+        # usa
         out_location_location = ARMAConv(20, activation='elu',
                                 gcn_activation='gelu')([Location_time_input, Location_location_input])
         out_location_location = Dropout(0.3)(out_location_location)
         out_location_location = ARMAConv(self.classes,
                                 activation="softmax")([out_location_location, Location_location_input])
 
+        # teste
+        # out_location_location = Dense(40, activation='relu')(Location_location_input)
+        # out_location_location = Dropout(0.3)(out_location_location)
+        # out_location_location = Dense(self.classes, activation='softmax')(out_location_location)
+
+        # usa
         out_location_time = Dense(40, activation='relu')(Location_time_input)
         out_location_time = Dense(self.classes, activation='softmax')(out_location_time)
-        out_user_location_time = Dense(40, activation='relu')(Temporal_input)
-        out_user_location_time = Dense(self.classes, activation='softmax')(out_user_location_time)
+
+
+        #out_user_location_time = Dense(40, activation='relu')(Temporal_input)
+        #out_user_location_time = Dense(self.classes, activation='softmax')(out_user_location_time)
         # out_location_location = Dense(22, activation='relu')(Location_location_input)
         # out_location_location = Dense(self.classes, activation='softmax')(out_location_location)
 
@@ -184,7 +194,7 @@ class GNNUS_BaseModel:
         # out_dense_duration = Dense(22, activation='relu')(Duration_input)
         # out_dense_duration = Dense(self.classes, activation='softmax')(out_dense_duration)
 
-        out_dense = tf.Variable(2.) * out_location_time + tf.Variable(2.) * out_location_location + tf.Variable(1.) * out_user_location_time
+        out_dense = tf.Variable(2.) * out_location_location + tf.Variable(2.) * out_location_time
         out_dense = Dense(self.classes, activation='softmax')(out_dense)
 
         #out = tf.Variable(2.) * out_location_time + tf.Variable(2.) * out_location_location
