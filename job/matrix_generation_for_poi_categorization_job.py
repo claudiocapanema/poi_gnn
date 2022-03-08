@@ -191,13 +191,13 @@ class MatrixGenerationForPoiCategorizationJob():
             sequence_matrix_base_filename = folder + sequence_matrix_base_filename + "directed_" + hour_file + categories_type +"_"+country+ ".csv"
 
         print("arquivos: ", folder, adjacency_matrix_base_filename, features_matrix_base_filename)
-
         print("padrao", pattern_matrices)
         print("tamanho: ", users_checkin.shape)
         if pattern_matrices == "yes":
             self.matrix_generation_for_poi_categorization_domain\
                 .generate_pattern_matrices(users_checkin,
                                            dataset_name,
+                                           categories_type,
                                            adjacency_matrix_filename,
                                            adjacency_weekday_matrix_filename,
                                            adjacency_weekend_matrix_filename,

@@ -190,30 +190,30 @@ TRANSACTIONS_BASE_DIR="${GLOBAL_FOURSQUARE_BASE_DIR}transactions/"
 #          }'
 
 ## transfer learning
-MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
-          "job": "matrix_generation_for_poi_categorization",
-          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES'",
-          "base_dir":"'$USER_TRACKING_BASE_DIR'",
-          "directed_folder":"directed/",
-          "not_directed_folder":"not_directed/",
-          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
-          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
-          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
-          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
-          "hour48":"yes",
-          "personal_features_matrix":"no",
-          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-          "country":"Brazil",
-          "state":"",
-          "different_venues":"yes",
-          "max_time_between_records": "",
-          "top_users":"40000",
-          "directed":"no",
-          "dataset_name":"user_tracking",
-          "pattern_matrices":"yes",
-          "base":"base",
-          "categories_type":"7_categories"
-          }'
+#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+#          "job": "matrix_generation_for_poi_categorization",
+#          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES'",
+#          "base_dir":"'$USER_TRACKING_BASE_DIR'",
+#          "directed_folder":"directed/",
+#          "not_directed_folder":"not_directed/",
+#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+#          "hour48":"yes",
+#          "personal_features_matrix":"no",
+#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+#          "country":"Brazil",
+#          "state":"",
+#          "different_venues":"yes",
+#          "max_time_between_records": "",
+#          "top_users":"40000",
+#          "directed":"no",
+#          "dataset_name":"user_tracking",
+#          "pattern_matrices":"yes",
+#          "base":"base",
+#          "categories_type":"7_categories"
+#          }'
 
 # base model
 #MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
@@ -242,30 +242,30 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
 #          }'
 
 ## predict
-#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
-#          "job": "matrix_generation_for_poi_categorization",
-#          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES_TRANSFER_LEARNING'",
-#          "base_dir":"'$USER_TRACKING_BASE_DIR'",
-#          "directed_folder":"directed/",
-#          "not_directed_folder":"not_directed/",
-#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
-#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
-#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
-#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
-#          "hour48":"yes",
-#          "personal_features_matrix":"no",
-#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-#          "country":"Brazil",
-#          "state":"",
-#          "different_venues":"yes",
-#          "max_time_between_records": "",
-#          "top_users":"40000",
-#          "directed":"no",
-#          "dataset_name":"user_tracking",
-#          "pattern_matrices":"yes",
-#          "base":"predict",
-#          "categories_type":"7_categories"
-#          }'
+MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+          "job": "matrix_generation_for_poi_categorization",
+          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES_TRANSFER_LEARNING'",
+          "base_dir":"'$USER_TRACKING_BASE_DIR'",
+          "directed_folder":"directed/",
+          "not_directed_folder":"not_directed/",
+          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+          "hour48":"yes",
+          "personal_features_matrix":"no",
+          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+          "country":"Brazil",
+          "state":"",
+          "different_venues":"yes",
+          "max_time_between_records": "",
+          "top_users":"40000",
+          "directed":"no",
+          "dataset_name":"user_tracking",
+          "pattern_matrices":"yes",
+          "base":"predict",
+          "categories_type":"8_categories"
+          }'
 
 
 #MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{

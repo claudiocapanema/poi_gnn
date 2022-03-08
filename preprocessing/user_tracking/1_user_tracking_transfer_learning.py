@@ -14,4 +14,6 @@ if __name__ == "__main__":
     print("uarios")
     print(len(df['id'].unique().tolist()))
 
+    print(df.drop_duplicates(subset=['id', 'poi_id'])['poi_resulting'].value_counts())
+
     df.to_csv(USER_TRACKING_LOCAL_DATETIME_GOWALLA_CATEGORIES_TRANSFER_LEARNING_BR, index=False)

@@ -75,8 +75,8 @@ def top_k_rows_category(data, k, user_category):
 
     row_sum = []
     user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
-    #categories_weights = {0: 1, 1: 1, 2: 4, 3: 6, 4: 3, 5: 3, 6: 7}
-    categories_weights = {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1}
+    categories_weights = {0: 1, 1: 1, 2: 4, 3: 6, 4: 3, 5: 3, 6: 7}
+    #categories_weights = {0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1}
     adjusted_row_sum = []
     for i in range(len(data)):
         category = user_category[i]
@@ -123,7 +123,7 @@ def top_k_rows_category_user_tracking(data, k, user_category):
 
     row_sum = []
     user_unique_categories = {i: 0 for i in pd.Series(user_category).unique().tolist()}
-    categories_weights = {0: 1, 1: 1, 2: 4, 3: 6, 4: 3, 5: 3, 6: 7}
+    categories_weights = {0: 1, 1: 1, 2: 4, 3: 6, 4: 3, 5: 3, 6: 7, 7:1}
     adjusted_row_sum = []
     for i in range(len(data)):
         category = user_category[i]

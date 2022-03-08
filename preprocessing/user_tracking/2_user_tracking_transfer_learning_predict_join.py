@@ -3,7 +3,7 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from configurations import USER_TRACKING_LOCAL_DATETIME_OSM_CATEGORIES, USER_TRACKING_LOCAL_DATETIME_GOWALLA_CATEGORIES_TRANSFER_LEARNING_BR, USER_TRACKING_PREDICTED
+from configurations import USER_TRACKING_LOCAL_DATETIME_OSM_CATEGORIES, USER_TRACKING_LOCAL_DATETIME_GOWALLA_CATEGORIES_TRANSFER_LEARNING_BR, USER_TRACKING_PREDICTED, USER_TRACKING_HOME_WORK_OTHER_AND_GOWALLA_CATEGORIES
 
 def barplot(df, filename):
 
@@ -34,21 +34,29 @@ def barplot(df, filename):
     fig.savefig(filename, bbox_inches='tight')
     fig.savefig(filename.replace("png", "pdf"), bbox_inches='tight')
 
+def count_categories(df):
+
+    uniques = df.unique().tolist()
+    uniques_dict = {uniques[i]: 0 for i in range(len(uniques))}
+
+    for i in df:
+
+        uniques_dict[i] += 1
+
+    return pd.DataFrame({'Category': list(uniques_dict.keys()), 'Percentage': list(uniques_dict.values())}).sort_values('Category')
+
+
 def barplot2(df1, df2, filename):
 
 
 
     sns.set_style()
 
-    df1 = df1.reset_index()
-    df1.columns = ['Category', 'Percentage']
-    total_1 = df1['Percentage'].sum()
     #df1['Percentage'] = df1['Percentage'].to_numpy() / total_1
     dataset_version = ['Original'] * len(df1)
 
-    df2 = df2.reset_index()
-    df2.columns = ['Category', 'Percentage']
-    total_2 = df2['Percentage'].sum()
+
+
     #df2['Percentage'] = df2['Percentage'].to_numpy() / total_2
     dataset_version = dataset_version + ['New'] * len(df2)
     df1 = df1[df1['Category'].isin(
@@ -58,7 +66,14 @@ def barplot2(df1, df2, filename):
     categories = df1['Category'].tolist()
     percentage = df1['Percentage'].tolist() + df2['Percentage'].tolist()
 
-    difference = (df2['Percentage'].to_numpy() - df1['Percentage'].to_numpy())/total_1
+    total_1 = df1['Percentage'].to_numpy()
+
+    print("aaaaa")
+    print(df2)
+    print(df1)
+    print("tota")
+    print(total_1)
+    difference = ((df2['Percentage'].to_numpy() - df1['Percentage'].to_numpy())/total_1)*100
 
     df = pd.DataFrame({'Category': categories, 'Percentage': difference})
 
@@ -156,7 +171,7 @@ def merge_df(df1, df2):
                 else:
                     new_categories.append(category)
 
-                c_2 += 1
+            c_2 += 1
         else:
             new_categories.append(category)
 
@@ -181,9 +196,9 @@ if __name__ == "__main__":
     print("tamanho antes: ", len(df_1))
     print("usuários antes: ", len(df_1['id'].unique().tolist()))
     print("Pois antes: ", len(df_1[df_1['poi_resulting'].isin(['Other', 'Food', 'Shopping', 'Community', 'Travel', 'Entertainment', 'Outdoors', 'Nightlife'])][['id', 'poi_id']].drop_duplicates()))
-    print("df1 value counts: \n", df_1['poi_resulting'].value_counts())
+    print("df1 value counts: \n", count_categories(df_1[df_1['poi_resulting'].isin(['Other', 'Food', 'Shopping', 'Community', 'Travel', 'Entertainment', 'Outdoors', 'Nightlife'])].drop_duplicates(subset=['id', 'poi_id'])['poi_resulting']))
 
-    df1_value_counts = df_1['poi_resulting'].value_counts()
+    df1_value_counts = count_categories(df_1[df_1['poi_resulting'].isin(['Other', 'Food', 'Shopping', 'Community', 'Travel', 'Entertainment', 'Outdoors', 'Nightlife'])].drop_duplicates(subset=['id', 'poi_id'])['poi_resulting'])
 
     print(len(df_1['id'].unique().tolist()))
 
@@ -199,7 +214,7 @@ if __name__ == "__main__":
 
     print("tamanho df3: ", len(df_3))
 
-    print("Value counts predicted: ", df_3['category'].value_counts())
+    print("Value counts predicted: ", df_3.drop_duplicates(subset=['id', 'poi_id'])['category'].value_counts())
 
     # print("count others 2: ", len(df_2.query("poi_resulting == 'Other'")))
 
@@ -215,12 +230,20 @@ if __name__ == "__main__":
     #
     # print("Merge 3")
     df = merge_df(df_1, df_3)
-    print("df value counts: \n", df['poi_resulting'].value_counts())
-    df_value_counts = df['poi_resulting'].value_counts()
+    print("df value counts: \n", df.drop_duplicates(subset=['id', 'poi_id'])['poi_resulting'].value_counts())
+    df_value_counts = count_categories(df[df['poi_resulting'].isin(['Other', 'Food', 'Shopping', 'Community', 'Travel', 'Entertainment', 'Outdoors', 'Nightlife'])].drop_duplicates(subset=['id', 'poi_id'])['poi_resulting'])
     #df_1 = df_1[df_1['id'].isin(df_2['id'].unique().tolist())]
     print("usuários depois: ", len(df_1['id'].unique().tolist()))
     barplot(df_1, "category.png")
     print(df_1['poi_resulting'].unique().tolist())
     barplot(df, "category_new.png")
+
+    print("compara")
+    print("antes")
+    print(df1_value_counts)
+    print("depois")
+    print(df_value_counts)
+
+    df.to_csv(USER_TRACKING_HOME_WORK_OTHER_AND_GOWALLA_CATEGORIES, index=False)
 
     barplot2(df1_value_counts, df_value_counts, "category_comparison.png")

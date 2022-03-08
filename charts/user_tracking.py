@@ -40,20 +40,20 @@ def bar_plot(df, x, y, filename):
     #     'pgf.rcfonts': False,
     # })
     #
-    figure.savefig(filename.replace("png", "pdf"), bbox_inches='tight')
+    figure.savefig(filename.replace("png", "svg"), bbox_inches='tight')
 
 
 if __name__ == "__main__":
 
 
-    base = "/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_job/base/not_directed/user_tracking/BR/7_categories/5_folds/4_replications/"
+    base = "/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_job/base/not_directed/user_tracking/BR/7_categories/5_folds/1_replications/"
     precision = base + "precision.csv"
     recall = base + "recall.csv"
     fscore = base + "fscore.csv"
 
-    df_precision = pd.read_csv(precision)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]
-    df_recall = pd.read_csv(recall)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]
-    df_fscore = pd.read_csv(fscore)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]
+    df_precision = pd.read_csv(precision)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]*100
+    df_recall = pd.read_csv(recall)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]*100
+    df_fscore = pd.read_csv(fscore)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]*100
 
     df_precision = column_as_row(df_precision, 'Precision')
     df_recall = column_as_row(df_recall, 'Recall')

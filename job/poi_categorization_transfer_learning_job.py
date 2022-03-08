@@ -139,6 +139,8 @@ class PoiCategorizationTransferLearningJob:
                                     7,
                                     dataset_name)
 
+        print(pd.Series(users_categories.flatten()).value_counts())
+
         selected_users = pd.DataFrame({'selected_users': selected_users})
 
         self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,

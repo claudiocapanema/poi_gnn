@@ -50,9 +50,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
         for model_name in report:
 
             fscore = report[model_name]['fscore']
-            accuracy = fscore['accuracy'].tolist()
-            weighted_fscore = fscore['weighted avg'].tolist()
-            macro_fscore = fscore['macro avg'].tolist()
+            accuracy = np.round(fscore['accuracy'].to_numpy()*100, 1).tolist()
+            weighted_fscore = np.round(fscore['weighted avg'].to_numpy()*100, 1).tolist()
+            macro_fscore = np.round(fscore['macro avg'].to_numpy()*100, 1).tolist()
 
             # total_fscore = 0
             # for column in columns:
@@ -187,7 +187,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
         elif "weighted" in file_name:
             y_label = "weighted"
         for p in figure.patches:
-            figure.annotate(format(p.get_height(), '.2f'),
+            figure.annotate(format(p.get_height(), '.1f'),
                             (p.get_x() + p.get_width() / 2., p.get_height()),
                             ha='center', va='center',
                             size=size,
@@ -220,9 +220,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
         for model_name in model_report:
 
             report = model_report[model_name]
-            precision = report['precision']
-            recall = report['recall']
-            fscore = report['fscore']
+            precision = report['precision']*100
+            recall = report['recall']*100
+            fscore = report['fscore']*100
             precision_means = {}
             recall_means = {}
             fscore_means = {}
@@ -271,9 +271,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
         df = df[['POI-GNN', 'HMRM', 'ARMA']]
 
         # get improvements
-        poi_gnn = [float(i.replace("textbf{", "").replace("}", "")[:5]) for i in df['POI-GNN'].to_numpy()]
-        hmrm = [float(i.replace("textbf{", "").replace("}", "")[:5]) for i in df['HMRM'].to_numpy()]
-        arma = [float(i.replace("textbf{", "").replace("}", "")[:5]) for i in df['ARMA'].to_numpy()]
+        poi_gnn = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['POI-GNN'].to_numpy()]
+        hmrm = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['HMRM'].to_numpy()]
+        arma = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['ARMA'].to_numpy()]
         difference = []
         for i in range(14, len(poi_gnn)):
             min_ = max([arma[i], hmrm[i]])
@@ -288,8 +288,8 @@ class PoiCategorizationPerformanceGraphicsLoader:
             else:
                 max_ = 0
 
-            s = str(round(min_*100, 3)) + "\%--" + str(round(max_*100, 3)) + "\%"
-            difference.append([round(value, 3), round(hmrm[i], 3), round(arma[i], 3), round(min_, 3), round(max_, 3), s])
+            s = str(round(min_, 1)) + "\%--" + str(round(max_, 1)) + "\%"
+            difference.append([round(value, 1), round(hmrm[i], 1), round(arma[i], 1), round(min_, 1), round(max_, 1), s])
 
         difference_df = pd.DataFrame(difference, columns=['base', 'hmrm', 'arma', 'min', 'max', 'texto'])
 

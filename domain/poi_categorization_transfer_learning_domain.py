@@ -810,7 +810,7 @@ class PoiCategorizationTransferLearningDomain:
         if country == 'BR' or country == "Brazil":
             if version == "normal":
                 print("Tipo de rede neural: NORMAL")
-                model = tf.keras.models.load_model("/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_job/base/not_directed/user_tracking/BR/7_categories/5_folds/4_replications/")
+                model = tf.keras.models.load_model("/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_job/base/not_directed/user_tracking/BR/7_categories/5_folds/1_replications/")
                 lr = 0.001
                 batch = 1
 
