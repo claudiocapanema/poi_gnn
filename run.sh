@@ -71,6 +71,11 @@ GLOBAL_FOURSQUARE_DIRECTED_8_CATEGORIES_MONTHS_4_12_BR_FEATURE_MATRIX_FILENAME="
 GLOBAL_FOURSQUARE_DIRECTED_8_CATEGORIES_MONTHS_4_12_BR_SEQUENCES_MATRIX_FILENAME="${GLOBAL_FOURSQUARE_BASE_DIR}matrizes/directed/sequence_matrix_directed_48_8_categories_months_4_12_BR.csv"
 
 # gpr
+
+GPR_GOWALLA_7_CATEGORIES_BASE_DIR="/media/claudio/Data/backup_win_hd/Downloads/doutorado/gowalla/matrices_poi_categorization/directed/"
+GPR_ADJACENCY_MATRIX="${GPR_GOWALLA_7_CATEGORIES_BASE_DIR}adjacency_matrixdirected_48_7_categories_United States.csv"
+GPR_DISTANCE_MATRIX="${GPR_GOWALLA_7_CATEGORIES_BASE_DIR}distance_matrixdirected_48_7_categories_United States.csv"
+GPR_USER_POI_VECTOR="${GPR_GOWALLA_7_CATEGORIES_BASE_DIR}user_poi_vector_directed7_categories_United States.csv"
 GLOBAL_FOURSQUARE_DIRECTED_GPR_8_CATEGORIES_BR_ADJACENCY_MATRIX_FILENAME="${GLOBAL_FOURSQUARE_BASE_DIR}gpr/directed/adjacency_matrix_directed_48_8_categories_BR.csv"
 GLOBAL_FOURSQUARE_DIRECTED_GPR_8_CATEGORIES_BR_FEATURE_MATRIX_FILENAME="${GLOBAL_FOURSQUARE_BASE_DIR}gpr/directed/features_matrix_directed_48_8_categories_BR.csv"
 GLOBAL_FOURSQUARE_GPR_8_CATEGORIES_BR_SEQUENCES_MATRIX_FILENAME="${GLOBAL_FOURSQUARE_BASE_DIR}gpr/directed/user_poi_vector_directed_48_8_categories_BR.csv"
@@ -216,36 +221,10 @@ TRANSACTIONS_BASE_DIR="${GLOBAL_FOURSQUARE_BASE_DIR}transactions/"
 #          }'
 
 # base model
-#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
-#          "job": "matrix_generation_for_poi_categorization",
-#          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US_TEXAS'",
-#          "base_dir":"'$GOWALLA_BASE_DIR'",
-#          "directed_folder":"directed/",
-#          "not_directed_folder":"not_directed/",
-#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
-#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
-#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
-#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
-#          "hour48":"yes",
-#          "personal_features_matrix":"no",
-#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-#          "country":"United States",
-#          "state":"",
-#          "different_venues":"yes",
-#          "max_time_between_records": "",
-#          "top_users":"40000",
-#          "directed":"no",
-#          "dataset_name":"gowalla",
-#          "pattern_matrices":"yes",
-#          "base":"base",
-#          "categories_type":"7_categories"
-#          }'
-
-## predict
 MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "job": "matrix_generation_for_poi_categorization",
-          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES_TRANSFER_LEARNING'",
-          "base_dir":"'$USER_TRACKING_BASE_DIR'",
+          "users_checkin_filename": "'$GOWALLA_LOCAL_DATETIME_US_TEXAS'",
+          "base_dir":"'$GOWALLA_BASE_DIR'",
           "directed_folder":"directed/",
           "not_directed_folder":"not_directed/",
           "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
@@ -255,17 +234,43 @@ MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
           "hour48":"yes",
           "personal_features_matrix":"no",
           "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
-          "country":"Brazil",
+          "country":"United States",
           "state":"",
           "different_venues":"yes",
           "max_time_between_records": "",
           "top_users":"40000",
-          "directed":"no",
-          "dataset_name":"user_tracking",
-          "pattern_matrices":"yes",
-          "base":"predict",
-          "categories_type":"8_categories"
+          "directed":"yes",
+          "dataset_name":"gowalla",
+          "pattern_matrices":"no",
+          "base":"base",
+          "categories_type":"7_categories"
           }'
+
+## predict
+#MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
+#          "job": "matrix_generation_for_poi_categorization",
+#          "users_checkin_filename": "'$USER_TRACKING_DATASET_7_GOWALLA_CATEGORIES_TRANSFER_LEARNING'",
+#          "base_dir":"'$USER_TRACKING_BASE_DIR'",
+#          "directed_folder":"directed/",
+#          "not_directed_folder":"not_directed/",
+#          "adjacency_matrix_base_filename":"'$ADJACENCY_MATRIX_BASE_FILENAME'",
+#          "features_matrix_base_filename":"'$FEATURES_MATRIX_BASE_FILENAME'",
+#          "distance_matrix_base_filename":"'$DISTANCE_MATRIX_BASE_FILENAME'",
+#          "duration_matrix_base_filename":"'$DURATION_MATRIX_BASE_FILENAME'",
+#          "hour48":"yes",
+#          "personal_features_matrix":"no",
+#          "sequence_matrix_base_filename":"'$SEQUENCE_MATRIX_BASE_FILENAME'",
+#          "country":"Brazil",
+#          "state":"",
+#          "different_venues":"yes",
+#          "max_time_between_records": "",
+#          "top_users":"40000",
+#          "directed":"no",
+#          "dataset_name":"user_tracking",
+#          "pattern_matrices":"yes",
+#          "base":"predict",
+#          "categories_type":"8_categories"
+#          }'
 
 
 #MATRIX_GENERATION_FOR_POI_CATEGORIZATION_CONFIG='{
@@ -578,16 +583,13 @@ POI_CATEGORIZATION_VALIDATION='{
 
 CATEGORIZATION_BASELINE_GPR_CONFIG='{
           "job": "poi_categorization_baseline_gpr",
-          "poi_detection_filename": "'$POI_DETECTION_FILENAME'",
-          "users_steps_filename": "'$USERS_STEPS_FILENAME'",
-          "adjacency_matrix_filename": "'$GLOBAL_FOURSQUARE_DIRECTED_GPR_8_CATEGORIES_MONTHS_4_12_2012_US_ADJACENCY_MATRIX_FILENAME'",
-          "feature_matrix_filename": "'$GLOBAL_FOURSQUARE_DIRECTED_GPR_8_CATEGORIES_MONTHS_4_12_2012_US_FEATURE_MATRIX_FILENAME'",
-          "user_poi_vector_filename": "'$GLOBAL_FOURSQUARE_GPR_8_CATEGORIES_MONTHS_4_12_2012_US_SEQUENCES_MATRIX_FILENAME'",
-          "user_metrics":"'$GLOBAL_FOURQUARE_USER_METRICS_FILENAME_US'",
+          "adjacency_matrix_filename": "'$GPR_ADJACENCY_MATRIX'",
+          "feature_matrix_filename": "'$GPR_DISTANCE_MATRIX'",
+          "user_poi_vector_filename": "'$GPR_USER_POI_VECTOR'",
           "graph_type":"directed",
-          "dataset_name":"global_foursquare",
+          "dataset_name":"gowalla",
           "country":"US",
-          "categories_type":"8_categories"
+          "categories_type":"7_categories"
           }'
 
 TRANSFER_LEARNING_CONFIG='{

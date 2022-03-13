@@ -187,7 +187,8 @@ class MatrixGenerationForPoiCategorizationJob():
             directed = True
             folder = base_dir + directed_folder
             adjacency_matrix_base_filename = folder+adjacency_matrix_base_filename + "directed_"+hour_file+categories_type+"_"+country+".csv"
-            features_matrix_base_filename = folder+features_matrix_base_filename + "directed_"+hour_file+categories_type+"_"+country+".csv"
+            distance_matrix_base_filename = folder+distance_matrix_base_filename + "directed_"+hour_file+categories_type+"_"+country+".csv"
+            user_poi_vector_base_filename = folder+"user_poi_vector_" + "directed" + categories_type + "_" + country + ".csv"
             sequence_matrix_base_filename = folder + sequence_matrix_base_filename + "directed_" + hour_file + categories_type +"_"+country+ ".csv"
 
         print("arquivos: ", folder, adjacency_matrix_base_filename, features_matrix_base_filename)
@@ -226,17 +227,17 @@ class MatrixGenerationForPoiCategorizationJob():
                                            osm_category_column)
         else:
             self.matrix_generation_for_poi_categorization_domain \
-                .generate_gpr_matrices(users_checkin,
+                .generate_gpr_matrices_v2(users_checkin,
+                                          dataset_name,
                                            adjacency_matrix_base_filename,
-                                           features_matrix_base_filename,
+                                           distance_matrix_base_filename,
+                                          user_poi_vector_base_filename,
                                            userid_column,
+                                          category_column,
+                                          locationid_column,
                                            latitude_column,
                                            longitude_column,
-                                           category_column,
-                                           locationid_column,
-                                           datetime_column,
-                                           directed,
-                                           osm_category_column)
+                                           datetime_column)
 
     def folder_generation(self, folder):
         print("criação da pas: ", folder)

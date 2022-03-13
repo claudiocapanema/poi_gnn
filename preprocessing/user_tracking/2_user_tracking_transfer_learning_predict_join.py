@@ -75,14 +75,18 @@ def barplot2(df1, df2, filename):
     print(total_1)
     difference = ((df2['Percentage'].to_numpy() - df1['Percentage'].to_numpy())/total_1)*100
 
-    df = pd.DataFrame({'Category': categories, 'Percentage': difference})
+    df = pd.DataFrame({'Category': categories, 'Increase (%)': difference})
+
+    order = [[i, j] for i, j in zip(categories, difference)]
+    order = sorted(order, key=lambda e: e[1], reverse=True)
+    order = [i[0] for i in order]
 
     plt.legend(frameon=False)
     plt.rc('pgf', texsystem='pdflatex')
     plt.figure(dpi=400)
     sns.set(font_scale=1.6, style='whitegrid')
     fig = plt.figure(figsize=(8, 4))
-    fig = sns.barplot(x="Percentage", y="Category", data=df, order=['Outdoors','Community','Shopping','Food',   'Travel', 'Entertainment',  'Nightlife'])
+    fig = sns.barplot(x="Increase (%)", y="Category", data=df, order=order)
     fig.set_ylabel("")
     fig = fig.get_figure()
     #plt.xticks(rotation=35)

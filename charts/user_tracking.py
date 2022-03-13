@@ -55,13 +55,13 @@ if __name__ == "__main__":
     df_recall = pd.read_csv(recall)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]*100
     df_fscore = pd.read_csv(fscore)[["Shopping", "Community", "Food", "Entertainment", "Travel", "Outdoors", "Nightlife"]]*100
 
-    df_precision = column_as_row(df_precision, 'Precision')
-    df_recall = column_as_row(df_recall, 'Recall')
-    df_fscore = column_as_row(df_fscore, 'F1-score')
+    df_precision = column_as_row(df_precision, 'Precision (%)')
+    df_recall = column_as_row(df_recall, 'Recall (%)')
+    df_fscore = column_as_row(df_fscore, 'F1-score (%)')
 
     print(df_precision)
 
-    bar_plot(df_precision, "Category", "Precision", "user_tracking_precision.png")
-    bar_plot(df_recall, "Category", "Recall", "user_tracking_recall.png")
-    bar_plot(df_fscore, "Category", "F1-score", "user_tracking_fscore.png")
-    bar_plot(df_precision, "Category", "Precision", "user_tracking_precision.png")
+    bar_plot(df_precision, "Category", "Precision (%)", "user_tracking_precision.png")
+    bar_plot(df_recall, "Category", "Recall (%)", "user_tracking_recall.png")
+    bar_plot(df_fscore, "Category", "F1-score (%)", "user_tracking_fscore.png")
+    bar_plot(df_precision, "Category", "Precision (%)", "user_tracking_precision.png")

@@ -95,25 +95,18 @@ class PoiCategorizationDomain:
                 first_categories.append(categories[i])
             return first_categories
 
-    def read_matrix(self, adjacency_matrix_filename, feature_matrix_filename, distance_matrix_filename=None, duration_matrix_filename=None):
+    def read_matrix(self, adjacency_matrix_filename, distance_matrix_filename, user_poi_matrix_filename):
 
         adjacency_df = self.file_extractor.read_csv(adjacency_matrix_filename).drop_duplicates(subset=['user_id'])
-        feature_df = self.file_extractor.read_csv(feature_matrix_filename).drop_duplicates(subset=['user_id'])
-        if adjacency_df['user_id'].tolist() != feature_df['user_id'].tolist():
+        distance_matrix_df = self.file_extractor.read_csv(distance_matrix_filename).drop_duplicates(subset=['user_id'])
+        if adjacency_df['user_id'].tolist() != distance_matrix_df['user_id'].tolist():
             print("MATRIZES DIFERENTES")
+            raise
 
-        distance_matrix_df = None
-        if distance_matrix_filename is not None:
-            distance_matrix_df = self.file_extractor.read_csv(distance_matrix_filename).drop_duplicates(
+        user_poi_matrix_df = self.file_extractor.read_csv(user_poi_matrix_filename).drop_duplicates(
                 subset=['user_id'])
 
-        duration_matrix_df = None
-        if duration_matrix_filename is not None:
-            print("duracao", duration_matrix_filename)
-            duration_matrix_df = self.file_extractor.read_csv(duration_matrix_filename).drop_duplicates(
-                subset=['user_id'])
-
-        return adjacency_df, feature_df, distance_matrix_df, duration_matrix_df
+        return adjacency_df, distance_matrix_df, user_poi_matrix_df
 
     def read_matrices(self, adjacency_matrix_dir, feature_matrix_dir):
 
