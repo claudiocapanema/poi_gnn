@@ -48,6 +48,7 @@ class PoiCategorizationBaselineGPRJob:
         country_dir = self.poi_categorization_baselines_configuration.COUNTRY[1][country]
         model_name_dir = self.poi_categorization_baselines_configuration.MODEL_NAME[1][model_name]
         graph_type_dir = self.poi_categorization_baselines_configuration.GRAPH_TYPE[1][graph_type]
+        int_to_category = self.poi_categorization_baselines_configuration.INT_TO_CATEGORIES[1][dataset_name][categories_type]
         output_dir = output_base_dir + graph_type_dir + dataset_type_dir + category_type_dir + country_dir + model_name_dir
 
         base_report = self.poi_categorization_baselines_configuration.REPORT_MODEL[1][categories_type]
@@ -66,7 +67,7 @@ class PoiCategorizationBaselineGPRJob:
                                         inputs,
                                     n_splits)
 
-        class_weight = {}
+        class_weight = {0: 2, 1: 1, 2: 1, 3: 2, 4: 2, 5: 2, 6: 2}
 
         folds_histories, base_report = self.poi_categorization_baseline_gpr_domain.\
             k_fold_with_replication_train_and_evaluate_baselines_model(folds,
@@ -79,5 +80,6 @@ class PoiCategorizationBaselineGPRJob:
 
         print("------------- Location ------------")
         print(base_report)
+        base_report = self.poi_categorization_baseline_gpr_domain.preprocess_report(base_report, int_to_category)
         self.poi_categorization_gpr_loader.save_report_to_csv(output_dir, base_report, n_splits, n_replications)
         self.poi_categorization_gpr_loader.plot_history_metrics(folds_histories, base_report, output_dir)

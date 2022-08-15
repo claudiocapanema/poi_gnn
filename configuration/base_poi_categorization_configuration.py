@@ -5,7 +5,7 @@ class BasePoiCategorizationConfiguration:
         self.N_SPLITS = ("n_splits", 5, False, "number of splits (minimum 2) for k fold")
 
         self.N_REPLICATIONS = (
-            "n_replications", 4, False, "number of replications/executions (minimum 1) of training and evaluation process")
+            "n_replications", 1, False, "number of replications/executions (minimum 1) of training and evaluation process")
 
         self.DATASET_TYPE = ("dataset_type", {'foursquare': "foursquare/", 'weeplaces': "weeplaces/", 'user_tracking': "user_tracking/",
                                               'global_foursquare': "global_foursquare/", 'dense_foursquare': "dense_foursquare/",

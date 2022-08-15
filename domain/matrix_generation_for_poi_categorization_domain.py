@@ -428,7 +428,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         distance_matrix = [[0 for i in range(n_pois)] for j in range(n_pois)]
         categories_list = [-1 for i in range(n_pois)]
         user_poi_vector_column = []
-        user_poi_vector = [0] * n_pois
+        user_category_vector = [0] * 7
 
         datetimes = user_checkin[datetime_column].tolist()
         placeids = user_checkin[locationid_column].tolist()
@@ -439,7 +439,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         categories = user_checkin[category_column].tolist()
 
         categories_list[0] = categories[0]
-        user_poi_vector[placeids_int[0]] = 1
+        user_category_vector[categories[0]] = 1
         count = 0
         max_timedelta = pd.Timedelta(days=2020)
         # if len(max_time_between_records) > 0:
@@ -475,7 +475,7 @@ class MatrixGenerationForPoiCategorizationDomain:
             distance_matrix[local_anterior][local_atual] = distance
             distance_matrix[local_atual][local_anterior] = distance
 
-            user_poi_vector[placeids_int[atual]] += 1
+            user_category_vector[categories[atual]] += 1
 
             adjacency_matrix[placeids_int[anterior]][placeids_int[atual]] += 1
 
@@ -483,8 +483,8 @@ class MatrixGenerationForPoiCategorizationDomain:
 
             categories_list[placeids_int[atual]] = categories[atual]
 
-        adjacency_matrix, features_matrix, categories_list, user_poi_vector = self.remove_gpr_gps_pois_that_dont_have_categories(
-            categories_list, adjacency_matrix, distance_matrix, user_poi_vector)
+        adjacency_matrix, features_matrix, categories_list = self.remove_gpr_gps_pois_that_dont_have_categories(
+            categories_list, adjacency_matrix, distance_matrix)
 
         #distance_matrix = self._summarize_categories_distance_matrix(distance_matrix)
 
@@ -506,7 +506,7 @@ class MatrixGenerationForPoiCategorizationDomain:
         # temporal_weekend_matrix = self.pmi(temporal_weekend_matrix)
 
         user_checkin = pd.DataFrame(
-            {'userid': [userid], 'adjacency': [adjacency_matrix], 'distance': [distance_matrix], 'user_poi': [user_poi_vector],
+            {'userid': [userid], 'adjacency': [adjacency_matrix], 'distance': [distance_matrix], 'user_poi': [user_category_vector],
              'visited_location_ids': [visited_location_ids_real],
              'category': [categories_list]})
 
@@ -1121,12 +1121,11 @@ class MatrixGenerationForPoiCategorizationDomain:
 
         return adjacency_matrix.tolist(), features_matrix.tolist(), categories.tolist()
 
-    def remove_gpr_gps_pois_that_dont_have_categories(self, categories, adjacency_matrix, distance_matrix, user_poi_matrix):
+    def remove_gpr_gps_pois_that_dont_have_categories(self, categories, adjacency_matrix, distance_matrix):
 
         indexes_filtered_pois = []
         adjacency_matrix = np.array(adjacency_matrix)
         distance_matrix = np.array(distance_matrix)
-        user_poi_matrix = np.array(user_poi_matrix)
         for i in range(len(categories)):
             if categories[i] >= 0:
                 indexes_filtered_pois.append(i)
@@ -1139,14 +1138,13 @@ class MatrixGenerationForPoiCategorizationDomain:
         categories = categories[indexes_filtered_pois]
         adjacency_matrix = adjacency_matrix[indexes_filtered_pois[:, None], indexes_filtered_pois]
         distance_matrix = distance_matrix[indexes_filtered_pois[:, None], indexes_filtered_pois]
-        user_poi_matrix = user_poi_matrix[indexes_filtered_pois]
 
         if len(adjacency_matrix) <= 1:
             adjacency_matrix = []
             distance_matrix = []
             user_poi_matrix = []
 
-        return adjacency_matrix.tolist(), distance_matrix.tolist(), categories.tolist(), user_poi_matrix.tolist()
+        return adjacency_matrix.tolist(), distance_matrix.tolist(), categories.tolist()
 
 
     def remove_raw_gps_pois_that_dont_have_categories(self, categories, adjacency_matrix, features_matrix):

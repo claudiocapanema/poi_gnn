@@ -11,7 +11,6 @@ from configuration.poi_categorization_configuration import PoICategorizationConf
 from configuration.matrix_generation_for_poi_categorization_configuration import MatrixGenerationForPoiCategorizationConfiguration
 from loader.poi_categorization_loader import PoiCategorizationLoader
 from pathlib import Path
-from numba import jit
 
 class MatrixGenerationForPoiCategorizationJob():
 

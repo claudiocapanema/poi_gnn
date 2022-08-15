@@ -72,8 +72,14 @@ class PoiCategorizationPerformanceGraphicsJob:
             new_models_names.append(model_name)
             output_dirs.append("/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_baselines_job/not_directed/gowalla/US/TX/7_categories/hmrm/5_folds/1_replications/")
 
+        if (country == 'US' and dataset_name == "gowalla" and state == "TX"):
+            model_name = 'gpr'
+            new_models_names.append(model_name)
+            output_dirs.append("/home/claudio/Documentos/pycharm_projects/poi_gnn/output/poi_categorization_baselines_job/directed/gowalla/7_categories/US/gpr/5_folds/1_replications/")
+
+
         # getting the metrics.csv directory of the poi-gnn
-        model_name = 'POI-GNN'
+        model_name = 'PGC-NN'
         new_models_names.append(model_name)
         output_base_dir = self.poi_categorization_configuration.OUTPUT_DIR[1]
         dataset_type_dir = self.poi_categorization_configuration.DATASET_TYPE[1][dataset_name]
@@ -87,6 +93,11 @@ class PoiCategorizationPerformanceGraphicsJob:
         # metrics = self.poi_categorization_performance_graphics_domain.\
         #     read_metrics(output_dirs, new_models_names, folds_replications)
         # print("metrica", metrics)
+        for i in range(len(new_models_names)):
+            if new_models_names[i] == 'arma':
+                new_models_names[i] = "S-PGC-NN"
+            if new_models_names[i] == 'POI-GNN':
+                new_models_names[i] = "PGC-NN"
         self.poi_categorization_performance_graphics_domain.\
             performance_graphics(output_dirs, new_models_names, osm_categories_to_int, base_dir, dataset_name)
 

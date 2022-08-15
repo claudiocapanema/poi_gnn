@@ -86,7 +86,7 @@ def barplot2(df1, df2, filename):
     plt.figure(dpi=400)
     sns.set(font_scale=1.6, style='whitegrid')
     fig = plt.figure(figsize=(8, 4))
-    fig = sns.barplot(x="Increase (%)", y="Category", data=df, order=order)
+    fig = sns.barplot(x="Increase (%)", y="Category", color='cornflowerblue', data=df, order=order)
     fig.set_ylabel("")
     fig = fig.get_figure()
     #plt.xticks(rotation=35)

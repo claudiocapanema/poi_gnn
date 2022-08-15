@@ -3,8 +3,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib
 
-sns.set_style()
-
 def column_as_row(df, metric_name):
 
     columns = df.columns.tolist()
@@ -22,6 +20,7 @@ def column_as_row(df, metric_name):
     return df
 
 def bar_plot(df, x, y, filename):
+    sns.set(style='whitegrid')
     plt.legend(frameon=False)
     plt.rc('pgf', texsystem='pdflatex')
     figure = sns.barplot(data=df, x=x, y=y)

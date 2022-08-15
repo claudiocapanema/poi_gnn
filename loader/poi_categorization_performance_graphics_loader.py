@@ -67,7 +67,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
         metrics = pd.DataFrame({'Solution': model_name_list, 'Accuracy': accuracy_list,
                                 'Macro f1-score': macro_fscore_list, 'Weighted f1-score': weighted_fscore_list})
 
-        sort_order = {'POI-GNN': 1, 'HMRM': 2, 'ARMA': 3}
+        sort_order = {'PGC-NN': 1, 'HMRM': 2, 'S-PGC-NN': 3, 'GPR': 4}
         metrics['order'] = np.array([sort_order[solution] for solution in metrics['Solution'].tolist()])
         metrics = metrics.sort_values(by='order')
         print("entrou")
@@ -158,12 +158,12 @@ class PoiCategorizationPerformanceGraphicsLoader:
         maximum = sorted_values[-1]
         if dataset == "users_steps":
             # ax[index].set_ylim(0, maximum * 1.14)
-            y_labels = {'macro': [28, 38, 30, 35, 35, 45], 'weighted': [22, 22, 22, 22, 22, 22],
-                        'accuracy': [22, 22, 22, 22, 22, 22]}
+            y_labels = {'macro': [28, 38, 30, 50, 35, 45], 'weighted': [22, 22, 22, 37, 22, 22],
+                        'accuracy': [22, 22, 22, 32, 22, 22]}
             # y_labels = {'macro': [22, 22, 22, 22, 22, 22], 'weighted': [22, 22, 22, 22, 22, 22], 'accuracy': [22, 22, 22, 22, 22, 22]}
         else:
-            y_labels = {'macro': [30, 30, 30, 30, 30, 30], 'weighted': [30, 30, 30, 30, 30, 30],
-                        'accuracy': [30, 30, 30, 30, 30, 30]}
+            y_labels = {'macro': [30, 30, 30, 65, 30, 30], 'weighted': [30, 30, 30, 65, 30, 30],
+                        'accuracy': [30, 30, 30, 45, 30, 30]}
             # ax[index].set_ylim(0, maximum * 1.14)
             if 'weighted' in file_name:
                 # ax[index].set_ylim(0, maximum * 1.2)
@@ -205,7 +205,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
     def export_reports(self, output_dirs, models_names, osm_categories_to_int, base_dir, dataset):
 
-        model_report = {'arma': {}, 'POI-GNN': {}, 'hmrm': {}}
+        model_report = {'S-PGC-NN': {}, 'PGC-NN': {}, 'hmrm': {}, 'gpr': {}}
         print("saidas: ", models_names)
         for i in range(len(models_names)):
             model_name = models_names[i]
@@ -220,6 +220,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
         for model_name in model_report:
 
             report = model_report[model_name]
+            print(model_name)
             precision = report['precision']*100
             recall = report['recall']*100
             fscore = report['fscore']*100
@@ -257,7 +258,7 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
         #max_values = df.idxmax(axis=1)
         max_values = self.idmax(df)
-        max_columns = {'arma': [], 'POI-GNN': [], 'hmrm': []}
+        max_columns = {'arma': [], 'POI-GNN': [], 'hmrm': [], 'gpr': {}}
         for max_value in max_values:
             row_index = max_value[0]
             column = max_value[1]
@@ -266,18 +267,19 @@ class PoiCategorizationPerformanceGraphicsLoader:
 
             df[column] = np.array(column_values)
 
-        df.columns = ['ARMA', 'POI-GNN', 'HMRM']
+        df.columns = ['S-PGC-NN', 'PGC-NN', 'HMRM', 'GPR']
 
-        df = df[['POI-GNN', 'HMRM', 'ARMA']]
+        df = df[['PGC-NN', 'HMRM', 'S-PGC-NN', 'GPR']]
 
         # get improvements
-        poi_gnn = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['POI-GNN'].to_numpy()]
+        poi_gnn = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['PGC-NN'].to_numpy()]
         hmrm = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['HMRM'].to_numpy()]
-        arma = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['ARMA'].to_numpy()]
+        arma = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['S-PGC-NN'].to_numpy()]
+        gpr = [float(i.replace("textbf{", "").replace("}", "")[:4]) for i in df['GPR'].to_numpy()]
         difference = []
         for i in range(14, len(poi_gnn)):
-            min_ = max([arma[i], hmrm[i]])
-            max_ = min([arma[i], hmrm[i]])
+            min_ = max([arma[i], hmrm[i], gpr[i]])
+            max_ = min([arma[i], hmrm[i], gpr[i]])
             value = poi_gnn[i]
             if min_ < value:
                 min_ = value - min_
@@ -289,9 +291,9 @@ class PoiCategorizationPerformanceGraphicsLoader:
                 max_ = 0
 
             s = str(round(min_, 1)) + "\%--" + str(round(max_, 1)) + "\%"
-            difference.append([round(value, 1), round(hmrm[i], 1), round(arma[i], 1), round(min_, 1), round(max_, 1), s])
+            difference.append([round(value, 1), round(hmrm[i], 1), round(arma[i], 1), round(gpr[i], 1), round(min_, 1), round(max_, 1), s])
 
-        difference_df = pd.DataFrame(difference, columns=['base', 'hmrm', 'arma', 'min', 'max', 'texto'])
+        difference_df = pd.DataFrame(difference, columns=['base', 'hmrm', 's-pgc', 'gpr', 'min', 'max', 'texto'])
 
         difference_df.to_csv(output + "difference.csv", index=False)
 

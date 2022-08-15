@@ -57,18 +57,18 @@ class GGLR_unit(Layer):
 
         x_out = self.normalization(x_out)
         #x_out = tf.keras.layers.Lambda(divide)([x_out, x_sum])
-        x_out = tf.keras.layers.LeakyReLU()(x_out)
+        x_out = tf.keras.activations.relu(x_out)
 
         return x_out
 
 class Equation_4(Layer):
-    def __init__(self, units=10):
+    def __init__(self, units=7):
         super(Equation_4, self).__init__()
         self.a = tf.Variable(1., trainable=True)
         self.b = tf.Variable(1., trainable=True)
         self.c = tf.Variable(1., trainable=True)
-        self.w = Dense(units, use_bias=False, trainable=True)
-        self.w2 = Dense(units, use_bias=False, trainable=True)
+        self.w = Dense(units, use_bias=True, trainable=True)
+        self.w2 = Dense(units, use_bias=True, trainable=True)
 
     def call(self, inputs, **kwargs):
 
@@ -78,7 +78,7 @@ class Equation_4(Layer):
 
         #c_d = self.c*distance
         #f = c_d
-        f = self.a*(tf.math.pow(distance, self.b))
+        f = self.a*distance
         #f = tf.math.exp(c_d)
         #f = self.a*(tf.math.pow(distance, self.b)*tf.math.exp(c_d))
         #out = f*(self.w(outgoing))*ingoing
@@ -117,30 +117,30 @@ class GPR_unit(Layer):
         # p_out = tf.matmul(p_out, self.secondary_kernel) # 10x
         # p_out = tf.add(p_out, self.main_bias)
         p_out_out = self.dense2(p_out)
-        user_out = tf.add(user_out, p_out_out)
+        user_out = tf.multiply(user_out, p_out_out)
 
         return tf.keras.activations.relu(user_out)
 
 class GPR_component(Layer):
-    def __init__(self, main_channel):
+    def __init__(self, main_channel, units):
 
         super(GPR_component, self).__init__()
         self.main_channel = main_channel
 
         self.gglr_unit_in = GGLR_unit(main_channel)
         self.gglr_unit_out = GGLR_unit(main_channel)
-        self.equation_4 = Equation_4()
+        self.equation_4 = Equation_4(units)
         self.glr_unit = GPR_unit(main_channel)
 
     def call(self, inputs, **kwargs):
 
-        p_in = inputs[0]
-        p_out = inputs[1]
+        adjacency_transposed_in = inputs[0]
+        adjacencey_in = inputs[1]
         distance = inputs[2]
         user = inputs[3]
 
-        p_in_out = self.gglr_unit_in([p_in])
-        p_out_out = self.gglr_unit_out([p_out])
+        p_in_out = self.gglr_unit_in([adjacency_transposed_in])
+        p_out_out = self.gglr_unit_out([adjacencey_in])
         predicted_adjacency_matrix = self.equation_4([p_in_out, p_out_out, distance])
         gpr_out = self.glr_unit([p_out_out, user])
 
@@ -166,26 +166,38 @@ class GPRUSModel:
         self.classes = classes
         self.features_num_columns = features_num_columns
 
-    def build(self, units1=60, output_size=8, dropout=0.5, seed=None):
+    def build(self, units1=60, output_size=7, dropout=0.5, seed=None):
         if seed is not None:
             tf.random.set_seed(seed)
         A_input = Input((self.max_size_matrices, self.max_size_matrices))
         A_transposed_input = Input((self.max_size_matrices, self.max_size_matrices))
-        X_input = Input((self.max_size_matrices, self.features_num_columns))
-        U_input = Input((self.max_size_matrices))
+        D_input = Input((self.max_size_matrices, self.features_num_columns))
+        W_input = Input((self.max_size_matrices, 7))
+        U_input = Input((7))
 
-        p_in_out1, p_out_out1, gpr_out1, predicted_adjacency_matrix = GPR_component(units1)([A_transposed_input, A_input, X_input, U_input])
+        u_cat = Dense(20, activation='relu')(U_input)
 
-        p_in_out1 = Dropout(0.5)(p_in_out1)
-        p_out_out1 = Dropout(0.5)(p_out_out1)
-        gpr_out1 = Dropout(0.5)(gpr_out1)
+        p_in_out1, p_out_out1, gpr_out1, predicted_adjacency_matrix = GPR_component(200, self.max_size_matrices)([A_transposed_input, A_input, D_input, u_cat])
 
-        p_in_out2, p_out_out2, gpr_out2, predicted_adjacency_matrix = GPR_component(units1)([p_in_out1, p_out_out1, X_input, gpr_out1])
+        print("gfggg", predicted_adjacency_matrix.shape)
+
+        # p_in_out1 = Dropout(0.4)(p_in_out1)
+        # p_out_out1 = Dropout(0.4)(p_out_out1)
+        # gpr_out1 = Dropout(0.4)(gpr_out1)
+
+        p_in_out2, p_out_out2, gpr_out2, predicted_adjacency_matrix = GPR_component(60, self.max_size_matrices)([p_in_out1, p_out_out1, D_input, gpr_out1])
 
         out = Concatenate()([p_in_out2, p_out_out2])
-        out = Dense(output_size, use_bias=False, activation='softmax')(out)
+        out_w = Dense(output_size, activation='softmax')(W_input) * tf.Variable(0.5)
+        out = Dense(output_size, activation='softmax')(out)
+        out = out + out_w
 
-        model = Model(inputs=[A_transposed_input, A_input, X_input, U_input], outputs=[out, predicted_adjacency_matrix])
+        print("aaa")
+        print(out.shape)
+        print("ddd")
+        print(predicted_adjacency_matrix.shape)
+
+        model = Model(inputs=[A_transposed_input, A_input, D_input, U_input, W_input], outputs=out)
 
         return model
 

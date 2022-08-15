@@ -1,9 +1,10 @@
 import numpy as np
 import json
 import pandas as pd
+import sklearn.preprocessing
+import sklearn as skm
 import spektral as sk
 import tensorflow as tf
-import sklearn.metrics as skm
 from sklearn.model_selection import KFold
 from tensorflow.keras import utils as np_utils
 
@@ -70,16 +71,19 @@ class PoiCategorizationBaselineGPRDomain(PoiCategorizationDomain):
             user_distance_matrix = json.loads(user_distance_matrix)
             user_distance_matrix = np.array(user_distance_matrix)
             user_distance_matrix = user_distance_matrix[idx[:,None], idx]
+
             # converter metros para km
-            user_distance_matrix = user_distance_matrix/1000
-            user_distance_matrix = np.where(user_distance_matrix>100, 100, user_distance_matrix)
+            # user_distance_matrix = user_distance_matrix/1000
+            # user_distance_matrix = np.where(user_distance_matrix>100, 100, user_distance_matrix)
+            # user_distance_matrix = skm.preprocessing.normalize(user_distance_matrix)
 
             # sequence
             user_poi_vector = user_poi_vector_df.iloc[i]
             user_poi_vector = user_poi_vector['matrices']
             user_poi_vector = json.loads(user_poi_vector)
             user_poi_vector = np.array(user_poi_vector)
-            user_poi_vector = user_poi_vector[idx]
+            user_poi_vector = np.divide(user_poi_vector, np.max(user_poi_vector))
+            #user_poi_vector = user_poi_vector[idx]
             user_poi_vector_list.append(user_poi_vector.tolist())
 
             matrices_list.append(user_matrix)
@@ -231,48 +235,66 @@ class PoiCategorizationBaselineGPRDomain(PoiCategorizationDomain):
                                           seed=None):
 
         adjacency_train, y_train, distance_train, user_poi_train, adjacency_test, y_test, distance_test, user_poi_test = fold
-        print("entradas: ", adjacency_train.shape, distance_train.shape, user_poi_train.shape,
+        class_weight = list(class_weight.values())
+        new_class_weight_train = []
+
+        for i in range(len(user_poi_train)):
+
+            new_class_weight_train.append([])
+            for j in range(max_size_matrices):
+
+                new_class_weight_train[i].append(user_poi_train[i])
+
+        new_class_weight_test = []
+
+        for i in range(len(user_poi_test)):
+
+            new_class_weight_test.append([])
+            for j in range(max_size_matrices):
+                new_class_weight_test[i].append(user_poi_test[i])
+
+        new_class_weight_train = np.array(new_class_weight_train)
+        new_class_weight_test = np.array(new_class_weight_test)
+
+        y_train = np_utils.to_categorical(y_train, num_classes=7)
+        y_test = np_utils.to_categorical(y_test, num_classes=7)
+        print("entradas: ", adjacency_train.shape, distance_train.shape, user_poi_train.shape, new_class_weight_train.shape,
               y_train.shape)
-        print("enstrada test: ", adjacency_test.shape, distance_test.shape, user_poi_test.shape,
+        print("enstrada test: ", adjacency_test.shape, distance_test.shape, user_poi_test.shape, new_class_weight_test.shape,
               y_test.shape)
+
         transposed_adjacency_train = self.transpose_matrices(adjacency_train)
         transposed_adjacency_test = self.transpose_matrices(adjacency_test)
 
-        num_classes = max(y_train.flatten()) + 1
+
         max_size = max_size_matrices
-        print("classes: ", num_classes)
+        print("classes: ", 7)
         batch = max_size*30
         print("tamanho batch: ", batch)
         print("epocas: ", parameters['epochs'])
         print("y_train: ", y_train.shape, y_test.shape)
 
-        model = GPRUSModel(classes=num_classes, max_size_matrices=max_size,
-                             features_num_columns=self.features_num_columns).build(output_size=num_classes, seed=seed)
-        y_train = np_utils.to_categorical(y_train, num_classes=num_classes)
-        y_test = np_utils.to_categorical(y_test, num_classes=num_classes)
+        model = GPRUSModel(classes=7, max_size_matrices=max_size,
+                             features_num_columns=self.features_num_columns).build(output_size=7, seed=seed)
         model.compile(optimizer=parameters['optimizer'],
                       loss=[parameters['loss'], tf.keras.losses.MeanSquaredError()],
                       weighted_metrics=[tf.keras.metrics.CategoricalAccuracy(name="acc"),
                                         tf.keras.metrics.CategoricalAccuracy(name="acc")])
 
 
-        hi = model.fit(x=[transposed_adjacency_train, adjacency_train, distance_train, user_poi_train],
-                       y=[y_train, adjacency_train], validation_data=([transposed_adjacency_test, adjacency_test, distance_test, user_poi_test], [y_test, adjacency_test]),
+        hi = model.fit(x=[transposed_adjacency_train, adjacency_train, distance_train, user_poi_train, new_class_weight_train],
+                       y=y_train, validation_data=([transposed_adjacency_test, adjacency_test, distance_test, user_poi_test, new_class_weight_test], y_test),
                        epochs=parameters['epochs'], batch_size=batch)
 
         h = hi.history
-        print("haa", h)
         # h = {'loss': h['loss'], 'val_loss': h['val_loss']}
         #print("summary: ", model.summary())
 
-        y_predict_location, y_predict_graph = model.predict([transposed_adjacency_test, adjacency_test, distance_test, user_poi_test],
+        y_predict_location = model.predict([transposed_adjacency_test, adjacency_test, distance_test, user_poi_test, new_class_weight_test],
                                            batch_size=batch)
 
-        print("saida:", type(y_predict_location), len(y_predict_location), y_predict_location)
-
-        scores = model.evaluate([transposed_adjacency_test, adjacency_test, distance_test, user_poi_test],
-                                [y_test, adjacency_test], batch_size=batch)
-        print("scores: ", scores)
+        scores = model.evaluate([transposed_adjacency_test, adjacency_test, distance_test, user_poi_test, new_class_weight_test],
+                                y_test, batch_size=batch)
 
         # To transform one_hot_encoding to list of integers, representing the locations
         # print("------------- Location ------------")
@@ -281,9 +303,8 @@ class PoiCategorizationBaselineGPRDomain(PoiCategorizationDomain):
         y_test = one_hot_decoding_predicted(y_test)
         # print("Original: ", y_test[0], " tamanho: ", len(y_test))
         # print("previu: ", y_predict_location[0], " tamanho: ", len(y_predict_location))
-        report = skm.classification_report(y_test, y_predict_location, output_dict=True)
-        # print(report)
-        print("finaal", class_weight)
+        report = skm.metrics.classification_report(y_test, y_predict_location, output_dict=True)
+        print(report)
         return h, report
 
     def transpose_matrices(self, matrices):
