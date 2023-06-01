@@ -95,18 +95,24 @@ class PoiCategorizationDomain:
                 first_categories.append(categories[i])
             return first_categories
 
-    def read_matrix(self, adjacency_matrix_filename, distance_matrix_filename, user_poi_matrix_filename):
+    def read_matrix(self, adjacency_matrix_filename, temporal_matrix_filename, distance_matrix_filename=None, duration_matrix_filename=None):
 
         adjacency_df = self.file_extractor.read_csv(adjacency_matrix_filename).drop_duplicates(subset=['user_id'])
-        distance_matrix_df = self.file_extractor.read_csv(distance_matrix_filename).drop_duplicates(subset=['user_id'])
-        if adjacency_df['user_id'].tolist() != distance_matrix_df['user_id'].tolist():
-            print("MATRIZES DIFERENTES")
-            raise
-
-        user_poi_matrix_df = self.file_extractor.read_csv(user_poi_matrix_filename).drop_duplicates(
+        temporal_matrix_df = self.file_extractor.read_csv(temporal_matrix_filename).drop_duplicates(subset=['user_id'])
+        if distance_matrix_filename is not None and duration_matrix_filename is not None:
+            distance_matrix_df = self.file_extractor.read_csv(distance_matrix_filename).drop_duplicates(
                 subset=['user_id'])
+            duration_matrix_df = self.file_extractor.read_csv(duration_matrix_filename).drop_duplicates(subset=['user_id'])
+            if adjacency_df['user_id'].tolist() != temporal_matrix_df['user_id'].tolist():
+                print("MATRIZES DIFERENTES")
+                raise
 
-        return adjacency_df, distance_matrix_df, user_poi_matrix_df
+            return adjacency_df, temporal_matrix_df, distance_matrix_df, duration_matrix_df
+        else:
+            if adjacency_df['user_id'].tolist() != temporal_matrix_df['user_id'].tolist():
+                print("MATRIZES DIFERENTES")
+                raise
+            return adjacency_df, temporal_matrix_df
 
     def read_matrices(self, adjacency_matrix_dir, feature_matrix_dir):
 
@@ -392,7 +398,6 @@ class PoiCategorizationDomain:
         max_events = 0
         max_user = -1
         selected_users = []
-        print("olaa")
         remove = 0
         for i in range(len(ids)):
 

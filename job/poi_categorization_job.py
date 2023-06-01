@@ -113,14 +113,14 @@ class PoiCategorizationJob:
         print(temporal_matrix_filename)
 
         # week matrices
-        adjacency_week_df, temporal_week_df, distance_week_df, duration_week_df = self.poi_categorization_domain. \
+        adjacency_week_df, temporal_week_df = self.poi_categorization_domain. \
             read_matrix(adjacency_matrix_week_filename, temporal_matrix_week_filename)
         # weekend matrices
-        adjacency_weekend_df, temporal_weekend_df, distance_weekend_df, duration_weekend_df = self.poi_categorization_domain. \
+        adjacency_weekend_df, temporal_weekend_df = self.poi_categorization_domain. \
             read_matrix(adjacency_matrix_weekend_filename, temporal_matrix_weekend_filename)
         print("Verificação de matrizes")
-        self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
-                                   adjacency_weekend_df, temporal_weekend_df, distance_df, duration_df)
+        self.matrices_verification([adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
+                                   adjacency_weekend_df, temporal_weekend_df, distance_df, duration_df])
 
         location_location = self.file_extractor.read_npz(base_dir +location_location_filename)
         location_time = self.file_extractor.read_csv(base_dir + location_time_filename)
@@ -143,8 +143,8 @@ class PoiCategorizationJob:
 
         selected_users = pd.DataFrame({'selected_users': selected_users})
 
-        self.matrices_verification(adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
-                              adjacency_weekend_df, temporal_weekend_df, distance_df, distance_week_df)
+        self.matrices_verification([adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
+                              adjacency_weekend_df, temporal_weekend_df, distance_df])
 
 
 
@@ -250,11 +250,11 @@ class PoiCategorizationJob:
             print(temporal_matrix_weekend_filename)
             raise
 
-    def matrices_verification(self, adjacency_df, temporal_df, adjacency_week_df, temporal_week_df,
-                              adjacency_weekend_df, temporal_weekend_df,  distance_df, duration_df):
+    def matrices_verification(self, df_list):
 
-        if not(len(adjacency_df) == len(temporal_df) == len(adjacency_week_df) == len(temporal_week_df) == len(adjacency_weekend_df) == len(temporal_weekend_df) == len(distance_df)):
-            print("Matrizes com tamanhos diferentes")
-            raise
-        else:
-            print("Quantidade inicial de usuários: ", len(adjacency_df))
+        for i in range(1, len(df_list)):
+            if not(len(df_list[i-1]) == len(df_list[i])):
+                print("Matrizes com tamanhos diferentes")
+                raise
+
+        print("Quantidade inicial de usuários: ", len(df_list[0]))
